@@ -27,9 +27,36 @@ package dreamwisp.swift.geom {
 			return (x + width);
 		}
 		
-		public function get bottomRight():SwiftPoint {
-			
+		public function get left():Number {
+			return x;
 		}
+		
+		public function get top():Number {
+			return y;
+		}
+		
+		public function contains(x:Number, y:Number):Boolean {
+			if (x > left && x < right && y > top && y < bottom) return true;
+			return false;
+		}
+		
+		public function containsPoint(point:SwiftPoint):Boolean {
+			if (point.x > left && point.x < right && point.y > top && point.y < bottom) return true;
+			return false;
+		}
+		
+		public function intersects(toIntersect:SwiftRectangle):Boolean {
+			
+			if (bottom < toIntersect.top || top > toIntersect.bottom) return false;
+			if (left > toIntersect.right || right < toIntersect.left) return false;
+			
+			return true;
+		}
+		
+		public function get bottomRight():SwiftPoint {
+			return null;
+		}
+		
 		public function set bottomRight(value:SwiftPoint):void {
 			
 		}

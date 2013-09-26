@@ -3,12 +3,12 @@ package dreamwisp.world.base {
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.hosts.IEntityFactory;
 	import dreamwisp.state.GameState;
+	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.visual.camera.ICamUser;
 	import dreamwisp.visual.ContainerView;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.world.tile.TileScape;
-	import flash.geom.Rectangle;
 	import project.entity.hosts.Player;
 	
 	/**
@@ -32,7 +32,7 @@ package dreamwisp.world.base {
 				
 		public var firstEntry:Boolean = true;
 		
-		private var _rect:Rectangle;
+		private var _rect:SwiftRectangle;
 		//protected var entityFactory:IEntityFactory;
 		private var _entityManager:EntityManager;
 		private var _player:Player;
@@ -99,7 +99,7 @@ package dreamwisp.world.base {
 			// check Story for 
 		}
 		
-		public function positionCamera(user:ICamUser = null, boundary:Rectangle = null, focus:Body = null):void {
+		public function positionCamera(user:ICamUser = null, boundary:SwiftRectangle = null, focus:Body = null):void {
 			if (camera) {
 				camera.user = user;
 				camera.setBounds(boundary);
@@ -107,8 +107,8 @@ package dreamwisp.world.base {
 			}
 		}
 		
-		public function get rect():Rectangle { return _rect; }
-		public function set rect(value:Rectangle):void { _rect = value; }
+		public function get rect():SwiftRectangle { return _rect; }
+		public function set rect(value:SwiftRectangle):void { _rect = value; }
 		
 		public function get entityManager():EntityManager { return _entityManager; }
 		public function set entityManager(value:EntityManager):void { _entityManager = value; }

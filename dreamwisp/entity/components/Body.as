@@ -1,8 +1,9 @@
 package dreamwisp.entity.components {
 	
 	import dreamwisp.entity.hosts.Entity;
+	import dreamwisp.swift.geom.SwiftPoint;
+	import dreamwisp.swift.geom.SwiftRectangle;
 	import flash.geom.Point;
-	import flash.geom.Rectangle;
 	
 	/**
 	 * Body handles the size and position of the entity in the 
@@ -42,8 +43,8 @@ package dreamwisp.entity.components {
 			this.y = y;
 		}
 		
-		public function getAsRectangle():Rectangle {
-			return new Rectangle(x, y, width, height);
+		public function getAsRectangle():SwiftRectangle {
+			return new SwiftRectangle(x, y, width, height);
 		}
 		
 		public function get x():Number { return _x; }
@@ -104,8 +105,9 @@ package dreamwisp.entity.components {
 		 * Returns the center point of the entity
 		 * in relation to the stage origin.
 		 */
-		public function get globalCenter():Point {
-			return new Point( (globalX + width / 2) , (globalY + height / 2) ); 
+		public function get globalCenter():SwiftPoint {
+			//return new Point( (globalX + width / 2) , (globalY + height / 2) );
+			return new SwiftPoint( (globalX + width / 2) , (globalY + height / 2) );
 		}
 		
 		public function get width():uint { return _width; }

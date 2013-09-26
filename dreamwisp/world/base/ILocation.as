@@ -1,10 +1,10 @@
 package dreamwisp.world.base {
 	
+	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.core.IUpdatable;
 	import dreamwisp.state.IGameState;
 	import dreamwisp.world.tile.TileScape;
-	import flash.geom.Rectangle;
 	import project.entity.hosts.Player;
 	
 	/**
@@ -16,8 +16,8 @@ package dreamwisp.world.base {
 		function goto(location:Object, ...address):void;
 		function enter():void;
 				
-		function get rect():Rectangle;
-		function set rect(value:Rectangle):void;
+		function get rect():SwiftRectangle;
+		function set rect(value:SwiftRectangle):void;
 		function get entityManager():EntityManager;
 		function set entityManager(value:EntityManager):void;
 		function get player():Player;

@@ -3,9 +3,9 @@ package dreamwisp.visual.camera {
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.action.IActionReceptor;
 	import dreamwisp.entity.components.Body;
+	import dreamwisp.swift.geom.SwiftRectangle;
 	import flash.display.Sprite;
 	import flash.geom.Point;
-	import flash.geom.Rectangle;
 	
 	/**
 	 * The Camera class can 
@@ -109,7 +109,7 @@ package dreamwisp.visual.camera {
 		 * Determines the boundaries of the level.
 		 * @param	rect The rectangular area that the camera is allowed to scroll through.
 		 */
-		public function setBounds(rect:Rectangle):void { 
+		public function setBounds(rect:SwiftRectangle):void { 
 			minX = (Data.STAGE_WIDTH/2) + rect.x;
 			maxX = rect.width - (Data.STAGE_WIDTH/2) + rect.x;
 			minY = (Data.STAGE_HEIGHT/2) + rect.y;
