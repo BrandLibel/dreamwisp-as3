@@ -1,14 +1,14 @@
 package dreamwisp.state {
 	
 	import dreamwisp.core.Game;
-	import dreamwisp.input.IReceptor;
+	import dreamwisp.input.IInputReceptor;
 	import dreamwisp.visual.ContainerView;
 	
 	/**
 	 * ...
 	 * @author Brandon
 	 */
-	public interface IGameState extends IReceptor {
+	public interface IGameState extends IInputReceptor {
 		
 		function enter():void;
 		function cleanup():void;

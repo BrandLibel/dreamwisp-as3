@@ -14,11 +14,11 @@ package dreamwisp.input {
 	 */
 	public class InputDispatcher {
 		
-		private var _receptor:IReceptor;
+		private var _receptor:IInputReceptor;
 		
 		private var isEnabled:Boolean;
 		
-		public function InputDispatcher(stage:Stage, inputReceptor:IReceptor) {
+		public function InputDispatcher(stage:Stage, inputReceptor:IInputReceptor) {
 			stage.addEventListener(MouseEvent.CLICK, mouseHandler);
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseHandler);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyHandler);
@@ -46,9 +46,9 @@ package dreamwisp.input {
 			receptor.hearKeyInput(e.type, e.keyCode);
 		}
 		
-		public function get receptor():IReceptor { return _receptor; }
+		public function get receptor():IInputReceptor { return _receptor; }
 		
-		public function set receptor(value:IReceptor):void { _receptor = value; }
+		public function set receptor(value:IInputReceptor):void { _receptor = value; }
 		
 	}
 

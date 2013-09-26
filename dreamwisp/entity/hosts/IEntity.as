@@ -7,14 +7,14 @@ package dreamwisp.entity.hosts {
 	import dreamwisp.entity.components.Physics;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.components.Weapon;
-	import dreamwisp.input.IReceptor;
+	import dreamwisp.input.IInputReceptor;
 	import dreamwisp.visual.lighting.LightSource;
 	import dreamwisp.world.base.Location;
 	import org.osflash.signals.Signal;
 	
 	
 	
-	public interface IEntity extends IReceptor {
+	public interface IEntity extends IInputReceptor {
 		// Actions
 		function destroy():void;
 		function update():void;

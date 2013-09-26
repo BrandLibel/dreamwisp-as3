@@ -12,7 +12,7 @@ package dreamwisp.world.base {
 	import project.entity.hosts.Player;
 	
 	/**
-	 * This superclass contains basic, shared functionality
+	 * This superclass contains basic functionality
 	 * for all types of locations.
 	 * @author Brandon Li 
 	 */

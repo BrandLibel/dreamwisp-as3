@@ -149,29 +149,17 @@ package dreamwisp.state {
 		
 		public function set heardKeyInput(value:Signal):void { _heardKeyInput = value; }
 		
-		public function get view():ContainerView {
-			return _view;
-		}
+		public function get view():ContainerView { return _view; }
 		
-		public function set view(value:ContainerView):void {
-			_view = value;
-		}
+		public function set view(value:ContainerView):void { _view = value; }
 		
-		public function get enabledInput():Signal {
-			return _enabledInput;
-		}
+		public function get enabledInput():Signal { return _enabledInput; }
 		
-		public function set enabledInput(value:Signal):void {
-			_enabledInput = value;
-		}
+		public function set enabledInput(value:Signal):void { _enabledInput = value; }
 		
-		public function get disabledInput():Signal {
-			return _disabledInput;
-		}
+		public function get disabledInput():Signal { return _disabledInput; }
 		
-		public function set disabledInput(value:Signal):void {
-			_disabledInput = value;
-		}
+		public function set disabledInput(value:Signal):void { _disabledInput = value; }
 		
 		
 		

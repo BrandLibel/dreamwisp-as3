@@ -5,19 +5,10 @@ package dreamwisp.input {
 	 * ...
 	 * @author Brandon
 	 */
-	public interface IInputManager {
+	public interface IInputManager extends IInputReceptor {
 		
-		function addInputReceptor(receptor:IReceptor):void;
-		function removeInputReceptor(receptor:IReceptor):void;
-		
-		function hearMouseInput(type:String, mouseX:int, mouseY:int):void;
-		function hearKeyInput(type:String, keyCode:uint):void;
-		
-		function get enabledInput():Signal;
-		function set enabledInput(value:Signal):void;
-		
-		function get disabledInput():Signal;
-		function set disabledInput(value:Signal):void;
+		function addInputReceptor(receptor:IInputReceptor):void;
+		function removeInputReceptor(receptor:IInputReceptor):void;
 		
 	}
 	
