@@ -41,7 +41,7 @@ package dreamwisp.swift.geom {
 		}
 		
 		public function containsPoint(point:SwiftPoint):Boolean {
-			if (point.x > left && point.x < right && point.y > top && point.y < bottom) return true;
+			if (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom) return true;
 			return false;
 		}
 		

@@ -289,7 +289,8 @@ package dreamwisp.entity.components {
 			bottom = Math.floor((body.y+(body.height-1))/tile_size);
 			top = Math.floor((body.y)/tile_size);
 			center_x = Math.floor((body.x + (body.width/2)) / tile_size);
-			center_y = Math.floor((body.y + (body.height/2)) / tile_size);
+			center_y = Math.floor((body.y + (body.height / 2)) / tile_size);
+			// prevent edges from being out of bounds
 			if (right >= tileGrid[0].length) right = tileGrid[0].length-1;
 			if (left < 0) left = 0;
 			if (center_x < 0) center_x = 0;
@@ -444,6 +445,8 @@ package dreamwisp.entity.components {
 			}
 			
 			if (currentState != airState) {
+				// prevent xSlopeDetector from exceeding array bounds
+				if (xSlopeDetector >= tileGrid[0].length) xSlopeDetector = tileGrid[0].length - 1;
 				if (tileGrid[ySlopeDetector+1][xSlopeDetector].type == "slope_up" || tileGrid[ySlopeDetector+1][xSlopeDetector].type == "slope_down") {
 					centerY = (ySlopeDetector+1)*tile_size+tile_size/2+1;
 					ySlopeDetector += 1;
