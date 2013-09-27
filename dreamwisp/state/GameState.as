@@ -2,7 +2,12 @@ package dreamwisp.state {
 	
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.core.Game;
+	import dreamwisp.entity.components.Body;
+	import dreamwisp.swift.geom.SwiftRectangle;
+	import dreamwisp.visual.camera.Camera;
+	import dreamwisp.visual.camera.ICamUser;
 	import dreamwisp.visual.ContainerView;
+	import dreamwisp.world.base.EntityManager;
 	import org.osflash.signals.Signal;
 	
 	/**
@@ -32,6 +37,10 @@ package dreamwisp.state {
 		
 		private var _enabledInput:Signal;
 		private var _disabledInput:Signal;
+		
+		private var _rect:SwiftRectangle;
+		private var _entityManager:EntityManager;
+		private var _camera:Camera;
 		
 		public function GameState() {
 			heardMouseInput = new Signal(String, int, int);
@@ -114,11 +123,14 @@ package dreamwisp.state {
 		public function update():void {
 			//if (paused) return;
 			if (transition) transition.update();
+			if (entityManager) entityManager.update();
+			if (camera) camera.update();
 		}
 		
 		public function render():void {
 			//if (paused) return;
 			if (transition) transition.render();
+			if (entityManager) entityManager.render();
 		}
 		
 		public function setGame(game:Game):void {
@@ -135,6 +147,14 @@ package dreamwisp.state {
 		public function hearKeyInput(type:String, keyCode:uint):void {
 			if (paused || !takesInput) return;
 			heardKeyInput.dispatch(type, keyCode);
+		}
+		
+		public function positionCamera(user:ICamUser = null, boundary:SwiftRectangle = null, focus:Body = null):void {
+			if (camera) {
+				camera.user = user;
+				camera.setBounds(boundary);
+				camera.focus = focus;
+			}
 		}
 		
 		public function get transition():TransitionManager { return _transition; }
@@ -160,6 +180,18 @@ package dreamwisp.state {
 		public function get disabledInput():Signal { return _disabledInput; }
 		
 		public function set disabledInput(value:Signal):void { _disabledInput = value; }
+		
+		public function get rect():SwiftRectangle { return _rect; }
+		
+		public function set rect(value:SwiftRectangle):void { _rect = value; }
+		
+		public function get entityManager():EntityManager { return _entityManager; }
+		
+		public function set entityManager(value:EntityManager):void { _entityManager = value; }
+		
+		public function get camera():Camera { return _camera; }
+		
+		public function set camera(value:Camera):void { _camera = value; }
 		
 		
 		

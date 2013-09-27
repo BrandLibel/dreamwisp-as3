@@ -171,12 +171,11 @@ package dreamwisp.visual {
 		 * @param	camCenter 
 		 */
 		public function followCamera(camX:Number, camY:Number):void {
+			if (!scrollRect) throw new Error("ContainerView " + this + " tried to follow camera but did not instantiate a scrollRect");
 			var newRect:Rectangle = scrollRect;
-			//MonsterDebugger.trace(this, levelRect);
 			newRect.x = (camX - (Data.STAGE_WIDTH / 2));
 			newRect.y = (camY - (Data.STAGE_HEIGHT / 2));
 			scrollRect = newRect;
-			//MonsterDebugger.trace(this, newRect);
 		}
 		
 		private function addGenericView(genericView:GenericView):void {

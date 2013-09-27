@@ -1,5 +1,6 @@
 package dreamwisp.world.base {
 	
+	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.core.IUpdatable;
@@ -15,15 +16,12 @@ package dreamwisp.world.base {
 		
 		function goto(location:Object, ...address):void;
 		function enter():void;
-				
-		function get rect():SwiftRectangle;
-		function set rect(value:SwiftRectangle):void;
-		function get entityManager():EntityManager;
-		function set entityManager(value:EntityManager):void;
+		
+		function transfer(entity:Entity):void;
+		
 		function get player():Player;
 		function set player(value:Player):void;
-		function get camera():Camera;
-		function set camera(value:Camera):void;
+		
 		function get tileScape():TileScape;
 		function set tileScape(value:TileScape):void;
 	}

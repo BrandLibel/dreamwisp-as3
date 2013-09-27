@@ -17,7 +17,7 @@ package dreamwisp.world.base {
 	public dynamic class EntityManager implements IEntityManager {
 
 		private var entityList:Object = Data.entityList.entitys;
-		public var entitys:Vector.<Entity>;
+		private var entitys:Vector.<Entity>;
 		
 		private var factory:IEntityFactory;
 		

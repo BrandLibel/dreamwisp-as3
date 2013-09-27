@@ -75,10 +75,6 @@ package dreamwisp.ui.menu {
 			selectButton(0, -1);
 		}
 		
-		/*private function confirmButton():void {
-			// override this
-		}*/
-		
 		private function build(layout:Object):void {
 			this.orientation = layout.orientation;
 			/// Adding assets
@@ -208,7 +204,6 @@ package dreamwisp.ui.menu {
 		}
 		
 		private function hitButton():void {
-			//button.hit();
 			if (buttonPressed.numListeners == 0) {
 				throw new Error("The Menu's buttonPressed signal has no listeners! Add some!");
 			}
@@ -218,102 +213,3 @@ package dreamwisp.ui.menu {
 	}
 
 }
-
-
-
-// MENU code
-
-
-//package project.menu {
-	//
-	//import dreamwisp.menu.MenuBase;
-	//import flash.events.MouseEvent;
-	//
-	///**
-	 //* ...
-	 //* @author Brandon
-	 //*/
-	//public class Menu extends MenuBase {
-		//
-		//public function Menu(layout:Object) {
-			//super(layout, confirmButton);
-		//}
-		//
-		//private function confirmButton():void {
-			//hitButton(button.name);
-		//}
-		//
-		//override protected function hitButton(buttonCode:String):void {
-			//super.hitButton(buttonCode);
-			//var bridgeData:Object;
-			//
-			//switch (buttonCode) {
-				//case "M1B1": // New Game button, brings up overwrite game prompt 
-					//
-					// two transition objects, defined here, passed to transition.exit and transition.entry for the bridged game states
-					///*bridgeData = {
-						//myExitTransition: { type: "alpha", startVal: 1, targetVal: 0, speed: 0.05 },
-						//newState: game.menus[2],
-						//transition: { type: "alpha", startVal: 0, targetVal: 1, speed: 0.05 }
-					//}
-					//startStateChange(bridgeData);*/
-					//
-					//changeState(
-						//{
-							//myExitTransition: { type: "alpha", startVal: 1, targetVal: 0, speed: 0.05 },
-							//newState: game.menus[2],
-							//transition: { type: "alpha", startVal: 0, targetVal: 1, speed: 0.05 }
-						//}
-					//);
-					//
-					//break;
-				//case "M1B2": // Load game button
-					//game.loadGame();
-					//break;
-				//case "M1B3": // Options button
-					//break;
-				//case "M2B1": // Overwrite game prompt to start new game
-					//
-					///*bridgeData = {
-						//myExitTransition: { type: "alpha", startVal: 1, targetVal: 0, speed: 0.05 },
-						//action: game.newGame,
-						//transition: { type: "alpha", startVal: 0, targetVal: 1, speed: 0.05 }
-					//}
-					//startStateChange(bridgeData);*/
-					//
-					//changeState(
-						//{
-							//myExitTransition: { type: "alpha", startVal: 1, targetVal: 0, speed: 0.05 },
-							//action: game.newGame
-						//}
-					//);
-					//
-					//break;
-				//case "M2B2":
-					//Data.save("test lolol");
-					//
-					///*bridgeData = {
-						//myExitTransition: { type: "alpha", startVal: 1, targetVal: 0, speed: 0.05 },
-						//newState: game.menus[1],
-						//transition: { type: "alpha", startVal: 0, targetVal: 1, speed: 0.05 }
-					//}
-					//startStateChange(bridgeData);*/
-					//changeState(
-						//{
-							//myExitTransition: { type: "alpha", startVal: 1, targetVal: 0, speed: 0.05 },
-							//newState: game.menus[1],
-							//transition: { type: "alpha", startVal: 0, targetVal: 1, speed: 0.05 }
-						//}
-					//);
-					//break;
-				// PAUSE MENU
-				//case "M3B1":
-					//break;
-				//case "M3B2":
-					//break;
-			//}
-		//}	
-		//
-	//}
-//
-//}

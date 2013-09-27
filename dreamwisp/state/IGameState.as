@@ -2,7 +2,10 @@ package dreamwisp.state {
 	
 	import dreamwisp.core.Game;
 	import dreamwisp.input.IInputReceptor;
+	import dreamwisp.swift.geom.SwiftRectangle;
+	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.visual.ContainerView;
+	import dreamwisp.world.base.EntityManager;
 	
 	/**
 	 * ...
@@ -31,6 +34,13 @@ package dreamwisp.state {
 		
 		function get transition():TransitionManager;
 		function set transition(value:TransitionManager):void;
+		
+		function get rect():SwiftRectangle;
+		function set rect(value:SwiftRectangle):void;
+		function get entityManager():EntityManager;
+		function set entityManager(value:EntityManager):void;
+		function get camera():Camera;
+		function set camera(value:Camera):void;
 	
 	}
 	
