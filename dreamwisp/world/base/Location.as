@@ -36,28 +36,18 @@ package dreamwisp.world.base {
 		
 		override public function update():void {
 			if (paused) return;
-			super.update();
+			
 			if (subLocation) subLocation.update();
 			if (tileScape) tileScape.update();
+			super.update();
 		}
 		
 		override public function render():void {
 			if (paused) return;
-			super.render();
 			if (tileScape) tileScape.render();
-			if (view) {
-				
-				// TODO: this block is temporary; it allows the ContainerView to be synced
-				// 		 with the x and y values of the actual Location (necessary for proper placement
-				//		 of Levels in Areas). 
-				if (rect) {
-					view.x = rect.x;
-					view.y = rect.y;
-				}
-				
-				view.render();
-			}
+			
 			if (subLocation) subLocation.render();
+			super.render();
 		}
 		
 		public function goto(location:Object, ...address):void {

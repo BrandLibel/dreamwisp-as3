@@ -131,6 +131,17 @@ package dreamwisp.state {
 			//if (paused) return;
 			if (transition) transition.render();
 			if (entityManager) entityManager.render();
+			if (view) {
+				// TODO: this block is temporary; it allows the ContainerView to be synced
+				// 		 with the x and y values of the actual Location (necessary for proper placement
+				//		 of Levels in Areas). 
+				if (rect) {
+					view.x = rect.x;
+					view.y = rect.y;
+				}
+				
+				view.render();
+			}
 		}
 		
 		public function setGame(game:Game):void {
