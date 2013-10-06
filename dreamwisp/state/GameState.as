@@ -3,6 +3,8 @@ package dreamwisp.state {
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.core.Game;
 	import dreamwisp.entity.components.Body;
+	import dreamwisp.input.IInputManager;
+	import dreamwisp.input.IInputReceptor;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.visual.camera.ICamUser;
@@ -20,6 +22,10 @@ package dreamwisp.state {
 		//		Location extends GameState...and things such as World or Area can manage states
 		//		just like Game can.
 		
+		public var gameStateSystem:GameStateSystem;
+		public var canUpdateBelow:Boolean = false;
+		public var canRenderBelow:Boolean = false;
+		
 		protected var game:Game;
 				
 		protected var paused:Boolean = false;
@@ -27,14 +33,16 @@ package dreamwisp.state {
 		
 		private var newState:IGameState;
 		private var newTransition:Object;
-		/// Function leading to state change
+		/// A function leading to a state change
 		private var action:Function;
 		
 		private var _view:ContainerView;
 		private var _transition:TransitionManager;
+		
+		private var _below:IGameState;
+		
 		private var _heardMouseInput:Signal;
 		private var _heardKeyInput:Signal;
-		
 		private var _enabledInput:Signal;
 		private var _disabledInput:Signal;
 		
@@ -47,22 +55,7 @@ package dreamwisp.state {
 			heardKeyInput = new Signal(String, uint);
 		}
 		
-		/**
-		 * Exits this state, changes the state and bridges with transitions defined in object bridgeData  
-		 * @param	bridgeData Must have fields: transition, myExitTransition
-		 * 			optional fields: newState, action
-		 */
-		protected function startStateChange(bridgeData:Object):void {
-			this.takesInput = false;
-			this.newTransition = bridgeData.transition;
-			if (bridgeData.newState) this.newState = bridgeData.newState;
-			if (bridgeData.action) this.action = bridgeData.action;
-			transition.finished.addOnce(commitStateChange);
-			if (bridgeData.myExitTransition) transition.start(bridgeData.myExitTransition);
-		}
-		
 		protected function commitStateChange():void {
-			
 			if (newState) {
 				game.changeState( newState, newTransition );
 			}
@@ -79,17 +72,28 @@ package dreamwisp.state {
 			newState = null;
 			newTransition = null;
 			action = null;
-			
+			// prevent reacting to input during a transition
 			takesInput = false;
-			if (bridgeData.newState) newState = bridgeData.newState;
+			
+			/*if (bridgeData.newState) */newState = bridgeData.newState;
 			if (bridgeData.transition) newTransition = bridgeData.transition;
 			if (bridgeData.action) action = bridgeData.action;
 			
 			// when using transitions, wait until transition completes until changing state
-			if (bridgeData.myExitTransition) {
+			if (bridgeData.myExitTransition && bridgeData.myExitTransition.type != "visible") {
 				transition.finished.addOnce(commitStateChange);
 				transition.start(bridgeData.myExitTransition);
 			} else {
+				// transition simply sets the visibility
+				if (bridgeData.myExitTransition.type == "visible") {
+					view.container.visible = bridgeData.myExitTransition.value;
+				} else {
+					// no exit transition for me, simply make me invisible and move on
+					view.container.visible = false;
+				}
+				
+				//view.alpha = 0;
+				//view.container.alpha = 0;
 				commitStateChange();
 			}
 		}
@@ -125,6 +129,7 @@ package dreamwisp.state {
 			if (transition) transition.update();
 			if (entityManager) entityManager.update();
 			if (camera) camera.update();
+			if (below && canUpdateBelow) below.update();
 		}
 		
 		public function render():void {
@@ -142,14 +147,13 @@ package dreamwisp.state {
 				
 				view.render();
 			}
+			if (below && canRenderBelow) below.render();
 		}
 		
 		public function setGame(game:Game):void {
 			this.game = game;
 		}
-		
-		//TODO: better off handling input through Signals which every
-		
+
 		public function hearMouseInput(type:String, mouseX:int, mouseY:int):void {
 			if (paused || !takesInput) return;
 			heardMouseInput.dispatch(type, mouseX, mouseY);
@@ -167,44 +171,51 @@ package dreamwisp.state {
 				camera.focus = focus;
 			}
 		}
+				
+		public function addInputReceptor(receptor:IInputReceptor):void {
+			MonsterDebugger.trace(this, "Added input receptor");
+			receptor.enabledInput.add( addInputReceptor );
+			receptor.disabledInput.add ( removeInputReceptor );
+			heardMouseInput.add( receptor.hearMouseInput );
+			heardKeyInput.add( receptor.hearKeyInput );
+		}
+		
+		public function removeInputReceptor(receptor:IInputReceptor):void {
+			receptor.disabledInput.remove( removeInputReceptor );
+			heardMouseInput.remove( receptor.hearMouseInput );
+			heardKeyInput.remove( receptor.hearKeyInput );
+		}
 		
 		public function get transition():TransitionManager { return _transition; }
-		
 		public function set transition(value:TransitionManager):void { _transition = value; }
 		
 		public function get heardMouseInput():Signal { return _heardMouseInput; }
-		
 		public function set heardMouseInput(value:Signal):void { _heardMouseInput = value; }
 		
 		public function get heardKeyInput():Signal { return _heardKeyInput; }
-		
 		public function set heardKeyInput(value:Signal):void { _heardKeyInput = value; }
 		
 		public function get view():ContainerView { return _view; }
-		
 		public function set view(value:ContainerView):void { _view = value; }
 		
 		public function get enabledInput():Signal { return _enabledInput; }
-		
 		public function set enabledInput(value:Signal):void { _enabledInput = value; }
 		
 		public function get disabledInput():Signal { return _disabledInput; }
-		
 		public function set disabledInput(value:Signal):void { _disabledInput = value; }
 		
 		public function get rect():SwiftRectangle { return _rect; }
-		
 		public function set rect(value:SwiftRectangle):void { _rect = value; }
 		
 		public function get entityManager():EntityManager { return _entityManager; }
-		
 		public function set entityManager(value:EntityManager):void { _entityManager = value; }
 		
 		public function get camera():Camera { return _camera; }
+		public function set camera(value:Camera):void { _camera = value; }		
 		
-		public function set camera(value:Camera):void { _camera = value; }
+		public function get below():IGameState { return _below; }
 		
-		
+		public function set below(value:IGameState):void { _below = value; }
 		
 	}
 

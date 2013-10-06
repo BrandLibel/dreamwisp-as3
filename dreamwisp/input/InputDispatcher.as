@@ -9,7 +9,10 @@ package dreamwisp.input {
 	
 	/**
 	 * This class takes user input and dispatches it to anything ingame
-	 * that is listening for input. 
+	 * that is listening for input. The listener, or 'InputReceptor', can be
+	 * something like a GameState, which is an 'InputManager' and can handle
+	 * many other InputReceptors, or something like a Player, which is a normal
+	 * InputReceptor.
 	 * @author Brandon
 	 */
 	public class InputDispatcher {

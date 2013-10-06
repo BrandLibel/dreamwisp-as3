@@ -1,7 +1,7 @@
 package dreamwisp.state {
 	
 	import dreamwisp.core.Game;
-	import dreamwisp.input.IInputReceptor;
+	import dreamwisp.input.IInputManager;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.visual.ContainerView;
@@ -11,7 +11,7 @@ package dreamwisp.state {
 	 * ...
 	 * @author Brandon
 	 */
-	public interface IGameState extends IInputReceptor {
+	public interface IGameState extends IInputManager {
 		
 		function enter():void;
 		function cleanup():void;
@@ -35,6 +35,8 @@ package dreamwisp.state {
 		function get transition():TransitionManager;
 		function set transition(value:TransitionManager):void;
 		
+		function get below():IGameState;
+		function set below(value:IGameState):void;
 		function get rect():SwiftRectangle;
 		function set rect(value:SwiftRectangle):void;
 		function get entityManager():EntityManager;

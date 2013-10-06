@@ -46,12 +46,11 @@
 			
 		}
 		
-		/*public function bridgeStates(oldState:IGameState, newState:IGameState):void {
-			// use menucontrol findstate()
-			oldState.transition.fadeOut(0.05);
-			//oldState.transition.finishedExit.add(changeState);
-			changeState(newState);
-		}*/
+		public function hideAllMenus():void {
+			for each (var menu:Menu in menus) {
+				if (menu) menu.view.container.visible = false;
+			}
+		}
 		
 		/**
 		 * 

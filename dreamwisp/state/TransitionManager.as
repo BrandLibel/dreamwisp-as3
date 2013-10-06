@@ -40,7 +40,7 @@ package dreamwisp.state {
 		 * 			Optional: startVal.
 		 */
 		public function start(transition:Object):void {
-			// default transition for a new state entry
+			// default transition for a new state entry - fade in
 			if (!transition) transition = { type: "alpha", startVal: 0, targetVal: 1, speed: 0.05 };
 			
 			var animatable:Animatable = this[transition.type];
