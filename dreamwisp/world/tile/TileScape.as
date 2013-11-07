@@ -5,14 +5,17 @@ package dreamwisp.world.tile {
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import project.world.Level;
+	
 	/**
 	 * ...
 	 * @author Brandon
 	 */
+	
 	public class TileScape {
 		
-		private const TILE_RECT:Rectangle = new Rectangle(0, 0, Data.TILE_SIZE, Data.TILE_SIZE);
+		private var tileRect:Rectangle;
+		private var tileWidth:uint;
+		private var tileHeight:uint;
 		
 		private var _tileGrid:Vector.<Vector.<Tile>> = new Vector.<Vector.<Tile>>;
 		/// Vector of points with x & y pos of tile on grid, only for tiles that require updating. 
@@ -23,8 +26,16 @@ package dreamwisp.world.tile {
 		
 		private var location:Location;
 		
-		public function TileScape(location:Location) {
+		//private var tileComposer:TileComposer;
+		/// JSON object containing all tile blueprints
+		private var tileList:Object;
+		
+		public function TileScape(location:Location, tileList:Object, tileWidth:uint = 32, tileHeight:uint = 32) {
 			this.location = location;
+			this.tileList = tileList;
+			this.tileWidth = tileWidth;
+			this.tileHeight = tileHeight;
+			tileRect = new Rectangle(0, 0, tileWidth, tileHeight);
 			init();
 		}
 		
@@ -52,16 +63,16 @@ package dreamwisp.world.tile {
 			for (var a:uint = 0; a < tileMap.length; a++) {
 				tileGrid.push(new <Tile>[]);
 				for (var b:uint = 0; b < tileMap[0].length; b++) {
-					tileGrid[a][b] = TileComposer.compose(tileMap[a][b]);
+					tileGrid[a][b] = compose(tileMap[a][b]);
 					var tile:Tile = tileGrid[a][b];
-					tile.x = b * Data.TILE_SIZE;
-					tile.y = a * Data.TILE_SIZE;
+					tile.x = b * tileWidth;
+					tile.y = a * tileHeight;
 					destPoint.x = tile.x;
 					destPoint.y = tile.y
 					if (tile.hasAnimation) tileCoords.push(new Point(b, a));
 					tile.render();
-					canvasData.copyPixels(tile.bitmap.bitmapData, TILE_RECT, destPoint);
-					if (tile.body) Level(location).solidBodys.push(tile.body);
+					canvasData.copyPixels(tile.bitmap.bitmapData, tileRect, destPoint);
+					//if (tile.body) Level(location).solidBodys.push(tile.body);
 				}
 			}
 			
@@ -71,10 +82,10 @@ package dreamwisp.world.tile {
 		
 		/// Visually renders the tile specified at the coordinates.
 		public function drawTile(row:uint, col:uint):void {
-			const destPoint:Point = new Point(col * Data.TILE_SIZE, row * Data.TILE_SIZE);
+			const destPoint:Point = new Point(col * tileWidth, row * tileHeight);
 			var tile:Tile = tileGrid[row][col];
 			tile.render();
-			canvasData.copyPixels(tile.bitmap.bitmapData, TILE_RECT, destPoint);	
+			canvasData.copyPixels(tile.bitmap.bitmapData, tileRect, destPoint);	
 		}
 		
 		/**
@@ -96,14 +107,19 @@ package dreamwisp.world.tile {
 					break;
 				}
 			}
-			tileGrid[row][col] = TileComposer.compose(newTileNum);
+			tileGrid[row][col] = compose(newTileNum);
 			if (tileGrid[row][col].hasAnimation) tileCoords.push(newPoint);
 			drawTile(row, col);
 		}
 		
+		private function compose(tileNum:uint):Tile {
+			const blueprint:Object = tileList.tiles[tileNum];
+			return new Tile(blueprint);
+		}
+		
 		public function get tileGrid():Vector.<Vector.<Tile>> { return _tileGrid; }
 		
-		public function set tileGrid(value:Vector.<Vector.<Tile>>):void { _tileGrid = value; }		
+		public function set tileGrid(value:Vector.<Vector.<Tile>>):void { _tileGrid = value; }
 		
 	}
 

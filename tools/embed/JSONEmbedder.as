@@ -22,8 +22,11 @@
 		/**
 		 * 
 		 * @param	source Pass an object which contains a list of constants; it will be used during the replace function. 
+		 * @param	SourceClass If used, the source is a JSON object that must be loaded before use.
 		 */
-		public function JSONEmbedder(source:Object = null) {
+		public function JSONEmbedder(source:Object = null, SourceClass:Class = null) {
+			if (SourceClass != null)
+				source = load(SourceClass, false).text;
 			this.source = source;
 		}
 		

@@ -1,7 +1,6 @@
 ﻿package dreamwisp.ui.menu {
 	
 	import com.demonsters.debugger.MonsterDebugger;
-	import dreamwisp.core.Watcher;
 	import dreamwisp.entity.components.Animation;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
@@ -12,7 +11,6 @@
 	public class MenuButton extends Entity {
 				
 		public var isEnabled:Boolean = true;
-		public var watcher:Watcher = new Watcher(this);
 		
 		public var dataProperty:String;
 						

@@ -33,7 +33,7 @@ package dreamwisp.ui.menu {
 		/// The list of all buttons used in this menu.
 		private var buttons:Vector.<MenuButton>;
 		
-		private var orientation:String;
+		private var isLayoutHorizontal:Boolean = false;
 		
 		private var keyMap:KeyMap;
 		
@@ -50,8 +50,8 @@ package dreamwisp.ui.menu {
 		private function init():void {
 			keyMap = new KeyMap();
 			keyMap.bind( [Keyboard.SPACE, Keyboard.ENTER, Keyboard.Z, Keyboard.X], null, hitButton );
-			keyMap.bind( ((orientation == Data.text.ORIENT_HORIZONTAL) ? Keyboard.LEFT : Keyboard.UP), scrollBack );
-			keyMap.bind( ((orientation == Data.text.ORIENT_HORIZONTAL) ? Keyboard.RIGHT : Keyboard.DOWN), scrollForward );
+			keyMap.bind( ((isLayoutHorizontal == true) ? Keyboard.LEFT : Keyboard.UP), scrollBack );
+			keyMap.bind( ((isLayoutHorizontal == true) ? Keyboard.RIGHT : Keyboard.DOWN), scrollForward );
 			//keyMap.clear(Keyboard.SPACE);
 			
 			// GameState
@@ -76,7 +76,7 @@ package dreamwisp.ui.menu {
 		}
 		
 		private function build(layout:Object):void {
-			this.orientation = layout.orientation;
+			isLayoutHorizontal = layout.isHorizontal;
 			/// Adding assets
 			if (layout.assets){
 				for (var j:uint = 0; j < layout.assets.length; j++) {
@@ -111,7 +111,7 @@ package dreamwisp.ui.menu {
 					btn = buttons[disabledButtons[k].button-1];
 					btn.disable();
 					/// giving them the property they listen for to be enabled
-					btn.watcher.watchFor(disabledButtons[k].dependency);
+					//btn.watcher.watchFor(disabledButtons[k].dependency);
 					btn.dataProperty = disabledButtons[k].dependency.name;
 					//btn.enableUpon(Data.getText(disabledButtons[k].dependency));
 					btn.update();
@@ -194,7 +194,7 @@ package dreamwisp.ui.menu {
 			selectButton();
 			/// check disabled buttons to see if they've become enabled
 			for (var i:uint = 1; i < buttons.length; i++) {
-				buttons[i].watcher.check();
+				//buttons[i].watcher.check();
 				if (buttons[i].isEnabled == false) buttons[i].check();
 			}
 		}

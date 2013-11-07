@@ -165,6 +165,7 @@ package dreamwisp.world.base {
 		
 		public function destroyEntity(action:Object):void {
 			MonsterDebugger.trace(this, entitys.length);
+			getEntityByID(action.actorID).destroy();
 			for (var i:uint = 0; i < entitys.length; i++) {
 				MonsterDebugger.trace(this, "looping: " + i);
 				if (entitys[i].actorID == action.actorID || !action.actorID) {
@@ -174,13 +175,44 @@ package dreamwisp.world.base {
 			}
 		}
 		
-		private function getEntityByID(action:Object):Entity {
+		/**
+		 * Returns the first entity found that has the specified name.
+		 * @param	name
+		 * @return
+		 */
+		public function getEntityByName(name:String):Entity {
+			var numOfSameNames:uint = 0;
+			var entityWithName:Entity = null;
 			for each (var entity:Entity in entitys) {
-				if (entity.actorID == action.actorID) {
+				if (entity.name == name) {
 					return entity;
 				}
 			}
-			return entity;
+			throw new Error("No entity found by requested name: " + name);
+		}
+		
+		/**
+		 * Retrieves a group of entitys with the specified name.
+		 * @param	name 
+		 * @return	A vector containing the entitys with that name.
+		 */
+		public function getEntitysByName(name:String):Vector.<Entity> {
+			var entitysWithName:Vector.<Entity> = new Vector.<Entity>;
+			for each (var entity:Entity in entitys) {
+				if (entity.name == name) {
+					entitysWithName.push(entity);
+				}
+			}
+			return entitysWithName;
+		}
+		
+		public function getEntityByID(id:uint):Entity {
+			for each (var entity:Entity in entitys) {
+				if (entity.actorID == id) {
+					return entity;
+				}
+			}
+			throw new Error("No entity found by requested ID: " + id);
 		}
 		
 		public function onEntityDestroyed(entity:Entity):void {

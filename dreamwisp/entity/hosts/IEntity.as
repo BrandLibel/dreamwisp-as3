@@ -19,6 +19,8 @@ package dreamwisp.entity.hosts {
 		function destroy():void;
 		function update():void;
 		function render():void;
+		function enableInput():void;
+		function disableInput():void;
 		
 		function get state():String;
 		function set state(value:String):void;

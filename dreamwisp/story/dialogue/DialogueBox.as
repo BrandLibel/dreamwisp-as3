@@ -8,6 +8,7 @@ package dreamwisp.story.dialogue {
 	import flash.ui.Keyboard;
 	import org.osflash.signals.Signal;
 	import tools.Belt;
+	import flash.utils.*;
 	
 	/**
 	 * ...
@@ -108,14 +109,16 @@ package dreamwisp.story.dialogue {
 			var name:String = Data.entityList.entitys[conversation.chatNode.speaker].name;
 			var text:String;
 			
-			DialogueGraphic(view.movieClip).nameBox.text = name;
-			DialogueGraphic(view.movieClip).textBox.text = conversation.chatNode.text;
+			var DialogueGraphicClass:Class = getDefinitionByName("DialogueGraphic") as Class;
+			DialogueGraphicClass(view.movieClip).nameBox.text = name;
+			DialogueGraphicClass(view.movieClip).textBox.text = conversation.chatNode.text;
 			MonsterDebugger.trace(this, "dialoguebox visible");
 		}
 		
 		internal function endConversation():void {
 			MonsterDebugger.trace(this, "dialogue box ending");
-			DialogueGraphic(view.movieClip).textBox.appendText( "THIS IS AN ACTION" );
+			var DialogueGraphicClass:Class = getDefinitionByName("DialogueGraphic") as Class;
+			DialogueGraphicClass(view.movieClip).textBox.appendText( "THIS IS AN ACTION" );
 			view.movieClip.visible = false;
 			convoPoint = 0;
 			disabledInput.dispatch(this);

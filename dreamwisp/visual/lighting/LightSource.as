@@ -9,8 +9,7 @@ package dreamwisp.visual.lighting {
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.filters.BlurFilter;
-	import project.entity.hosts.Player;
-	import project.world.Level;
+	//import project.world.Level;
 	
 	/**
 	 * A LightSource is a Sprite and Inverse Mask that is added to a Darkness sprite.
@@ -99,12 +98,12 @@ package dreamwisp.visual.lighting {
 		}
 		
 		public function render():void {
-			if (!sorted) {
+			/*if (!sorted) {
 				Level(host.myLocation).solidBodys.sort(sortBodyByDistance);
 				Level(host.myLocation).solidBodys.splice(0, 1);
 				//Level(host.myLocation).solidBodys.splice(20, 264);
 				//MonsterDebugger.trace(this, Level(host.myLocation).solidBodys,"","",0xD20000);
-			}
+			}*/
 			
 			// calculate ray light
 			lightMask.graphics.clear();

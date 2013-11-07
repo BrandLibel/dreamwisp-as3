@@ -214,7 +214,6 @@ package dreamwisp.state {
 		public function set camera(value:Camera):void { _camera = value; }		
 		
 		public function get below():IGameState { return _below; }
-		
 		public function set below(value:IGameState):void { _below = value; }
 		
 	}

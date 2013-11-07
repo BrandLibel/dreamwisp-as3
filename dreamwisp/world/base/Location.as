@@ -1,7 +1,9 @@
 package dreamwisp.world.base {
 	
 	import dreamwisp.entity.components.Body;
+	import dreamwisp.entity.hosts.IEntity;
 	import dreamwisp.entity.hosts.IEntityFactory;
+	import dreamwisp.entity.hosts.IPlayer;
 	import dreamwisp.state.GameState;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.ContainerView;
@@ -27,7 +29,7 @@ package dreamwisp.world.base {
 		
 		public var firstEntry:Boolean = true;
 		
-		private var _player:Player;
+		private var _player:IPlayer;
 		private var _tileScape:TileScape;
 		
 		public function Location() {
@@ -63,7 +65,6 @@ package dreamwisp.world.base {
 		}
 		
 		override public function enter():void {
-			
 			startup();
 		}
 		
@@ -71,8 +72,8 @@ package dreamwisp.world.base {
 			
 		}
 		
-		public function get player():Player { return _player; }
-		public function set player(value:Player):void { _player = value; }
+		public function get player():IPlayer { return _player; }
+		public function set player(value:IPlayer):void { _player = value; }
 		
 		public function get tileScape():TileScape { return _tileScape; }
 		public function set tileScape(value:TileScape):void { _tileScape = value; }

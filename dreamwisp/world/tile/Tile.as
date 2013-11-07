@@ -68,7 +68,7 @@ package dreamwisp.world.tile {
 		
 		public function Tile(blueprint:Object) {
 			tileMap;
-			// TODO: create tile maps, a 1d array containing list of all surrounding tiles
+			// TODO: create tile maps, a 1d array containing list of all surrounding tiles NW, N, NE, W, E, SW, S, SE
 			init(blueprint);
 		}
 		
