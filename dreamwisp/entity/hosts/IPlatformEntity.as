@@ -1,6 +1,6 @@
 package dreamwisp.entity.hosts {
 	
-	import dreamwisp.entity.components.PlatformController;
+	import dreamwisp.entity.components.platformer.PlatformController;
 	
 	/**
 	 * ...

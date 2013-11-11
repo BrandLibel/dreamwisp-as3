@@ -1,11 +1,11 @@
-package dreamwisp.entity.components {
+package dreamwisp.entity.components.platformer {
 	
 	import com.demonsters.debugger.MonsterDebugger;
-	import dreamwisp.entity.components.platformer.*;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.entity.hosts.IPlatformEntity;
+	import dreamwisp.entity.components.Body;
+	import dreamwisp.entity.components.Physics;
 	import dreamwisp.world.tile.Tile;
-	import project.entity.hosts.Player;
 	import statemachine.StateMachine;
 	import statemachine.StateMachineEvent;
 	
@@ -40,9 +40,14 @@ package dreamwisp.entity.components {
 		private var pressingUp:Boolean = false;
 		
 		// tile collision variables
-		public var tile_size:uint = Data.TILE_SIZE;
+		//public var tile_size:uint = Data.TILE_SIZE;
+		private var tileWidth:uint;
+		private var tileHeight:uint;
+		
 				
-		public var tileGrid:Vector.<Vector.<Tile>> = new Vector.<Vector.<Tile>>;
+		private var tileGrid:Vector.<Vector.<Tile>> = new Vector.<Vector.<Tile>>;
+		/// Object containing location-specific properties 
+		internal var environment:Object;
 		
 		private var over:String;
 		private var currentTile:Tile;
@@ -55,24 +60,24 @@ package dreamwisp.entity.components {
 		
 		protected var bottom:uint;
 		private var prev_bottom:Number;
-		public var left:int;
-		public var right:int;
-		public var top:uint;
-		public var center:Tile;
-		public var center_x:int;
-		public var center_y:uint;
-		public var bottom_left:Tile;
-		public var bottom_center:Tile;
-		public var bottom_right:Tile;
-		public var top_left:Tile;
-		public var top_center:Tile;
-		public var top_right:Tile;
-		public var above_left:Tile;
-		public var above:Tile;
-		public var above_right:Tile;
-		public var below_left:Tile;
-		public var below:Tile;
-		public var below_right:Tile;
+		internal var left:int;
+		internal var right:int;
+		internal var top:uint;
+		internal var center:Tile;
+		internal var center_x:int;
+		internal var center_y:uint;
+		internal var bottom_left:Tile;
+		internal var bottom_center:Tile;
+		internal var bottom_right:Tile;
+		internal var top_left:Tile;
+		internal var top_center:Tile;
+		internal var top_right:Tile;
+		internal var above_left:Tile;
+		internal var above:Tile;
+		internal var above_right:Tile;
+		internal var below_left:Tile;
+		internal var below:Tile;
+		internal var below_right:Tile;
 		
 		public function PlatformController(entity:IPlatformEntity, maxWalkSpeed:uint, walkAcceleration:Number, jumpPower:int):void {
 			host = entity;
@@ -82,6 +87,13 @@ package dreamwisp.entity.components {
 			this.maxWalkSpeed = maxWalkSpeed;
 			this.walkAcceleration = walkAcceleration;
 			this.jumpPower = jumpPower;
+			
+			environment = new Object();
+			environment.gravity = 1.6;
+			environment.tileWidth = 32;
+			environment.tileHeight = 32;
+			tileWidth = 32;
+			tileHeight = 32;
 			
 			movementSM = new StateMachine();
 			movementSM.addState( "groundState", { enter: onStateChange }  );
@@ -106,6 +118,7 @@ package dreamwisp.entity.components {
 		
 		public function update():void {
 			tileGrid = host.myLocation.tileScape.tileGrid;
+			
 			registerGround();
 			checkCollisions();
 			currentState.update();
@@ -150,7 +163,7 @@ package dreamwisp.entity.components {
 				physics.yVelocity = 0;
 				movementSM.changeState( "ladderState" );
 				// centering the entity in the ladder, x = 0 + 
-				body.x = ( center_x * tile_size) + (tile_size - body.width ) / 2;
+				body.x = ( center_x * tileWidth) + (tileWidth - body.width ) / 2;
 			}
 		}
 		
@@ -165,9 +178,9 @@ package dreamwisp.entity.components {
 		
 		private function registerGround():void {
 			bonus_speed = 0;
-			var left_foot_x:uint = Math.floor(body.x/tile_size);
-			var right_foot_x:uint = Math.floor((body.x+(body.width-1))/tile_size);
-			var foot_y:uint = Math.floor((body.y+body.height)/tile_size);
+			var left_foot_x:uint = Math.floor(body.x/tileWidth);
+			var right_foot_x:uint = Math.floor((body.x+(body.width-1))/tileWidth);
+			var foot_y:uint = Math.floor((body.y+body.height)/tileHeight);
 			if (foot_y >= 0 && foot_y < tileGrid.length){
 				if (left_foot_x >= 0 && left_foot_x < tileGrid[0].length){
 					var left_foot:Tile = tileGrid[foot_y][left_foot_x];
@@ -247,7 +260,7 @@ package dreamwisp.entity.components {
 			}
 			//MonsterDebugger.trace(this, over);
 			//MonsterDebugger.trace(this, "colliding bottom : " + y, "", "", 0xD50000);
-			body.y = bottom * tile_size-body.height;
+			body.y = bottom * tileHeight-body.height;
 			//MonsterDebugger.trace(this, "colliding bottom", "", "", 0x1FC501);
 			
 			physics.yVelocity = 0;
@@ -257,7 +270,7 @@ package dreamwisp.entity.components {
 		}
 		
 		protected function collideTop():void {
-			body.y = bottom * tile_size + 1 /*+ (body.height-1)*/;
+			body.y = bottom * tileHeight + 1 /*+ (body.height-1)*/;
 			physics.yVelocity = 0;
 			//react();
 			currentState.collideTop();
@@ -265,7 +278,7 @@ package dreamwisp.entity.components {
 		}
 		
 		protected function collideLeft():void {
-			body.x = (left + 1) * tile_size /*+ body.width*/;
+			body.x = (left + 1) * tileWidth /*+ body.width*/;
 			physics.xVelocity = 0;
 			//react();
 			//MonsterDebugger.trace(this, "colliding left" );
@@ -274,7 +287,7 @@ package dreamwisp.entity.components {
 		}
 		
 		protected function collideRight():void {
-			body.x = right * tile_size-body.width;
+			body.x = right * tileWidth-body.width;
 			physics.xVelocity = 0;
 			//react();
 			//MonsterDebugger.trace(this, "colliding right" );
@@ -284,12 +297,12 @@ package dreamwisp.entity.components {
 		
 		private function getEdges():void {
 			/// Testing for edges 
-			right = Math.floor((body.x+(body.width-1))/tile_size);
-			left = Math.floor((body.x)/tile_size);
-			bottom = Math.floor((body.y+(body.height-1))/tile_size);
-			top = Math.floor((body.y)/tile_size);
-			center_x = Math.floor((body.x + (body.width/2)) / tile_size);
-			center_y = Math.floor((body.y + (body.height / 2)) / tile_size);
+			right = Math.floor((body.x+(body.width-1))/tileWidth);
+			left = Math.floor((body.x)/tileWidth);
+			bottom = Math.floor((body.y+(body.height-1))/tileHeight);
+			top = Math.floor((body.y)/tileHeight);
+			center_x = Math.floor((body.x + (body.width/2)) / tileWidth);
+			center_y = Math.floor((body.y + (body.height / 2)) / tileHeight);
 			// prevent edges from being out of bounds
 			if (right >= tileGrid[0].length) right = tileGrid[0].length-1;
 			if (left < 0) left = 0;
@@ -332,8 +345,8 @@ package dreamwisp.entity.components {
 			// when performing slope calculations, center x pos (body.x + body.width/2)
 			// is used 
 			
-			x_slope_detector = Math.floor(((body.x + body.width / 2)) / tile_size);
-			y_slope_detector = Math.floor(((body.y + body.height / 2)) / tile_size);
+			x_slope_detector = Math.floor(((body.x + body.width / 2)) / tileWidth);
+			y_slope_detector = Math.floor(((body.y + body.height / 2)) / tileHeight);
 			
 			if (x_slope_detector < 0) x_slope_detector = 0;
 			
@@ -345,17 +358,17 @@ package dreamwisp.entity.components {
 					if (tile.type == "slope_up" || tile.type == "slope_down") {
 						if (tile.type == "slope_up") {
 							//MonsterDebugger.trace(this, "on slope from air", "", "", 0x0073F2);
-							x_offset = tile_size-(body.x + body.width / 2) % tile_size;
+							x_offset = tileWidth-(body.x + body.width / 2) % tileWidth;
 						}
 						/// could be an "else"...               
 						if (tile.type == "slope_down") {
 							//MonsterDebugger.trace(this, "on slope from air", "", "", 0x0073F2);
-							x_offset = (body.x + body.width / 2) % tile_size;
+							x_offset = (body.x + body.width / 2) % tileWidth;
 						}
 						if (physics.yVelocity < 0) {
 							trace("");
 						}
-						if ((body.y + body.height / 2) > Math.floor((body.y /*+ body.height / 2*/)/tile_size)*tile_size-body.height+x_offset && physics.yVelocity > 0) {
+						if ((body.y + body.height / 2) > Math.floor((body.y /*+ body.height / 2*/)/tileHeight)*tileHeight-body.height+x_offset && physics.yVelocity > 0) {
 							/// rebounce fix here
 							trace("bounce!");
 							/*MonsterDebugger.trace(this, "bouncey bouncey", "", "", 0x0073F2);
@@ -369,20 +382,20 @@ package dreamwisp.entity.components {
 				/// could NOT be an else  
 				if (currentState != airState) {
 					if (tileGrid[y_slope_detector+1][x_slope_detector].type == "slope_up" || tileGrid[y_slope_detector+1][x_slope_detector].type == "slope_down") {
-						body.y = (y_slope_detector+1)*tile_size+tile_size/2+1;
+						body.y = (y_slope_detector+1)*tileHeight+tileHeight/2+1;
 						y_slope_detector += 1;
 						//trace("not on slope");
 					}
 					tile = tileGrid[y_slope_detector][x_slope_detector];
 					if (tile.type == "slope_up" || tile.type == "slope_down") {
 						if (tile.type == "slope_up") {
-							x_offset = tile_size-(body.x + body.width / 2)%tile_size;
+							x_offset = tileWidth - (body.x + body.width / 2) % tileWidth;
 						}
 						/// could be an "else"...               
 						if (tile.type == "slope_down") {
-							x_offset = (body.x + body.width / 2)%tile_size;
+							x_offset = (body.x + body.width / 2) % tileWidth;
 						}
-						body.y = Math.floor((body.y /*+ body.height / 2*/)/tile_size)*tile_size-body.height+x_offset;
+						body.y = Math.floor((body.y /*+ body.height / 2*/)/tileHeight)*tileHeight-body.height+x_offset;
 						onSlope = true;
 						if (physics.xVelocity > 15){
 							trace("reducing speed");
@@ -397,10 +410,10 @@ package dreamwisp.entity.components {
 				}
 			}
 			if (currentState == groundState && !onSlope) {
-				body.y = -(body.height / 2) + y_slope_detector * tile_size + tile_size / 2 + 1;
+				body.y = -(body.height / 2) + y_slope_detector * tileHeight + tileHeight / 2 + 1;
 				// bugfix for collision differences between entitys with height < 30
 				if (body.height < 30) {
-					body.y =  y_slope_detector * tile_size + tile_size / 2 + 1;
+					body.y =  y_slope_detector * tileHeight + tileHeight / 2 + 1;
 					// during collisions,
 					// 821.44 with
 					// 818.74 commented out
@@ -425,8 +438,8 @@ package dreamwisp.entity.components {
 			var centerX:Number = body.x + body.width / 2;
 			var centerY:Number = body.y + body.height / 2;
 			
-			var xSlopeDetector:int = Math.floor(centerX / tile_size);
-			var ySlopeDetector:int = Math.floor(centerY / tile_size);
+			var xSlopeDetector:int = Math.floor(centerX / tileWidth);
+			var ySlopeDetector:int = Math.floor(centerY / tileHeight);
 			
 			var tile:Tile;
 			
@@ -448,7 +461,7 @@ package dreamwisp.entity.components {
 				// prevent xSlopeDetector from exceeding array bounds
 				if (xSlopeDetector >= tileGrid[0].length) xSlopeDetector = tileGrid[0].length - 1;
 				if (tileGrid[ySlopeDetector+1][xSlopeDetector].type == "slope_up" || tileGrid[ySlopeDetector+1][xSlopeDetector].type == "slope_down") {
-					centerY = (ySlopeDetector+1)*tile_size+tile_size/2+1;
+					centerY = (ySlopeDetector+1)*tileHeight+tileHeight/2+1;
 					ySlopeDetector += 1;
 					//trace("not on slope");
 				} 
@@ -457,7 +470,7 @@ package dreamwisp.entity.components {
 					
 					if (tile.type == "slope_up") { // /|
 						// BASIC: centerY = tileY + (tileHeight - (centerX - tileX)) - body.height / 2;
-						centerY = tile.y + (tile_size - (centerX - tile.x)) - body.height / 2;
+						centerY = tile.y + (tileHeight - (centerX - tile.x)) - body.height / 2;
 					} else if (tile.type == "slope_down") { // |\
 						// BASIC: centerY = 
 						centerY = tile.y + (centerX - tile.x) - body.height / 2;
@@ -469,12 +482,12 @@ package dreamwisp.entity.components {
 			
 			if (currentState == groundState && !onSlope) {
 				
-				centerY = ySlopeDetector * tile_size + (tile_size / 2) + 1;
+				centerY = ySlopeDetector * tileHeight + (tileHeight / 2) + 1;
 				
 				// bugfix for collision differences between entitys with height < 30
 				// TODO: DOES NOT WORK FOR ALL SIZES, FIX UNDERLYING PROBLEM
 				if (body.height < 30) {
-					centerY = (body.height / 2) + ySlopeDetector * tile_size + (tile_size / 2) + 1;
+					centerY = (body.height / 2) + ySlopeDetector * tileHeight + (tileHeight / 2) + 1;
 					// during collisions,
 					// 821.44 with
 					// 818.74 commented out
@@ -499,7 +512,7 @@ package dreamwisp.entity.components {
 		}
 		
 		public function testY(height:Number):Number {
-			return -(height / 2) + y_slope_detector * tile_size + tile_size / 2 + 1;
+			return -(height / 2) + y_slope_detector * tileHeight + tileHeight / 2 + 1;
 		}
 		
 	}

@@ -8,9 +8,7 @@ package dreamwisp.entity.components {
 	
 	/**
 	 * This class is for anything that can be visually rendered on the screen.
-	 * Invisible entitys will not need this. It can either be a single graphic
-	 * which uses the <code>displayObject</code>, 
-	 * or a group of graphics, which uses the <code>container</code>.
+	 * Invisible entitys will not need this.
 	 */
 	public class View {
 		

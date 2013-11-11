@@ -23,7 +23,7 @@ package dreamwisp.entity.components {
 			died = new Signal(Entity);
 		}
 		
-		public function hit(damage:uint):void {
+		public function hit(damage:Number):void {
 			hits -= damage;
 			if (hits <= 0) {
 				die();

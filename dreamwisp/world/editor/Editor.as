@@ -2,7 +2,7 @@ package dreamwisp.world.editor {
 	
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.input.KeyMap;
-	import dreamwisp.state.GameState;
+	import dreamwisp.core.GameScreen;
 	import dreamwisp.world.base.Location;
 	import flash.events.MouseEvent;
 	import flash.ui.Keyboard;
@@ -11,7 +11,7 @@ package dreamwisp.world.editor {
 	 * ...
 	 * @author Brandon
 	 */
-	public class Editor extends GameState {
+	public class Editor extends GameScreen {
 		
 		private var tileScapeEditor:TileScapeEditor;
 		private var _location:Location;

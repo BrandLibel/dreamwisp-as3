@@ -14,8 +14,8 @@ package dreamwisp.world.tile {
 	public class TileScape {
 		
 		private var tileRect:Rectangle;
-		private var tileWidth:uint;
-		private var tileHeight:uint;
+		private var _tileWidth:uint;
+		private var _tileHeight:uint;
 		
 		private var _tileGrid:Vector.<Vector.<Tile>> = new Vector.<Vector.<Tile>>;
 		/// Vector of points with x & y pos of tile on grid, only for tiles that require updating. 
@@ -29,10 +29,13 @@ package dreamwisp.world.tile {
 		//private var tileComposer:TileComposer;
 		/// JSON object containing all tile blueprints
 		private var tileList:Object;
+		/// PNG spritesheet of all tiles
+		private var tileSheet:BitmapData;
 		
-		public function TileScape(location:Location, tileList:Object, tileWidth:uint = 32, tileHeight:uint = 32) {
+		public function TileScape(location:Location, tileList:Object, tileSheet:BitmapData, tileWidth:uint = 32, tileHeight:uint = 32) {
 			this.location = location;
 			this.tileList = tileList;
+			this.tileSheet = tileSheet;
 			this.tileWidth = tileWidth;
 			this.tileHeight = tileHeight;
 			tileRect = new Rectangle(0, 0, tileWidth, tileHeight);
@@ -114,12 +117,21 @@ package dreamwisp.world.tile {
 		
 		private function compose(tileNum:uint):Tile {
 			const blueprint:Object = tileList.tiles[tileNum];
-			return new Tile(blueprint);
+			const presets:Object = tileList.presets;
+			return new Tile(blueprint, presets, tileSheet, tileWidth, tileHeight);
 		}
 		
 		public function get tileGrid():Vector.<Vector.<Tile>> { return _tileGrid; }
 		
 		public function set tileGrid(value:Vector.<Vector.<Tile>>):void { _tileGrid = value; }
+		
+		public function get tileWidth():uint { return _tileWidth; }
+		
+		public function set tileWidth(value:uint):void { _tileWidth = value; }
+		
+		public function get tileHeight():uint { return _tileHeight; }
+		
+		public function set tileHeight(value:uint):void { _tileHeight = value; }
 		
 	}
 

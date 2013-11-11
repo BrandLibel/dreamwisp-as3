@@ -22,7 +22,7 @@ package dreamwisp.entity.hosts {
 			//view.movieClip = Belt.addClassFromLibrary("E5", Belt.CLASS_MOVIECLIP);
 			
 			groupName = "Interactibles";
-			view.layer = Data.text.LAYER_INTERACTIBLES;
+			//view.layer = Data.text.LAYER_INTERACTIBLES;
 			
 			leverFlipped = new Signal(String, Boolean);
 			leverFlipped.add(accessLocation);

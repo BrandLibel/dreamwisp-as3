@@ -9,7 +9,7 @@ package dreamwisp.visual {
 	import flash.geom.Rectangle;
 	
 	/**
-	 * This super class contains basic functionality for
+	 * ContainerView contains basic functionality for
 	 * a view that is a layer-based container of graphics.
 	 * @author Brandon Li
 	 */
@@ -19,6 +19,14 @@ package dreamwisp.visual {
 		public static const LABEL_OVERLAY:String = "overlay";
 		public static const LAYER_BOTTOM:uint = 0;
 		public static const LAYER_TOP:uint = uint.MAX_VALUE;
+		
+		// Constants to handle relative positioning
+		private const CENTER:String = "center";
+		private const LEFT:String = "left";
+		private const RIGHT:String = "right";
+		private const MIDDLE:String = "middle";
+		private const TOP:String = "top";
+		private const BOTTOM:String = "bottom";
 		
 		//private var _layers:Array;
 		private var _container:Sprite;
@@ -35,8 +43,13 @@ package dreamwisp.visual {
 		public var rotationY:int;
 		public var scrollRect:Rectangle;
 		
-		public function ContainerView() {
+		private var width:Number;
+		private var height:Number;
+		
+		public function ContainerView(width:Number = 768, height:Number = 480) {
 			container = new Sprite();
+			this.width = width;
+			this.height = height;
 		}
 		
 		/*
@@ -86,6 +99,16 @@ package dreamwisp.visual {
 				// to allow light even outside of darkness, add the color mask to another layer
 				//addGraphic(entity.lightSource.colorMask, entity.lightSource.x, entity.lightSource.y, 7);
 			}
+		}
+		
+		public function addGraphicsObject(graphicsObject:IGraphicsObject, layer:uint = 0, label:String = ""):void {
+			
+			addGenericView( new GenericView(graphicsObject.getGraphicsData(), layer, label ) );
+			graphicsObject.initialize(width, height);
+			if (graphicsObject.relativeX != null && graphicsObject.relativeX != "")
+				graphicsObject.getGraphicsData().x = calculateRelativePosition( graphicsObject.relativeX, graphicsObject.getGraphicsData() );
+			if (graphicsObject.relativeY != null && graphicsObject.relativeY != "")
+				graphicsObject.getGraphicsData().y = calculateRelativePosition( graphicsObject.relativeY, graphicsObject.getGraphicsData() );
 		}
 		
 		/**
@@ -167,15 +190,35 @@ package dreamwisp.visual {
 		
 		/**
 		 * Sets the scroll rect of this view according to the camera's center pos.
-		 * This function is usually called by the <code>Camera</code> class itself.
-		 * @param	camCenter 
+		 * This function is usually called by the <code>Camera</code> class itself. 
 		 */
 		public function followCamera(camX:Number, camY:Number):void {
 			if (!scrollRect) throw new Error("ContainerView " + this + " tried to follow camera but did not instantiate a scrollRect");
 			var newRect:Rectangle = scrollRect;
-			newRect.x = (camX - (Data.STAGE_WIDTH / 2));
-			newRect.y = (camY - (Data.STAGE_HEIGHT / 2));
+			newRect.x = (camX - (width / 2));
+			newRect.y = (camY - (height / 2));
 			scrollRect = newRect;
+		}
+		
+		private function calculateRelativePosition(value:String, displayObject:DisplayObject):uint {
+			var result:uint = 0;
+			
+			if (value == LEFT)
+				result = 0;
+			else if (value == RIGHT)
+				result = width;
+			else if (value == CENTER)
+				result = (width - displayObject.width) / 2;
+			else if (value == TOP)
+				result = 0 + (displayObject.height / 2);
+			else if (value == BOTTOM)
+				result = height - (displayObject.height);
+			else if (value == MIDDLE)
+				result = (height - displayObject.height) / 2;
+			else 
+				throw new Error("THAT RELATIVE POSITION STRING IS INVALID. CHECK VALUES");
+			
+			return result;
 		}
 		
 		private function addGenericView(genericView:GenericView):void {

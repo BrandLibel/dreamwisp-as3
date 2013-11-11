@@ -1,10 +1,12 @@
-package dreamwisp.state {
+package dreamwisp.core {
 	
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.core.Game;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.input.IInputManager;
 	import dreamwisp.input.IInputReceptor;
+	import dreamwisp.core.ScreenManager;
+	import dreamwisp.state.TransitionManager;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.visual.camera.ICamUser;
@@ -16,13 +18,9 @@ package dreamwisp.state {
 	 * ...
 	 * @author Brandon
 	 */
-	public class GameState implements IGameState {
+	public class GameScreen implements IInputManager {
 		
-		// TODO: Make GameState a more integral part. GameState has it's own ContainerView.
-		//		Location extends GameState...and things such as World or Area can manage states
-		//		just like Game can.
-		
-		public var gameStateSystem:GameStateSystem;
+		public var screenManager:ScreenManager;
 		public var canUpdateBelow:Boolean = false;
 		public var canRenderBelow:Boolean = false;
 		
@@ -31,7 +29,7 @@ package dreamwisp.state {
 		protected var paused:Boolean = false;
 		protected var takesInput:Boolean = true;
 		
-		private var newState:IGameState;
+		private var newState:GameScreen;
 		private var newTransition:Object;
 		/// A function leading to a state change
 		private var action:Function;
@@ -39,7 +37,7 @@ package dreamwisp.state {
 		private var _view:ContainerView;
 		private var _transition:TransitionManager;
 		
-		private var _below:IGameState;
+		private var _below:GameScreen;
 		
 		private var _heardMouseInput:Signal;
 		private var _heardKeyInput:Signal;
@@ -50,7 +48,7 @@ package dreamwisp.state {
 		private var _entityManager:EntityManager;
 		private var _camera:Camera;
 		
-		public function GameState() {
+		public function GameScreen() {
 			heardMouseInput = new Signal(String, int, int);
 			heardKeyInput = new Signal(String, uint);
 		}
@@ -98,8 +96,6 @@ package dreamwisp.state {
 			}
 		}
 		
-		/* INTERFACE dreamwisp.state.IGameState */
-				
 		public function enter():void {
 			
 		}
@@ -213,8 +209,8 @@ package dreamwisp.state {
 		public function get camera():Camera { return _camera; }
 		public function set camera(value:Camera):void { _camera = value; }		
 		
-		public function get below():IGameState { return _below; }
-		public function set below(value:IGameState):void { _below = value; }
+		public function get below():GameScreen { return _below; }
+		public function set below(value:GameScreen):void { _below = value; }
 		
 	}
 

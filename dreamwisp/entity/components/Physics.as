@@ -5,6 +5,7 @@ package dreamwisp.entity.components {
 	import dreamwisp.entity.hosts.Entity;
 	
 	/**
+	 * DEPRECATED - REMOVE
 	 * This class is for entitys that are able to move around and affected by physics.
 	 * This includes reaction to physical phenomenon such as gravity. 
 	 * Beds and doorways, for example, would not have a PhysicsBody.
@@ -14,7 +15,7 @@ package dreamwisp.entity.components {
 		
 		protected var host:Entity;
 		
-		private var gravity:Number = Data.GRAVITY;
+		//private var gravity:Number = Data.GRAVITY;
 		
 		public var state:String = "falling";
 		
@@ -98,7 +99,6 @@ package dreamwisp.entity.components {
 		 * When called, it simply modifies the speed values of the entity.
 		 * The speeds are used to affect the actual position values of the body
 		 * in the update() function.
-		 * 
 		 */
 		public final function move(dir:uint, isAccelerate:Boolean = true, newAcceleration:Number = 0, value:uint = 0):void {
 			if (isAccelerate == true)

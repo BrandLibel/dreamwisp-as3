@@ -19,7 +19,6 @@ package dreamwisp.core {
 		public static const LAYER_ITEMS:uint = 5;
 		public static const LAYER_FRONTTILES:uint = 6; 
 		
-		
 	}
 
 }

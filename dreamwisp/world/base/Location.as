@@ -4,12 +4,11 @@ package dreamwisp.world.base {
 	import dreamwisp.entity.hosts.IEntity;
 	import dreamwisp.entity.hosts.IEntityFactory;
 	import dreamwisp.entity.hosts.IPlayer;
-	import dreamwisp.state.GameState;
+	import dreamwisp.core.GameScreen;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.ContainerView;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.world.tile.TileScape;
-	import project.entity.hosts.Player;
 	
 	/**
 	 * This superclass contains basic functionality
@@ -17,7 +16,7 @@ package dreamwisp.world.base {
 	 * @author Brandon Li 
 	 */
 	
-	public class Location extends GameState implements ILocation {
+	public class Location extends GameScreen implements ILocation {
 			
 		/// The index uint of the active sublocation in the list.
 		private var activeLocation:uint;

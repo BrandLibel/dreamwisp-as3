@@ -21,18 +21,20 @@ package dreamwisp.world.tile {
 	
 	public dynamic final class Tile extends Entity {
 		
-		private static const tileSheet:BitmapData = Data.tileSheet;
-		private static const tilePresets:Object = Data.tilePresets;
+		private var tilePresets:Object;
+		private var tileSheet:BitmapData;
 		
 		private static const ORIGIN:Point = new Point();
 		private static const PROP_HITS:String = "hits";
-		private static const TILE_RECT:Rectangle = new Rectangle(0, 0, Data.TILE_SIZE, Data.TILE_SIZE);
+		private var tileRect:Rectangle;
 		
 		private static const TYPE_AIR:String = "air";
 		private static const TYPE_CUSTOM:String = "custom";
 		
 		private var _x:uint = 0;
 		private var _y:uint = 0;
+		private var tileWidth:uint;
+		private var tileHeight:uint;
 		
 		public var type:String;
 		///Object containing booleans left, right, up, down determining 
@@ -66,8 +68,20 @@ package dreamwisp.world.tile {
 		public var created:Signal;
 		//public var destroyed:Signal;
 		
-		public function Tile(blueprint:Object) {
+		/**
+		 * 
+		 * @param	blueprint The properties to create this tile with.
+		 * @param	tilePresets A list of common tile properties that can be combined.
+		 * @param	tileSheet The PNG image containing all tile graphics.
+		 */
+		public function Tile(blueprint:Object, tilePresets:Object, tileSheet:BitmapData, tileWidth:uint, tileHeight:uint) {
 			tileMap;
+			this.tilePresets = tilePresets;
+			this.tileSheet = tileSheet;
+			this.tileWidth = tileWidth;
+			this.tileHeight = tileHeight;
+			this.tileRect = new Rectangle(0, 0, tileWidth, tileHeight);
+			
 			// TODO: create tile maps, a 1d array containing list of all surrounding tiles NW, N, NE, W, E, SW, S, SE
 			init(blueprint);
 		}
@@ -88,7 +102,7 @@ package dreamwisp.world.tile {
 				frames = blueprint.frames.concat();
 			}
 			
-			if (type != TYPE_AIR) body = new Body(this, Data.TILE_SIZE, Data.TILE_SIZE);
+			if (type != TYPE_AIR) body = new Body(this, tileWidth, tileHeight);
 			
 			created = new Signal(Tile);
 			destroyed = new Signal(Tile);
@@ -100,7 +114,7 @@ package dreamwisp.world.tile {
 				// dealing with a single preset
 				const presetName:String = presets[0];
 				type = presetName;
-				const presetObject:Object = tilePresets.presets[presetName];
+				const presetObject:Object = tilePresets[presetName];
 				// copying all properties from the preset
 				for (var name:String in presetObject) {
 					this[name] = presetObject[name];
@@ -141,8 +155,8 @@ package dreamwisp.world.tile {
 		 */
 		public function drawTile(erase:Boolean = false):void {
 			if (type == TYPE_AIR) {
-				bitmap.bitmapData = new BitmapData(Data.TILE_SIZE, Data.TILE_SIZE);
-				bitmap.bitmapData.fillRect(TILE_RECT, 0); // air is blank
+				bitmap.bitmapData = new BitmapData(tileWidth, tileHeight);
+				bitmap.bitmapData.fillRect(tileRect, 0); // air is blank
 				return;
 			}
 			
@@ -151,15 +165,15 @@ package dreamwisp.world.tile {
 			
 			if (erase && bitmap.bitmapData) {
 				//bitmap.bitmapData.dispose();
-				bitmap.bitmapData.fillRect(TILE_RECT, 0);
+				bitmap.bitmapData.fillRect(tileRect, 0);
 			}
-			if (!bitmap.bitmapData) bitmap.bitmapData = new BitmapData(Data.TILE_SIZE, Data.TILE_SIZE);
+			if (!bitmap.bitmapData) bitmap.bitmapData = new BitmapData(tileWidth, tileHeight);
 			
 			bitmap.bitmapData.copyPixels(tileSheet, copyFrom, ORIGIN);
 		}
 		
 		private function erase():void {
-			bitmap.bitmapData.fillRect(TILE_RECT, 0);
+			bitmap.bitmapData.fillRect(tileRect, 0);
 		}
 		
 		public final function hit(damage:int = 1):void {

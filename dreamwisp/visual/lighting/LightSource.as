@@ -4,6 +4,7 @@ package dreamwisp.visual.lighting {
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.world.tile.Tile;
+	import dreamwisp.world.tile.TileScape;
 	import flash.display.BlendMode;
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
@@ -127,10 +128,12 @@ package dreamwisp.visual.lighting {
 							break stepLoop;
 						}
 					}*/
-					
+					// TODO - REPLACE TILE LIST WITH A DENSER 2D ARRAY OF "OPAQUE" BOOLEANS
+					// EVERY ENTITY THAT OCCUPIES A LOCATION WOULD TAKE UP SPACE IN THIS OPACITY MAP
 					// testing light collision upon the tileScape, good performance
-					var gridX:int = Math.floor((host.body.centerX + (lightPower / lightStep * i) * Math.cos(n)) / 32);
-					var gridY:int = Math.floor((host.body.centerY + (lightPower / lightStep * i) * Math.sin(n)) / 32);
+					var tileScape:TileScape = host.myLocation.tileScape;
+					var gridX:int = Math.floor((host.body.centerX + (lightPower / lightStep * i) * Math.cos(n)) / tileScape.tileWidth);
+					var gridY:int = Math.floor((host.body.centerY + (lightPower / lightStep * i) * Math.sin(n)) / tileScape.tileHeight);
 					// break when out of bounds or in a square that contains a completely solid tile
 					if (gridY >= host.myLocation.tileScape.tileGrid.length || gridY < 0) {
 						break stepLoop;
@@ -139,7 +142,7 @@ package dreamwisp.visual.lighting {
 						break stepLoop;
 					}
 					if (host.myLocation.tileScape.tileGrid[gridY][gridX].isOpaque) {
-						lightPenetration = Data.TILE_SIZE / 4;
+						lightPenetration = (tileScape.tileHeight + tileScape.tileWidth) / 8;
 						break stepLoop;
 					}
 					

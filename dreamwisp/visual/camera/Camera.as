@@ -22,8 +22,7 @@ package dreamwisp.visual.camera {
 		public static const MIN_X:String = "minX";
 		public static const MIN_Y:String = "minY";
 						
-		private var _center:Point = new Point(Data.STAGE_WIDTH / 2, Data.STAGE_HEIGHT / 2);
-		private var isScrollable:Boolean = false;
+		private var _center:Point;// = new Point(width / 2, height / 2);
 		
 		/// The right most edge that the camera center can be, in pixels.
 		internal var maxX:uint = 0;
@@ -64,18 +63,25 @@ package dreamwisp.visual.camera {
 		private var shakeSeverity:uint = 0;
 		private var shakeCount:uint = 0;
 		
-		public function Camera(initialStateName:String = STATE_FOCUS) {
+		private var height:uint;
+		private var width:uint;
+		
+		public function Camera(width:uint = 768, height:uint = 480, initialStateName:String = STATE_FOCUS) {
+			this.width = width;
+			this.height = height;
+			
+			center = new Point(width / 2, height / 2);
+			
 			// creating states
 			focusState = new FocusState(this);
 			pathState = new PathState(this);
 			slowFocusState = new SlowFocusState(this);
 			changeToState(initialStateName);
-			
 		}
 		
 		public function update():void {
 			// no need to update in a location the size of the camera
-			if (isScrollable) currentState.scroll();
+			if (isScrollable()) currentState.scroll();
 			
 			// camera shake code
 			if (isShaking) {
@@ -106,17 +112,16 @@ package dreamwisp.visual.camera {
 		}
 		
 		/**
-		 * Determines the boundaries of the level.
+		 * Determines the boundaries of the possible scrolling area.
 		 * @param	rect The rectangular area that the camera is allowed to scroll through.
 		 */
 		public function setBounds(rect:SwiftRectangle):void { 
-			minX = (Data.STAGE_WIDTH/2) + rect.x;
-			maxX = rect.width - (Data.STAGE_WIDTH/2) + rect.x;
-			minY = (Data.STAGE_HEIGHT/2) + rect.y;
-			maxY = rect.height - (Data.STAGE_HEIGHT / 2) + rect.y;
+			minX = (width/2) + rect.x;
+			maxX = rect.width - (width/2) + rect.x;
+			minY = (height/2) + rect.y;
+			maxY = rect.height - (height / 2) + rect.y;
 			rectWidth = rect.width;
 			rectHeight = rect.height;
-			checkScrollable();
 			// for setting camera to top-left most position of given rect
 			// important for first time entry into locations
 			user.followCamera(minX, minY);
@@ -220,20 +225,16 @@ package dreamwisp.visual.camera {
 		/**
 		 * If the target rect is bigger than the stage, allows camera to move.
 		 */
-		private function checkScrollable():void {
-			if (rectWidth > Data.STAGE_WIDTH || rectHeight > Data.STAGE_HEIGHT) {
-				isScrollable = true;
-			} else {
-				isScrollable = false;
-			}
+		private function isScrollable():Boolean {
+			return (rectWidth > width || rectHeight > height);
 		}
 		
 		internal function centralizeX(value:*):* {
-			return (value + Data.STAGE_WIDTH);
+			return (value + width);
 		}
 		
 		internal function centralizeY(value:*):* {
-			return (value + Data.STAGE_HEIGHT);
+			return (value + height);
 		}
 		
 		/// The focus is the body of the entity which the camera follows.

@@ -1,7 +1,6 @@
 package dreamwisp.entity.components.platformer {
 	
 	import com.demonsters.debugger.MonsterDebugger;
-	import dreamwisp.entity.components.PlatformController;
 	import dreamwisp.entity.hosts.IPlatformEntity;
 	
 	/**
@@ -30,7 +29,7 @@ package dreamwisp.entity.components.platformer {
 			/*if (platformController.onSlope == false) {
 				MonsterDebugger.trace(this, "falling from gravity");
 			}*/
-			host.physics.yVelocity += Data.GRAVITY;
+			host.physics.yVelocity += platformController.environment.gravity;
 			
 			if (host.physics.yVelocity > platformController.terminalVelocityY) {
 				MonsterDebugger.trace(this, "terminal fall velocity");

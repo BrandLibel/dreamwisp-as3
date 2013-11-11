@@ -24,7 +24,7 @@ package dreamwisp.entity.hosts {
 			//view.movieClip = Belt.addClassFromLibrary("E4", Belt.CLASS_MOVIECLIP);
 			
 			groupName = "Interactibles";
-			view.layer = Data.text.LAYER_INTERACTIBLES;
+			//view.layer = Data.text.LAYER_INTERACTIBLES;
 		}
 		
 		public function get destination():Object { return _destination; }

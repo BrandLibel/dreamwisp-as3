@@ -8,7 +8,6 @@ package dreamwisp.entity.hosts {
 		
 		function createEntity(name:String):Entity;
 		
-		
 	}
 	
 }

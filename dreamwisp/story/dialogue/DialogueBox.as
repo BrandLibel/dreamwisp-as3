@@ -32,11 +32,18 @@ package dreamwisp.story.dialogue {
 		
 		/// The current chat point in the conversation.
 		private var chatObj:Object;
+		private var entityList:Object;
 		
 		public var openedDialogue:Signal;
 		public var closedDialogue:Signal;
 		
-		public function DialogueBox() {
+		/**
+		 * 
+		 * @param	entityList Needs a ref to the entity list so it can lookup names.
+		 */
+		public function DialogueBox(entityList:Object) {
+			this.entityList = entityList;
+			
 			view = new View(this);
 			view.movieClip = Belt.addClassFromLibrary("DialogueGraphic", Belt.CLASS_MOVIECLIP);
 			view.movieClip.visible = false;
@@ -106,7 +113,7 @@ package dreamwisp.story.dialogue {
 			//DialogueGraphic(view.movieClip).textBox.text = chatObj.text;
 			//if (conversation.chatNode.speaker )
 			
-			var name:String = Data.entityList.entitys[conversation.chatNode.speaker].name;
+			var name:String = entityList.entitys[conversation.chatNode.speaker].name;
 			var text:String;
 			
 			var DialogueGraphicClass:Class = getDefinitionByName("DialogueGraphic") as Class;

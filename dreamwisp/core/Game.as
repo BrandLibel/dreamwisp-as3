@@ -4,7 +4,6 @@
 	import dreamwisp.input.InputDispatcher;
 	import dreamwisp.input.InputDispatcher;
 	import dreamwisp.ui.menu.Menu;
-	import dreamwisp.state.IGameState;
 	import dreamwisp.visual.VisualHandler;
 	import flash.display.Stage;
 	//import dreamwisp.ui.menu.MenuControl;
@@ -22,7 +21,7 @@
 		public var input:InputDispatcher;
 		public var visualHandler:VisualHandler;
 				
-		protected var gameState:IGameState;
+		protected var gameScreen:GameScreen;
 		
 		public var menus:Vector.<Menu> = new <Menu>[null];
 						
@@ -30,7 +29,7 @@
 			//MonsterDebugger.trace(this, Data.worldData);
 			Data.prepare();
 			view = new Sprite();
-			if (stage) input = new InputDispatcher(stage, gameState);
+			if (stage) input = new InputDispatcher(stage, gameScreen);
 			//newGame();
 		}
 		
@@ -58,14 +57,14 @@
 		 * @param	transition Must contain: type, targetVal, speed. 
 		 * 			Optional: startVal.
 		 */
-		public function changeState(newState:IGameState, transition:Object = null):void {
+		public function changeState(newState:GameScreen, transition:Object = null):void {
 			
-			if (gameState) {
+			if (gameScreen) {
 				//MonsterDebugger.trace(this, view.getChildIndex(gameState.view.container));
 				//MonsterDebugger.trace(this, view.getChildIndex(newState.view.container));
 				// controlling the visual layering of gameStates, so the newState is always on top
-				if (view.getChildIndex(newState.view.container) < view.getChildIndex(gameState.view.container)) {
-					view.swapChildren(gameState.view.container, newState.view.container);
+				if (view.getChildIndex(newState.view.container) < view.getChildIndex(gameScreen.view.container)) {
+					view.swapChildren(gameScreen.view.container, newState.view.container);
 				}
 				//MonsterDebugger.trace(this, view.getChildIndex(gameState.view.container));
 				//MonsterDebugger.trace(this, view.getChildIndex(newState.view.container));
@@ -76,27 +75,28 @@
 					+ "," + view.getChildIndex(world.view.container)
 				);*/
 			}
-			gameState = newState;
-			gameState.setGame(this);
-			gameState.enter();
+			gameScreen = newState;
+			gameScreen.setGame(this);
+			gameScreen.enter();
 			
 			
 			if (transition) {
-				gameState.transition.start(transition);
+				gameScreen.transition.start(transition);
 			} else {
 				// TransitionManager always affects the visual, reset to prevent 
-				gameState.transition.reset();
+				gameScreen.transition.reset();
 			}
 			
-			if (input) input.receptor = gameState;
+			if (input) input.receptor = gameScreen;
 		}
 		
 		/**
 		 * The main game loop
 		 */
 		public function loop(e:Event):void {
-			gameState.update();
-			gameState.render();
+			if (!gameScreen) return;
+			gameScreen.update();
+			gameScreen.render();
 		}
 		
 	}

@@ -3,7 +3,7 @@ package dreamwisp.ui.menu {
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.input.KeyMap;
 	import dreamwisp.ui.menu.MenuButton;
-	import dreamwisp.state.GameState;
+	import dreamwisp.core.GameScreen;
 	import dreamwisp.state.TransitionManager;
 	import dreamwisp.visual.ContainerView;
 	import flash.display.MovieClip;
@@ -22,7 +22,7 @@ package dreamwisp.ui.menu {
 	// TODO: reduce MenuBase functionality so that it is only a system of buttons.
 	//		 Separate unrelated functionality, such as displaying assets. 
 	
-	public class Menu extends GameState {
+	public class Menu extends GameScreen {
 		
 		//public var view:MenuView;
 		private var assets:Array = [];
@@ -42,7 +42,8 @@ package dreamwisp.ui.menu {
 		
 		public function Menu(layout:Object) {
 			//MonsterDebugger.trace(this, layout);
-			view = new MenuView();
+			view = new ContainerView();
+			view.container.visible = false;
 			build(layout);
 			init();
 		}
@@ -81,9 +82,11 @@ package dreamwisp.ui.menu {
 			if (layout.assets){
 				for (var j:uint = 0; j < layout.assets.length; j++) {
 					assets.push(new Asset(layout.assets[j]));
+					var asset:Asset = assets[j];
 					var assetMC:MovieClip = assets[j].movieClip;
 					//view.addGraphic(assetMC, assetMC.x, assetMC.y, MenuView.LAYER_ASSETS); 
-					view.addDisplayObject(assetMC, ContainerView.LAYER_BOTTOM, assetMC.x, assetMC.y);
+					//view.addDisplayObject(assetMC, ContainerView.LAYER_BOTTOM);
+					view.addGraphicsObject(asset, ContainerView.LAYER_BOTTOM);
 				}
 			}
 			/// Adding buttons

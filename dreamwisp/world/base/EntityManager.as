@@ -11,17 +11,18 @@ package dreamwisp.world.base {
 	import tools.Belt;
 		
 	/**
-	 * ...
+	 * EntityManager handles creation and tracking of Entitys.
+	 * Use entitySignals for the graphics and project-specific configuration. 
 	 * @author Brandon
 	 */
 	public dynamic class EntityManager implements IEntityManager {
 
-		private var entityList:Object = Data.entityList.entitys;
-		private var entitys:Vector.<Entity>;
+		private var entityList:Object;
+		private var dialogue:Object;
+		private var entitys:Vector.<Entity> = new Vector.<Entity>;
+		private var tempEntityList:Vector.<Entity> = new Vector.<Entity>;
 		
 		private var factory:IEntityFactory;
-		
-		private var index:uint;
 		
 		/// Signal to dispatch AFTER spawnEntity has been called
 		public var entitySpawned:Signal;
@@ -30,13 +31,14 @@ package dreamwisp.world.base {
 		/// Signal to dispatch AFTER destroyEntity has been called
 		public var entityRemoved:Signal;
 		
-		public function EntityManager(factory:IEntityFactory) {
+		public function EntityManager(factory:IEntityFactory, entityList:Object, dialogue:Object = null) {
 			this.factory = factory;
+			this.entityList = entityList;
+			if (dialogue) this.dialogue = dialogue;
 			init();
 		}
 		
 		private function init():void {
-			entitys = new Vector.<Entity>;
 			// defining signals
 			entitySpawned = new Signal(Entity);
 			entitySpawned.add( addEntity );
@@ -45,13 +47,15 @@ package dreamwisp.world.base {
 		}
 		
 		public function update():void {
-			// loop uses index++ to allow for index-- compensation on entity destruction
-			for (index; index < entitys.length; index++) {
-				var entity:Entity = entitys[index];
+			// create a temp copy of the entity list and update that
+			// to avoid confusion when updating an entity adds/removes another
+			tempEntityList.length = 0;
+			for each (var tempEntity:Entity in entitys) {
+				tempEntityList.push(tempEntity);
+			}
+			for each (var entity:Entity in tempEntityList) {
 				entity.update();
 			}
-			index = 0;
-			
 		}
 		
 		public function render():void {
@@ -79,7 +83,7 @@ package dreamwisp.world.base {
 			if (entityData.group) entity.groupName = entityData.group;
 			if (entityData.targetGroup) entity.targetName = entityData.targetGroup;
 			if (entity.view) {
-				// attach movieClip if it the Class hasn't defined one for itself
+				// attach movieClip if it hasn't defined one for itself
 				if (!entity.view.movieClip) {
 					// E + entity num is the name of the movieClip for the entity
 					entity.view.movieClip = Belt.addClassFromLibrary("E" + actionData.entityNum, Belt.CLASS_MOVIECLIP);
@@ -89,7 +93,7 @@ package dreamwisp.world.base {
 			
 			// attaching entity according to actionData
 			if (actionData.conversation) {
-				entity.actor.setConversation( Data.dialogue[actionData.conversation] );
+				entity.actor.setConversation( dialogue[actionData.conversation] );
 			}
 			if (actionData.destination) {
 				// for doors
@@ -107,7 +111,7 @@ package dreamwisp.world.base {
 		}
 		
 		/**
-		 * Adds the entity to the general entitys list.
+		 * Attaches and orients an entity to the unique environment of this EntityManager.
 		 * @param	entity
 		 * @return
 		 */
@@ -225,9 +229,6 @@ package dreamwisp.world.base {
 			entity.entityCreated.remove(addEntity);
 			
 			entityRemoved.dispatch(entity);
-			
-			// compensate for the loop through entitys array
-			index--;
 		}
 		
 	}
