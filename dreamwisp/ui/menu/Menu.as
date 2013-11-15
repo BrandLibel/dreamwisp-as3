@@ -5,7 +5,12 @@ package dreamwisp.ui.menu {
 	import dreamwisp.ui.menu.MenuButton;
 	import dreamwisp.core.GameScreen;
 	import dreamwisp.state.TransitionManager;
+	import dreamwisp.visual.AutoScrollGraphic;
+	import dreamwisp.visual.BasicGraphicsFactory;
 	import dreamwisp.visual.ContainerView;
+	import dreamwisp.visual.IGraphicsFactory;
+	import dreamwisp.visual.IGraphicsObject;
+	import flash.display.Bitmap;
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
 	import flash.ui.Keyboard;
@@ -40,10 +45,14 @@ package dreamwisp.ui.menu {
 		// Signals 
 		public var buttonPressed:Signal;
 		
-		public function Menu(layout:Object) {
-			//MonsterDebugger.trace(this, layout);
+		private var graphicsFactory:IGraphicsFactory;
+		
+		public function Menu(layout:Object, graphicsFactory:IGraphicsFactory) {
+			this.graphicsFactory = graphicsFactory;		
+			
 			view = new ContainerView();
 			view.container.visible = false;
+			
 			build(layout);
 			init();
 		}
@@ -64,10 +73,6 @@ package dreamwisp.ui.menu {
 			buttonPressed = new Signal(String);
 		}
 		
-		private function noAction():void {
-			MonsterDebugger.trace(this, "nothing");
-		}
-		
 		private function scrollForward():void {
 			selectButton(0, 1);
 		}
@@ -78,18 +83,18 @@ package dreamwisp.ui.menu {
 		
 		private function build(layout:Object):void {
 			isLayoutHorizontal = layout.isHorizontal;
-			/// Adding assets
+			// Adding assets
 			if (layout.assets){
 				for (var j:uint = 0; j < layout.assets.length; j++) {
-					assets.push(new Asset(layout.assets[j]));
-					var asset:Asset = assets[j];
-					var assetMC:MovieClip = assets[j].movieClip;
-					//view.addGraphic(assetMC, assetMC.x, assetMC.y, MenuView.LAYER_ASSETS); 
-					//view.addDisplayObject(assetMC, ContainerView.LAYER_BOTTOM);
-					view.addGraphicsObject(asset, ContainerView.LAYER_BOTTOM);
+					//assets.push(new Asset(layout.assets[j]));
+					var asset:Object = layout.assets[j];
+					if (!asset.hasOwnProperty("type") || !asset.hasOwnProperty("name")) continue;
+					var graphicsObject:IGraphicsObject = graphicsFactory.getGraphicsObject(asset.type, asset.name, asset);
+					assets.push(graphicsObject);
+					view.addGraphicsObject(graphicsObject, ContainerView.LAYER_BOTTOM);
 				}
 			}
-			/// Adding buttons
+			// Adding buttons
 			buttons = new Vector.<MenuButton>;
 			var btn:MenuButton;
 			var btnCodePreface:String = "M" + layout.menuNum + "B";
@@ -178,14 +183,15 @@ package dreamwisp.ui.menu {
 		override public function update():void {
 			if (paused) return;
 			super.update();
-			for each (var asset:Asset in assets) asset.update();
+			for each (var asset:IGraphicsObject in assets) asset.update();
 			for each (var button:MenuButton in buttons) button.update();
+			
 		}
 		
 		override public function render():void {
 			if (paused) return;
 			super.render();
-			for each (var asset:Asset in assets) asset.render();
+			for each (var asset:IGraphicsObject in assets) asset.render();
 			for each (var button:MenuButton in buttons) button.render();
 			view.render();
 		}

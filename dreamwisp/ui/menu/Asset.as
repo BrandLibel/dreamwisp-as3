@@ -3,6 +3,7 @@ package dreamwisp.ui.menu {
 	import dreamwisp.visual.Animatable;
 	import dreamwisp.visual.AnimHandler;
 	import dreamwisp.visual.IGraphicsObject;
+	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
 	import tools.Belt;
 	import flash.display.MovieClip;
@@ -112,7 +113,7 @@ package dreamwisp.ui.menu {
 			actual = scrollRect;
 		}
 		
-		public function getGraphicsData():* {
+		public function getGraphicsData():DisplayObject {
 			return _movieClip;
 		}
 		

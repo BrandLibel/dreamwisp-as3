@@ -4,6 +4,7 @@
 	import dreamwisp.input.InputDispatcher;
 	import dreamwisp.input.InputDispatcher;
 	import dreamwisp.ui.menu.Menu;
+	import dreamwisp.visual.IGraphicsFactory;
 	import dreamwisp.visual.VisualHandler;
 	import flash.display.Stage;
 	//import dreamwisp.ui.menu.MenuControl;
@@ -22,6 +23,7 @@
 		public var visualHandler:VisualHandler;
 				
 		protected var gameScreen:GameScreen;
+		protected var graphicsFactory:IGraphicsFactory;
 		
 		public var menus:Vector.<Menu> = new <Menu>[null];
 						

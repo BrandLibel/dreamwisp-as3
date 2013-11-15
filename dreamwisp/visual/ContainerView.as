@@ -106,9 +106,10 @@ package dreamwisp.visual {
 			addGenericView( new GenericView(graphicsObject.getGraphicsData(), layer, label ) );
 			graphicsObject.initialize(width, height);
 			if (graphicsObject.relativeX != null && graphicsObject.relativeX != "")
-				graphicsObject.getGraphicsData().x = calculateRelativePosition( graphicsObject.relativeX, graphicsObject.getGraphicsData() );
+				
+				graphicsObject.x = graphicsObject.getGraphicsData().x = calculateRelativePosition( graphicsObject.relativeX, graphicsObject.getGraphicsData() );
 			if (graphicsObject.relativeY != null && graphicsObject.relativeY != "")
-				graphicsObject.getGraphicsData().y = calculateRelativePosition( graphicsObject.relativeY, graphicsObject.getGraphicsData() );
+				graphicsObject.y = graphicsObject.getGraphicsData().y = calculateRelativePosition( graphicsObject.relativeY, graphicsObject.getGraphicsData() );
 		}
 		
 		/**
