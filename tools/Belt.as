@@ -1,6 +1,10 @@
 ﻿package tools {
 	
 	import com.demonsters.debugger.MonsterDebugger;
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.display.DisplayObject;
+	import flash.display.IBitmapDrawable;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.utils.getDefinitionByName;
@@ -123,6 +127,12 @@
 			for (var name:String in source) {
 				if (target[name]) target[name] = source[name];
 			}
+		}
+		
+		public static function convertToBitmap(displayObject:DisplayObject):Bitmap {
+			var bitmapData:BitmapData = new BitmapData(displayObject.width, displayObject.height, true, 0x000000);
+			bitmapData.draw(displayObject);
+			return new Bitmap(bitmapData);
 		}
 		
 	}
