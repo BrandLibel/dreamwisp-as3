@@ -36,12 +36,8 @@ package dreamwisp.visual {
 		public function getGraphicsObject(type:String, name:String, data:Object = null):IGraphicsObject {
 			MonsterDebugger.trace(this, graphics[name]);
 			var displayObject:DisplayObject = findDisplayObject(name);
-			if (type == "PassiveGraphic") {
-				// convert movieClip to a bitmap
-				if (displayObject is MovieClip)
-					displayObject = Belt.convertToBitmap(displayObject);
+			if (type == "PassiveGraphic")
 				return new PassiveGraphic(displayObject, data.x, data.y);
-			}
 			if (type == "AutoScrollGraphic")
 				return new AutoScrollGraphic(displayObject, data.x, data.y, data.scrollSpeedX, data.scrollSpeedY);
 			// type is SpritesheetAnimation

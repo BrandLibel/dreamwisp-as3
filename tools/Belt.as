@@ -7,6 +7,8 @@
 	import flash.display.IBitmapDrawable;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.geom.Matrix;
+	import flash.geom.Rectangle;
 	import flash.utils.getDefinitionByName;
 	
 	public final class Belt {
@@ -130,8 +132,11 @@
 		}
 		
 		public static function convertToBitmap(displayObject:DisplayObject):Bitmap {
+			MonsterDebugger.trace(displayObject, displayObject.width + "x" + displayObject.height);
 			var bitmapData:BitmapData = new BitmapData(displayObject.width, displayObject.height, true, 0x000000);
-			bitmapData.draw(displayObject);
+			// draw using coordinates with respect to itself; prevents cutoff converting to bitmap
+			var bounds:Rectangle = displayObject.getBounds(displayObject);
+			bitmapData.draw(displayObject, new Matrix(1,0,0,1,-bounds.left,-bounds.top));
 			return new Bitmap(bitmapData);
 		}
 		
