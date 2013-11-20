@@ -13,7 +13,10 @@ package dreamwisp.input {
 	public class KeyMap {
 		
 		private var bindings:Vector.<KeyBind> = new Vector.<KeyBind>;
+		private var keySequences:Vector.<KeySequence> = new Vector.<KeySequence>;
 		private var keyCombos:Vector.<KeyCombo> = new Vector.<KeyCombo>;
+		/// List of keyBinds that currently being held down.
+		private var keysPressed:Vector.<KeyBind> = new Vector.<KeyBind>;
 		
 		public static const KEY_PRESSED:Boolean = true;
 		public static const KEY_RELEASED:Boolean = false;
@@ -31,14 +34,15 @@ package dreamwisp.input {
 		public function bind(keyCodeData:Object, pressActions:Object = null, releaseActions:Object = null):void {
 			// unbind the keyCode(s) if previously binded
 			if (bindings.length > 0) {
+				var keyBind:KeyBind = find(keyCode);
 				var keyCode:uint;
 				if (keyCodeData is Array) { // multiple keyCodes
 					for each (keyCode in keyCodeData) {
-						if (find(keyCode)) find(keyCode).stripKey(keyCode);
+						if (keyBind) keyBind.stripKey(keyCode);
 					}
 				} else { // single keyCode
 					keyCode = uint(keyCodeData);
-					if (find(keyCode)) find(keyCode).stripKey(keyCode);
+					if (keyBind) keyBind.stripKey(keyCode);
 				}
 			}
 			
@@ -47,8 +51,9 @@ package dreamwisp.input {
 		}
 		
 		public function stripKey(keyCode:uint):void {
-			if (!find(keyCode)) return;
-			find(keyCode).stripKey(keyCode);
+			var keyBind:KeyBind = find(keyCode);
+			if (!keyBind) return;
+			keyBind.stripKey(keyCode);
 		}
 		
 		/**
@@ -92,8 +97,84 @@ package dreamwisp.input {
 		}
 		
 		public function isDown(keyCode:uint):Boolean {
-			if (!find(keyCode)) return false;
-			return find(keyCode).isDown;
+			var keyBind:KeyBind = find(keyCode);
+			if (!keyBind) return false;
+			return keyBind.isDown;
+		}
+				
+		/**
+		 * Create a group of keyBinds that execute an action when held together.
+		 * @param	keys
+		 * @param	action
+		 * @param	triggerKey Optional trigger is what must be pressed at the end of the combo.
+		 */
+		public function defineCombo(keys:Array, action:Function, triggerKey:uint = 0):void {
+			//TODO: When defining combos or sequences, a keyCode that doesn't match with any
+			//		pre-existing keyBind should construct a new one
+			keys = promoteToKeyBinds(keys);
+			
+			// check and return if identical combo already exists
+			if (keySequences.length > 0) {
+				for each (var combo:KeyCombo in keyCombos) {
+					if (Belt.isArrayEqual( combo.keys, keys))
+						return;
+				}
+			}
+			
+			keyCombos.push ( new KeyCombo(keys, action/*, find(triggerKey)*/) );
+		}
+		
+		/**
+		 * Creating a sequential list of keyBinds required for a certain combo.
+		 * @param	keys
+		 * @param	action The function to execute when combo succeeds.
+		 * @param	delay
+		 */
+		public function defineSequence(keys:Array, action:Function = null, delay:uint = 60):void {
+			// to allow multiple key mappings, each keySequence must get a KeyBind object
+			// rather than a regular keyCode uint.
+			keys = promoteToKeyBinds(keys);
+			
+			// check and return if exact sequence already exists
+			if (keySequences.length > 0) {
+				for each (var sequence:KeySequence in keySequences) {
+					if (Belt.isArrayEqual( sequence.keys, keys))
+						return;
+				}
+			}
+			
+			keySequences.push( new KeySequence(keys, action, delay) );
+		}
+		
+		public function update():void {
+			// use this for keeping time for Keycombos
+			for each (var sequence:KeySequence in keySequences) {
+				sequence.update();
+			}
+		}
+		 
+		public function receiveKeyInput(type:String, keyCode:uint):void {
+			var keyBind:KeyBind = find(keyCode);
+			if (!keyBind) return;
+			if (type == KeyboardEvent.KEY_DOWN) {
+				// resgistering as key being pressed
+				if (keysPressed.indexOf(keyBind) == -1) {
+					keysPressed.push(keyBind);
+					checkCombo();
+					MonsterDebugger.trace(this, keysPressed);
+				}
+				// checking for keySequence and keyCombo match, no holding down key
+				if (!keyBind.isDown) {
+					checkSequence(keyCode, KEY_PRESSED);
+				}
+				// letting the keyBind know it is being pressed
+				keyBind.press();
+			}
+			if (type == KeyboardEvent.KEY_UP) {
+				keyBind.release();
+				checkSequence(keyCode, KEY_RELEASED);
+				keysPressed.splice(keysPressed.indexOf(keyBind), 1);
+			}
 		}
 		
 		/**
@@ -102,77 +183,59 @@ package dreamwisp.input {
 		 * @return 
 		 */
 		private function find(keyCode:uint):KeyBind {
+			if (keyCode == 0) return null;
 			// check for a match
 			for each (var keyBind:KeyBind in bindings) {
-				if (keyBind.hasKey(keyCode)) return keyBind;
+				if (keyBind.hasKey(keyCode))
+					return keyBind;
 			}
 			return null;
 		}
 		
 		/**
-		 * Creating a sequential list of key presses required for a certain combo.
-		 * @param	keys
-		 * @param	action The function to execute when combo succeeds.
-		 * @param	delay
+		 * Whenever a key is pressed it needs to be checked for an existing sequence.
+		 * @param	keyCode
 		 */
-		public function addCombo(keys:Array, action:Function = null, delay:uint = 60):void {
-			
-			// to allow multiple key mappings, each keyCombo must get a KeyBind object
-			// rather than a regular keyCode uint.
-			for (var i:uint = 0; i < keys.length; i++) {
-				// converting keys from keyCode uints to KeyBind objects
-				keys[i] = find(keys[i]);
+		private function checkSequence(keyCode:uint, keyType:Boolean = KEY_PRESSED):void {
+			if (keySequences.length == 0) return;
+			for each (var sequence:KeySequence in keySequences) {
+				if (keyType == KEY_PRESSED)
+					sequence.registerKeyPress(keyCode);
+				else
+					sequence.registerKeyRelease(keyCode);
 			}
-			
-			// check if exact combo already exists
-			if (keyCombos.length != 0) {
-				for each (var keyCombo:KeyCombo in keyCombos) {
-					if (Belt.isArrayEqual( keyCombo.keys, keys)) {
-						return;
-					}
-				}
-			}
-			
-			keyCombos.push( new KeyCombo(keys, action, delay) );
 		}
 		
 		/**
-		 * Whenever a key is pressed it needs to be checked for an existing combo.
-		 * @param	keyCode
+		 * Check whether the currently pressed keyBinds match any keyCombo.
 		 */
-		private function checkCombo(keyCode:uint, keyType:Boolean = KEY_PRESSED):void {
+		private function checkCombo():void {
 			if (keyCombos.length == 0) return;
 			for each (var keyCombo:KeyCombo in keyCombos) {
-				if (keyType == KEY_PRESSED) {
-					keyCombo.registerKeyPress(keyCode);
-				} else {
-					keyCombo.registerKeyRelease(keyCode);
-				}
+				if (keyCombo.matches( makeKeyBindArray(keysPressed) ))
+					keyCombo.trigger();
 			}
 		}
 		
-		public function update():void {
-			// use this for keeping time for Keycombos
-			for each (var keyCombo:KeyCombo in keyCombos) {
-				keyCombo.update();
+		/**
+		 * Replaces keyCodes in an array with the associated keyBinds. 
+		 * @param	keys The list of keyCodes.
+		 * @return
+		 */
+		private function promoteToKeyBinds(keyCodes:Array):Array {
+			var keyBinds:Array = new Array();
+			for (var i:uint = 0; i < keyCodes.length; i++) {
+				keyBinds[i] = find(keyCodes[i]);
 			}
+			return keyBinds;
 		}
-		 
-		public function receiveKeyInput(type:String, keyCode:uint):void {
-			if (type == KeyboardEvent.KEY_DOWN) {
-				
-				if (find(keyCode)) {
-					// checking for key combo match, no holding down key
-					if (!find(keyCode).isDown) checkCombo(keyCode, KEY_PRESSED);
-					find(keyCode).press();
-				}
+		
+		private function makeKeyBindArray(keyBindVector:Vector.<KeyBind>):Array {
+			var keyBindArray:Array = new Array();
+			for (var i:int = 0; i < keyBindVector.length; i++) {
+				keyBindArray[i] = keyBindVector[i];
 			}
-			if (type == KeyboardEvent.KEY_UP) {
-				if (find(keyCode)) {
-					find(keyCode).release();
-					checkCombo(keyCode, KEY_RELEASED);
-				}
-			}
+			return keyBindArray;
 		}
 		
 	}

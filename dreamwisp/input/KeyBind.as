@@ -4,7 +4,8 @@ package dreamwisp.input {
 	import org.osflash.signals.Signal;
 	
 	/**
-	 * ...
+	 * KeyBind is a group of related keyCodes 
+	 * that execute the same actions.
 	 * @author Brandon
 	 */
 	
@@ -58,7 +59,7 @@ package dreamwisp.input {
 				if (keyCodes is Array) {
 					var kcArray:Array = keyCodes as Array;
 					kcArray.splice( kcArray.indexOf(keyCode), 1);
-					if (kcArray.length == 0) 
+					if (kcArray.length == 0)
 					MonsterDebugger.trace(this, "stripping keys: " + keyCode + "|||" + keyCodes);
 				} else { 
 					// Destroy this keyBind, no keys point to it anymore
@@ -67,8 +68,9 @@ package dreamwisp.input {
 		}
 		
 		internal function hasKey(keyCode:uint):Boolean {
+			// returns true if the keyCode exists in the array
 			if (keyCodes is Array) {
-				if ((keyCodes as Array).indexOf(keyCode) >= 0 ) return true;
+				if ((keyCodes as Array).indexOf(keyCode) >= 0) return true;
 			} else {
 				if (keyCode == keyCodes) return true;
 			}
@@ -92,6 +94,12 @@ package dreamwisp.input {
 				if (keyReleased.numListeners != 0) keyReleased.dispatch(); //releaseAction.call()
 				//trace("one release");
 			}
+		}
+		
+		internal function equals(other:KeyBind):Boolean {
+			// returns true if keyBinds share a single member
+			var keyToTest:uint = (keyCodes is Array) ? keyCodes[0] : uint(keyCodes);
+			return (other.hasKey(keyToTest));
 		}
 		
 	}
