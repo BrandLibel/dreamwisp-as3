@@ -1,5 +1,6 @@
 package dreamwisp.visual {
 	
+	import com.demonsters.debugger.MonsterDebugger;
 	import flash.display.DisplayObject;
 	
 	/**
@@ -35,6 +36,7 @@ package dreamwisp.visual {
 		/* INTERFACE dreamwisp.visual.IGraphicsObject */
 		
 		public function initialize(parentWidth:Number = 768, parentHeight:Number = 480):void {
+			MonsterDebugger.trace(this, parentWidth + ", " + parentHeight +"||" + displayObject.width + ", " + displayObject.height );
 			this.parentWidth = parentWidth;
 			this.parentHeight = parentHeight;
 		}

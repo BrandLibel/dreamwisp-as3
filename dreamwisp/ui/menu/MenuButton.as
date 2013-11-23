@@ -5,6 +5,7 @@
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.hosts.Entity;
+	import flash.geom.Rectangle;
 	import org.osflash.signals.Signal;
 	import tools.Belt;
 	
@@ -25,7 +26,10 @@
 			view.movieClip.buttonMode = true;
 			view.movieClip.useHandCursor = false;
 			
-			body = new Body(this, view.movieClip.width, view.movieClip.height);
+			var bounds:Rectangle = view.movieClip.getBounds(view.movieClip);
+			
+			body = new Body(this, view.movieClip.width + bounds.left, view.movieClip.height + bounds.top);
+			MonsterDebugger.trace(this, body.width + ", " + body.height);
 			
 			if (view.movieClip.totalFrames > 1){
 				animation = new Animation(this);
