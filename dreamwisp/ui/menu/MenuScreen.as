@@ -4,7 +4,6 @@ package dreamwisp.ui.menu {
 	import dreamwisp.input.KeyMap;
 	import dreamwisp.ui.menu.MenuButton;
 	import dreamwisp.core.GameScreen;
-	import dreamwisp.state.TransitionManager;
 	import dreamwisp.visual.AutoScrollGraphic;
 	import dreamwisp.visual.BasicGraphicsFactory;
 	import dreamwisp.visual.ContainerView;
@@ -27,7 +26,7 @@ package dreamwisp.ui.menu {
 	// TODO: reduce MenuBase functionality so that it is only a system of buttons.
 	//		 Separate unrelated functionality, such as displaying assets. 
 	
-	public class Menu extends GameScreen {
+	public class MenuScreen extends GameScreen {
 		
 		//public var view:MenuView;
 		private var assets:Array = [];
@@ -46,15 +45,24 @@ package dreamwisp.ui.menu {
 		public var buttonPressed:Signal;
 		
 		private var graphicsFactory:IGraphicsFactory;
+		private var isDrawing:Boolean = false;
+		private var drawHeadX:Number = 0;
+		private var drawHeadY:Number = 0;
 		
-		public function Menu(layout:Object, graphicsFactory:IGraphicsFactory) {
+		public function MenuScreen(layout:Object, graphicsFactory:IGraphicsFactory) {
 			this.graphicsFactory = graphicsFactory;		
 			
 			view = new ContainerView();
-			view.container.visible = false;
+			//view.container.visible = false;
 			
 			build(layout);
 			init();
+			
+			view.container.graphics.lineStyle(16, 0x0087BD);
+			//0xBBF8FB
+			//0xB2FFFF (Celeste)
+			//0x0087BD (Natural Color System)
+			drawTo(0, 0);
 		}
 		
 		private function init():void {
@@ -65,7 +73,7 @@ package dreamwisp.ui.menu {
 			//keyMap.clear(Keyboard.SPACE);
 			
 			// GameState
-			transition = new TransitionManager(view);
+			//transition = new TransitionManager(view);
 			
 			heardKeyInput.add(keyMap.receiveKeyInput);
 			
@@ -138,14 +146,11 @@ package dreamwisp.ui.menu {
 		
 		private function checkForButtonAt(mouseX:int, mouseY:int):Boolean {
 			for (var i:uint = 0; i < buttons.length; i++) {
-				var btn:MenuButton = buttons[i]
-				if (mouseX >= btn.body.x && mouseX <= btn.body.x + btn.body.width) {
-					if (mouseY >= btn.body.y && mouseY <= btn.body.y + btn.body.height) {
-						if (this.buttonNum != i) {
-							selectButton(i);
-						}
-						return true;
-					}
+				var btn:MenuButton = buttons[i];
+				if (btn.body.touchesPoint(mouseX, mouseY)) {
+					if (this.buttonNum != i)
+						selectButton(i);
+					return true;
 				}
 			}
 			return false;
@@ -180,12 +185,25 @@ package dreamwisp.ui.menu {
 		}
 		
 		/// Runs all the visual animations of graphics.
-		override public function update():void {
+		override public function update(coveredByOtherScreen:Boolean = false):void {
 			if (paused) return;
 			super.update();
 			for each (var asset:IGraphicsObject in assets) asset.update();
 			for each (var button:MenuButton in buttons) button.update();
-			
+			const stepDist:uint = 8;
+			drawHeadX += stepDist;
+			drawHeadY += stepDist;
+			if (isDrawing) {
+				view.container.graphics.lineTo(drawHeadX, drawHeadY);
+				/*view.container.graphics.moveTo(drawHeadX - 8*2, drawHeadY - 8*2);
+				view.container.graphics.lineStyle(8, 0xFFFFFF);
+				view.container.graphics.lineTo(drawHeadX, drawHeadY);
+				view.container.graphics.lineStyle(16, 0xBBF8FB);*/
+			}
+		}
+		
+		private function drawTo(targetX:Number, targetY:Number):void {
+			isDrawing = true;
 		}
 		
 		override public function render():void {
@@ -197,19 +215,16 @@ package dreamwisp.ui.menu {
 		}
 		
 		override public function enter():void {
-			takesInput = true;
+			super.enter();
+			/*takesInput = true;
 			view.container.visible = true;
-			view.container.alpha = 0;
+			view.container.alpha = 0;*/
 			selectButton();
 			/// check disabled buttons to see if they've become enabled
 			for (var i:uint = 1; i < buttons.length; i++) {
 				//buttons[i].watcher.check();
 				if (buttons[i].isEnabled == false) buttons[i].check();
 			}
-		}
-		
-		public function exit():void {
-			view.container.visible = false;
 		}
 		
 		private function hitButton():void {

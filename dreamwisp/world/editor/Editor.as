@@ -34,7 +34,7 @@ package dreamwisp.world.editor {
 			if (!isActive) {
 				enter();
 			} else {
-				exit();
+				//exit();
 			}
 		}
 		
@@ -44,11 +44,11 @@ package dreamwisp.world.editor {
 			location.pause();
 		}
 		
-		private function exit():void {
+		/*private function exit():void {
 			MonsterDebugger.trace(this, "Exited");
 			isActive = false;
 			location.resume();
-		}
+		}*/
 		
 		override public function hearKeyInput(type:String, keyCode:uint):void {
 			keyMap.receiveKeyInput(type, keyCode);

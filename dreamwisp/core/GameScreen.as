@@ -6,13 +6,13 @@ package dreamwisp.core {
 	import dreamwisp.input.IInputManager;
 	import dreamwisp.input.IInputReceptor;
 	import dreamwisp.core.ScreenManager;
-	import dreamwisp.state.TransitionManager;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.visual.camera.ICamUser;
 	import dreamwisp.visual.ContainerView;
 	import dreamwisp.world.base.EntityManager;
 	import org.osflash.signals.Signal;
+	import project.world.World;
 	
 	/**
 	 * ...
@@ -21,6 +21,9 @@ package dreamwisp.core {
 	public class GameScreen implements IInputManager {
 		
 		public var screenManager:ScreenManager;
+		/// Whether this screen allows logic & drawing of those behind it.
+		public var canRunScreensBelow:Boolean = false;
+		public var canBelowHandleInput:Boolean = false;
 		public var canUpdateBelow:Boolean = false;
 		public var canRenderBelow:Boolean = false;
 		
@@ -28,17 +31,25 @@ package dreamwisp.core {
 				
 		protected var paused:Boolean = false;
 		protected var takesInput:Boolean = true;
-		
-		private var newState:GameScreen;
-		private var newTransition:Object;
-		/// A function leading to a state change
-		private var action:Function;
-		
+	
 		private var _view:ContainerView;
-		private var _transition:TransitionManager;
 		
-		private var _below:GameScreen;
-		
+		// transition related
+		public static const STATE_TRANSITION_IN:uint = 0;
+		public static const STATE_TRANSITION_OUT:uint = 1;
+		public static const STATE_ACTIVE:uint = 2;
+		public static const STATE_HIDDEN:uint = 3;
+		private static const DIR_ON:int = 1;
+		private static const DIR_OFF:int = -1;
+		public var screenState:uint;
+		/// Indicates the screen is transitioning off to die.
+		private var isExiting:Boolean = false;
+		/// Indicates progress of transition. 0 is fully out, 1 is fully in.
+		/// Can be used as a multiplier for many visual properties (x, y, alpha, etc.)
+		private var transitionPosition:Number = 1;
+		protected var transitionTimeIn:Number = 0.05;
+		protected var transitionTimeOut:Number = 0.05;
+				
 		private var _heardMouseInput:Signal;
 		private var _heardKeyInput:Signal;
 		private var _enabledInput:Signal;
@@ -51,53 +62,6 @@ package dreamwisp.core {
 		public function GameScreen() {
 			heardMouseInput = new Signal(String, int, int);
 			heardKeyInput = new Signal(String, uint);
-		}
-		
-		protected function commitStateChange():void {
-			if (newState) {
-				game.changeState( newState, newTransition );
-			}
-			if (action != null) action();
-		}
-		
-		/**
-		 * Exits this state and prepares to enter a new one.
-		 * @param	bridgeData 
-		 * 			Optional fields: transition, myExitTransition
-		 */
-		public function changeState(bridgeData:Object):void {
-			// forget about old data
-			newState = null;
-			newTransition = null;
-			action = null;
-			// prevent reacting to input during a transition
-			takesInput = false;
-			
-			/*if (bridgeData.newState) */newState = bridgeData.newState;
-			if (bridgeData.transition) newTransition = bridgeData.transition;
-			if (bridgeData.action) action = bridgeData.action;
-			
-			// when using transitions, wait until transition completes until changing state
-			if (bridgeData.myExitTransition && bridgeData.myExitTransition.type != "visible") {
-				transition.finished.addOnce(commitStateChange);
-				transition.start(bridgeData.myExitTransition);
-			} else {
-				// transition simply sets the visibility
-				if (bridgeData.myExitTransition.type == "visible") {
-					view.container.visible = bridgeData.myExitTransition.value;
-				} else {
-					// no exit transition for me, simply make me invisible and move on
-					view.container.visible = false;
-				}
-				
-				//view.alpha = 0;
-				//view.container.alpha = 0;
-				commitStateChange();
-			}
-		}
-		
-		public function enter():void {
-			
 		}
 		
 		public function cleanup():void {
@@ -120,17 +84,62 @@ package dreamwisp.core {
 			takesInput = false;
 		}
 		
-		public function update():void {
-			//if (paused) return;
-			if (transition) transition.update();
-			if (entityManager) entityManager.update();
-			if (camera) camera.update();
-			if (below && canUpdateBelow) below.update();
+		public function update(coveredByOtherScreen:Boolean = false):void {
+			
+			//WORK IN PROGRESS - GAME SCREEN STATE MACHINE
+			//note: microsoft's system has an update() that is always called.
+			//		the virtual handleInput() with param inputState can be implemented
+			//		by a subclass. inputState holds all input information - where the
+			//		mouse is, what keys are being held, etc.
+			
+			if (screenState == STATE_TRANSITION_IN) {
+				takesInput = true;
+				if (camera) camera.update();
+				if (!updateTransition(DIR_ON))
+					screenState = STATE_ACTIVE;
+			}
+			// TODO: disable input while transition out, to prevent waitlist from getting duplicates
+			if (screenState == STATE_TRANSITION_OUT) {
+				takesInput = false;
+				if (!updateTransition(DIR_OFF)) {
+					// finished transition off, hide or remove
+					screenState = STATE_HIDDEN;
+					if (isExiting) screenManager.removeScreen( this );
+				}
+			}
+			// mocking transition visual data
+			//view.alpha = transitionPosition;
+			//view.container.alpha = transitionPosition;
+			if (screenState == STATE_ACTIVE) {
+				// update everything it can
+				if (entityManager) entityManager.update();
+				if (camera) camera.update();
+			}
+			
+			
+		}
+		
+		private function updateTransition(direction:int):Boolean {
+			//TODO: use timer & milliseconds to determine delta
+			const transitionDelta:Number = transitionTimeIn;
+			
+			transitionPosition += transitionDelta * direction;
+			//MonsterDebugger.trace(this, "transition: " + transitionPosition);
+			// Reached the end of the transition?
+			if ( (direction == DIR_OFF && transitionPosition <= 0) ||
+				 (direction == DIR_ON && transitionPosition >= 1)) {
+				return false;
+			}
+			// Still transitioning.
+			return true;
 		}
 		
 		public function render():void {
 			//if (paused) return;
-			if (transition) transition.render();
+			view.alpha = transitionPosition;
+			if (this is World)
+				MonsterDebugger.trace(this, this.view.alpha);
+			//view.x = (1 - transitionPosition) * 768;
 			if (entityManager) entityManager.render();
 			if (view) {
 				// TODO: this block is temporary; it allows the ContainerView to be synced
@@ -143,7 +152,31 @@ package dreamwisp.core {
 				
 				view.render();
 			}
-			if (below && canRenderBelow) below.render();
+		}
+		
+		/**
+		 * Tell the screen to start gradually transitioning in.
+		 */
+		public function enter():void {
+			if (transitionTimeIn > 0) {
+				transitionPosition = 0;
+				view.alpha = transitionPosition;
+				screenState = STATE_TRANSITION_IN;
+			}
+			else 
+				screenState = STATE_ACTIVE;
+		}
+
+		/**
+		 * Tell the screen to start gradually transitioning out.
+		 */
+		public function exit():void {
+			if (transitionTimeOut > 0) {
+				screenState = STATE_TRANSITION_OUT;
+				isExiting = true;
+			}
+			else // subclass says it has no transition
+				screenManager.removeScreen(this);
 		}
 		
 		public function setGame(game:Game):void {
@@ -182,9 +215,6 @@ package dreamwisp.core {
 			heardKeyInput.remove( receptor.hearKeyInput );
 		}
 		
-		public function get transition():TransitionManager { return _transition; }
-		public function set transition(value:TransitionManager):void { _transition = value; }
-		
 		public function get heardMouseInput():Signal { return _heardMouseInput; }
 		public function set heardMouseInput(value:Signal):void { _heardMouseInput = value; }
 		
@@ -208,9 +238,6 @@ package dreamwisp.core {
 		
 		public function get camera():Camera { return _camera; }
 		public function set camera(value:Camera):void { _camera = value; }		
-		
-		public function get below():GameScreen { return _below; }
-		public function set below(value:GameScreen):void { _below = value; }
 		
 	}
 

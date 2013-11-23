@@ -1,5 +1,6 @@
 package dreamwisp.world.base {
 	
+	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.hosts.IEntity;
 	import dreamwisp.entity.hosts.IEntityFactory;
@@ -9,6 +10,7 @@ package dreamwisp.world.base {
 	import dreamwisp.visual.ContainerView;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.world.tile.TileScape;
+	import project.world.World;
 	
 	/**
 	 * This superclass contains basic functionality
@@ -16,7 +18,7 @@ package dreamwisp.world.base {
 	 * @author Brandon Li 
 	 */
 	
-	public class Location extends GameScreen implements ILocation {
+	public class Location extends GameScreen {
 			
 		/// The index uint of the active sublocation in the list.
 		private var activeLocation:uint;
@@ -35,7 +37,7 @@ package dreamwisp.world.base {
 			
 		}
 		
-		override public function update():void {
+		override public function update(coveredByOtherScreen:Boolean = false):void {
 			if (paused) return;
 			
 			if (subLocation) subLocation.update();
@@ -49,6 +51,7 @@ package dreamwisp.world.base {
 			
 			if (subLocation) subLocation.render();
 			super.render();
+			
 		}
 		
 		public function goto(location:Object, ...address):void {
@@ -64,6 +67,7 @@ package dreamwisp.world.base {
 		}
 		
 		override public function enter():void {
+			super.enter();
 			startup();
 		}
 		

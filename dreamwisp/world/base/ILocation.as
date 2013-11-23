@@ -6,7 +6,6 @@ package dreamwisp.world.base {
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.core.IUpdatable;
-	import dreamwisp.state.IGameState;
 	import dreamwisp.world.tile.TileScape;
 	
 	/**
