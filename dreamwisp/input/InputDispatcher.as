@@ -45,7 +45,10 @@ package dreamwisp.input {
 		}
 		
 		public function keyHandler(e:KeyboardEvent):void {
-			//MonsterDebugger.trace(this, "dispatching input");
+			//NOTE: Stage can lose focus from keyEvents when the Main stage sprite has
+			//		displayObjects removed/added during runtime. Add/remove child is not
+			//		necessary for screens because they are unchanging and frequently called upon.
+			//MonsterDebugger.trace(this, "dispatching key input");
 			receptor.hearKeyInput(e.type, e.keyCode);
 		}
 		
