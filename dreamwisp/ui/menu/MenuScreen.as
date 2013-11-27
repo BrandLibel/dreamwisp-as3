@@ -54,15 +54,20 @@ package dreamwisp.ui.menu {
 			
 			view = new ContainerView();
 			//view.container.visible = false;
-			
+			if (layout.numOfButtons == 2) { 
+				//transitionTimeIn = 0;
+				//transitionTimeOut = 0;
+				//isConcurrent = true;
+				//isPopup = true;
+			}
 			build(layout);
 			init();
 			
-			view.container.graphics.lineStyle(16, 0x0087BD);
+			//view.container.graphics.lineStyle(16, 0x0087BD);
 			//0xBBF8FB
 			//0xB2FFFF (Celeste)
 			//0x0087BD (Natural Color System)
-			drawTo(0, 0);
+			//drawTo(0, 0);
 		}
 		
 		private function init():void {
@@ -88,7 +93,7 @@ package dreamwisp.ui.menu {
 		private function scrollBack():void {
 			selectButton(0, -1);
 		}
-		
+				
 		private function build(layout:Object):void {
 			isLayoutHorizontal = layout.isHorizontal;
 			// Adding assets
@@ -137,7 +142,7 @@ package dreamwisp.ui.menu {
 		}
 		
 		override public function hearMouseInput(type:String, mouseX:int, mouseY:int):void {
-			if (paused || !takesInput) return;
+			if (paused || !inActiveHalf()) return;
 			checkForButtonAt(mouseX, mouseY);
 			if (type == MouseEvent.CLICK) {
 				if (checkForButtonAt(mouseX, mouseY)) hitButton();//button.hit();
@@ -185,7 +190,7 @@ package dreamwisp.ui.menu {
 		}
 		
 		/// Runs all the visual animations of graphics.
-		override public function update(coveredByOtherScreen:Boolean = false):void {
+		override public function update():void {
 			if (paused) return;
 			super.update();
 			for each (var asset:IGraphicsObject in assets) asset.update();

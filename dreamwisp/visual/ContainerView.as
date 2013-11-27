@@ -39,6 +39,8 @@ package dreamwisp.visual {
 		public var x:Number;
 		public var y:Number;
 		public var alpha:Number = 1;
+		public var scaleX:Number = 1;
+		public var scaleY:Number = 1;
 		public var rotationX:int;
 		public var rotationY:int;
 		public var scrollRect:Rectangle;
@@ -65,6 +67,8 @@ package dreamwisp.visual {
 			container.x = x;
 			container.y = y;
 			container.alpha = alpha;
+			container.scaleX = scaleX;
+			container.scaleY = scaleY;
 			if (scrollRect) {
 				container.scrollRect = scrollRect;
 			} else { // because setting rotation destroys the scrollRect, this logic is needed

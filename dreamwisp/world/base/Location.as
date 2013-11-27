@@ -37,7 +37,7 @@ package dreamwisp.world.base {
 			
 		}
 		
-		override public function update(coveredByOtherScreen:Boolean = false):void {
+		override public function update():void {
 			if (paused) return;
 			
 			if (subLocation) subLocation.update();

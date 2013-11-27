@@ -41,7 +41,7 @@ package dreamwisp.input {
 		}
 		
 		public function mouseHandler(e:MouseEvent):void {
-			receptor.hearMouseInput(e.type, int(e.stageX), int(e.stageY));
+			if (receptor) receptor.hearMouseInput(e.type, int(e.stageX), int(e.stageY));
 		}
 		
 		public function keyHandler(e:KeyboardEvent):void {
@@ -49,7 +49,7 @@ package dreamwisp.input {
 			//		displayObjects removed/added during runtime. Add/remove child is not
 			//		necessary for screens because they are unchanging and frequently called upon.
 			//MonsterDebugger.trace(this, "dispatching key input");
-			receptor.hearKeyInput(e.type, e.keyCode);
+			if (receptor) receptor.hearKeyInput(e.type, e.keyCode);
 		}
 		
 		public function get receptor():IInputReceptor { return _receptor; }

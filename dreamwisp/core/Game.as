@@ -21,7 +21,6 @@
 		public var input:InputDispatcher;
 				
 		protected var screenManager:ScreenManager;
-		protected var gameScreen:GameScreen;
 		protected var graphicsFactory:IGraphicsFactory;
 		
 		public var menus:Vector.<MenuScreen> = new <MenuScreen>[null];
@@ -30,7 +29,7 @@
 			//MonsterDebugger.trace(this, Data.worldData);
 			Data.prepare();
 			view = new Sprite();
-			if (stage) input = new InputDispatcher(stage, gameScreen);
+			if (stage) input = new InputDispatcher(stage, null);
 			screenManager = new ScreenManager(this);
 			
 			//newGame();
@@ -48,21 +47,12 @@
 			
 		}
 		
-		public function hideAllMenus():void {
-			for each (var menu:MenuScreen in menus) {
-				if (menu) menu.view.container.visible = false;
-			}
-		}
-		
 		/**
 		 * The main game loop
 		 */
 		public function loop(e:Event):void {
 			screenManager.update();
 			screenManager.render();
-			if (!gameScreen) return;
-			gameScreen.update();
-			gameScreen.render();
 		}
 		
 	}

@@ -24,13 +24,12 @@ package dreamwisp.core {
 		/// Whether this screen allows logic & drawing of those behind it.
 		public var canRunScreensBelow:Boolean = false;
 		public var canBelowHandleInput:Boolean = false;
-		public var canUpdateBelow:Boolean = false;
-		public var canRenderBelow:Boolean = false;
+		public var isPopup:Boolean = false;
+		public var isConcurrent:Boolean = false;
 		
 		protected var game:Game;
 				
 		protected var paused:Boolean = false;
-		protected var takesInput:Boolean = true;
 	
 		private var _view:ContainerView;
 		
@@ -41,14 +40,16 @@ package dreamwisp.core {
 		public static const STATE_HIDDEN:uint = 3;
 		private static const DIR_ON:int = 1;
 		private static const DIR_OFF:int = -1;
-		public var screenState:uint;
+		public var state:uint;
 		/// Indicates the screen is transitioning off to die.
 		private var isExiting:Boolean = false;
 		/// Indicates progress of transition. 0 is fully out, 1 is fully in.
 		/// Can be used as a multiplier for many visual properties (x, y, alpha, etc.)
-		private var transitionPosition:Number = 1;
+		protected var transitionPosition:Number = 0;
 		protected var transitionTimeIn:Number = 0.05;
 		protected var transitionTimeOut:Number = 0.05;
+		/// The transitionPosition above which this screen is considered active for input.
+		protected var activeThreshold:Number = 0;
 				
 		private var _heardMouseInput:Signal;
 		private var _heardKeyInput:Signal;
@@ -76,56 +77,36 @@ package dreamwisp.core {
 			paused = false;
 		}
 		
-		public function enableInput():void {
-			takesInput = true;
-		}
-		
-		public function disableInput():void {
-			takesInput = false;
-		}
-		
-		public function update(coveredByOtherScreen:Boolean = false):void {
+		public function update():void {
 			
-			//WORK IN PROGRESS - GAME SCREEN STATE MACHINE
-			//note: microsoft's system has an update() that is always called.
-			//		the virtual handleInput() with param inputState can be implemented
-			//		by a subclass. inputState holds all input information - where the
-			//		mouse is, what keys are being held, etc.
-			
-			if (screenState == STATE_TRANSITION_IN) {
-				takesInput = true;
-				if (camera) camera.update();
+			//if (entityManager) entityManager.update();
+			if (state == STATE_TRANSITION_IN) {
 				if (!updateTransition(DIR_ON))
-					screenState = STATE_ACTIVE;
+					state = STATE_ACTIVE;
 			}
-			// TODO: disable input while transition out, to prevent waitlist from getting duplicates
-			if (screenState == STATE_TRANSITION_OUT) {
-				takesInput = false;
+			else if (state == STATE_TRANSITION_OUT) {
 				if (!updateTransition(DIR_OFF)) {
-					// finished transition off, hide or remove
-					screenState = STATE_HIDDEN;
+					// finished transition off, don't render anymore
+					state = STATE_HIDDEN;
+					// screen marked as 'exiting' means it gets removed as well
 					if (isExiting) screenManager.removeScreen( this );
 				}
 			}
-			// mocking transition visual data
-			//view.alpha = transitionPosition;
-			//view.container.alpha = transitionPosition;
-			if (screenState == STATE_ACTIVE) {
-				// update everything it can
+			
+			if (inActiveHalf()) {
 				if (entityManager) entityManager.update();
 				if (camera) camera.update();
 			}
-			
-			
+	
 		}
 		
 		private function updateTransition(direction:int):Boolean {
 			//TODO: use timer & milliseconds to determine delta
-			const transitionDelta:Number = transitionTimeIn;
+			const transitionDelta:Number = (direction < 0) ? transitionTimeOut : transitionTimeIn;
 			
 			transitionPosition += transitionDelta * direction;
-			//MonsterDebugger.trace(this, "transition: " + transitionPosition);
-			// Reached the end of the transition?
+			
+			// Reached the end of the transition
 			if ( (direction == DIR_OFF && transitionPosition <= 0) ||
 				 (direction == DIR_ON && transitionPosition >= 1)) {
 				return false;
@@ -134,12 +115,31 @@ package dreamwisp.core {
 			return true;
 		}
 		
+		/**
+		 * Draws the transition in the style decided by the Screen.
+		 * @param	direction
+		 */
+		protected function renderTransition():void {
+			var direction:int = (state == STATE_TRANSITION_IN) ? 1 : -1;
+			var transitionOffset:Number = Number(Math.pow(transitionPosition, 2));
+			
+			view.alpha = transitionPosition;
+			view.x = -direction * (1 - transitionPosition) * 768;
+			view.scaleX = transitionPosition;
+			view.scaleY = transitionPosition;
+		}
+		
+		public function inTransition():Boolean {
+			return (state == STATE_TRANSITION_IN || state == STATE_TRANSITION_OUT);
+		}
+		
+		public function inActiveHalf():Boolean {
+			return ((state == STATE_TRANSITION_IN && transitionPosition >= activeThreshold) || state == STATE_ACTIVE);
+		}
+		
 		public function render():void {
 			//if (paused) return;
-			view.alpha = transitionPosition;
-			if (this is World)
-				MonsterDebugger.trace(this, this.view.alpha);
-			//view.x = (1 - transitionPosition) * 768;
+			renderTransition();
 			if (entityManager) entityManager.render();
 			if (view) {
 				// TODO: this block is temporary; it allows the ContainerView to be synced
@@ -160,11 +160,13 @@ package dreamwisp.core {
 		public function enter():void {
 			if (transitionTimeIn > 0) {
 				transitionPosition = 0;
-				view.alpha = transitionPosition;
-				screenState = STATE_TRANSITION_IN;
+				state = STATE_TRANSITION_IN;
 			}
-			else 
-				screenState = STATE_ACTIVE;
+			else {
+				transitionPosition = 1;
+				state = STATE_ACTIVE;
+			}
+			//renderTransition();
 		}
 
 		/**
@@ -172,11 +174,18 @@ package dreamwisp.core {
 		 */
 		public function exit():void {
 			if (transitionTimeOut > 0) {
-				screenState = STATE_TRANSITION_OUT;
+				transitionPosition = 1;
+				state = STATE_TRANSITION_OUT;
 				isExiting = true;
 			}
-			else // subclass says it has no transition
+			// subclass says it has no transition
+			else {
+				// go invisible instantly
+				transitionPosition = 0;
+				render();
 				screenManager.removeScreen(this);
+			}
+			
 		}
 		
 		public function setGame(game:Game):void {
@@ -184,12 +193,12 @@ package dreamwisp.core {
 		}
 
 		public function hearMouseInput(type:String, mouseX:int, mouseY:int):void {
-			if (paused || !takesInput) return;
+			if (paused || !inActiveHalf()) return;
 			heardMouseInput.dispatch(type, mouseX, mouseY);
 		}
 		
 		public function hearKeyInput(type:String, keyCode:uint):void {
-			if (paused || !takesInput) return;
+			if (paused || !inActiveHalf()) return;
 			heardKeyInput.dispatch(type, keyCode);
 		}
 		
