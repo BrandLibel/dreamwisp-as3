@@ -5,6 +5,7 @@
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.hosts.Entity;
+	import dreamwisp.input.InputState;
 	import flash.geom.Rectangle;
 	import org.osflash.signals.Signal;
 	import tools.Belt;
@@ -23,19 +24,21 @@
 		private function init():void {
 			view = new View(this);
 			view.movieClip = Belt.addClassFromLibrary(name, Belt.CLASS_MOVIECLIP);
-			view.movieClip.buttonMode = true;
-			view.movieClip.useHandCursor = false;
+			// buttonMode on MovieClips add overhead; it must handle events and frame seeking
+			// buttonMode causes framerate to drop when rapidly clicking a button, it is unneeded
+			// see: http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/display/Sprite.html#buttonMode
+			//view.movieClip.buttonMode = true;
+			//view.movieClip.useHandCursor = false;
 			
 			var bounds:Rectangle = view.movieClip.getBounds(view.movieClip);
 			
 			body = new Body(this, view.movieClip.width + bounds.left, view.movieClip.height + bounds.top);
-			MonsterDebugger.trace(this, body.width + ", " + body.height);
+			//MonsterDebugger.trace(this, body.width + ", " + body.height);
 			
 			if (view.movieClip.totalFrames > 1){
 				animation = new Animation(this);
 				animation.mapFrameLabels(view.movieClip);
 			}
-			
 		}
 		
 		private function testPress(btnCode:String):void {
