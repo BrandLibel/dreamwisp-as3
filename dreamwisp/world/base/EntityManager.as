@@ -7,6 +7,8 @@ package dreamwisp.world.base {
 	import dreamwisp.entity.hosts.IInteractible;
 	import dreamwisp.entity.hosts.IPlatformEntity;
 	import dreamwisp.entity.hosts.Door;
+	import dreamwisp.entity.hosts.IPlayerControllable;
+	import dreamwisp.input.InputState;
 	import org.osflash.signals.Signal;
 	import tools.Belt;
 		
@@ -15,12 +17,13 @@ package dreamwisp.world.base {
 	 * Use entitySignals for the graphics and project-specific configuration. 
 	 * @author Brandon
 	 */
-	public dynamic class EntityManager implements IEntityManager {
+	public dynamic class EntityManager {
 
 		private var entityList:Object;
 		private var dialogue:Object;
 		private var entitys:Vector.<Entity> = new Vector.<Entity>;
 		private var tempEntityList:Vector.<Entity> = new Vector.<Entity>;
+		private var controllableEntitys:Vector.<IPlayerControllable> = new Vector.<IPlayerControllable>;
 		
 		private var factory:IEntityFactory;
 		
@@ -46,6 +49,16 @@ package dreamwisp.world.base {
 			entityRemoved = new Signal(Entity);
 		}
 		
+		/**
+		 * Distributes input state to all IPlayerControlled - entitys that can recieve input
+		 * @param	inputState
+		 */
+		public function handleInput(inputState:InputState):void {
+			for each (var entity:IPlayerControllable in controllableEntitys) {
+				entity.handleInput(inputState);
+			}
+		}
+		
 		public function update():void {
 			// create a temp copy of the entity list and update that
 			// to avoid confusion when updating an entity adds/removes another
@@ -58,8 +71,8 @@ package dreamwisp.world.base {
 			}
 		}
 		
-		public function render():void {
-			for each (var entity:Entity in entitys) entity.render();
+		public function render(interpolation:Number):void {
+			for each (var entity:Entity in entitys) entity.render(interpolation);
 		}
 		
 		/**
@@ -119,6 +132,9 @@ package dreamwisp.world.base {
 			entitys.push(entity);
 			entity.destroyed.add(onEntityDestroyed);
 			entity.entityCreated.add(addEntity);
+			
+			if (entity is IPlayerControllable)
+				controllableEntitys.push( entity );
 			
 			if (entity.interactibles) entity.interactibles = new Vector.<Entity>;
 			
@@ -222,6 +238,8 @@ package dreamwisp.world.base {
 		public function onEntityDestroyed(entity:Entity):void {
 			// remove entity from the general entitys list
 			entitys.splice( entitys.indexOf(entity), 1 );
+			if (controllableEntitys.indexOf(entity) != -1)
+				controllableEntitys.splice( entitys.indexOf(entity), 1 );
 			// remove the entity from its own group
 			if (entity.group) entity.group.splice ( entity.group.indexOf(entity), 1 );
 			//if (entity.view) location.view.removeChild(entity.view.movieClip);

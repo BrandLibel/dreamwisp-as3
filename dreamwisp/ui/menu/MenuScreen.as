@@ -1,6 +1,7 @@
 package dreamwisp.ui.menu {
 	
 	import com.demonsters.debugger.MonsterDebugger;
+	import dreamwisp.input.InputState;
 	import dreamwisp.input.KeyMap;
 	import dreamwisp.ui.menu.MenuButton;
 	import dreamwisp.core.GameScreen;
@@ -38,9 +39,7 @@ package dreamwisp.ui.menu {
 		private var buttons:Vector.<MenuButton>;
 		
 		private var isLayoutHorizontal:Boolean = false;
-		
-		private var keyMap:KeyMap;
-		
+				
 		// Signals 
 		public var buttonPressed:Signal;
 		
@@ -55,10 +54,10 @@ package dreamwisp.ui.menu {
 			view = new ContainerView();
 			//view.container.visible = false;
 			if (layout.numOfButtons == 2) { 
-				//transitionTimeIn = 0;
+				transitionTimeIn = 0;
 				//transitionTimeOut = 0;
 				//isConcurrent = true;
-				//isPopup = true;
+				isPopup = true;
 			}
 			build(layout);
 			init();
@@ -75,13 +74,7 @@ package dreamwisp.ui.menu {
 			keyMap.bind( [Keyboard.SPACE, Keyboard.ENTER, Keyboard.Z, Keyboard.X], null, hitButton );
 			keyMap.bind( ((isLayoutHorizontal == true) ? Keyboard.LEFT : Keyboard.UP), scrollBack );
 			keyMap.bind( ((isLayoutHorizontal == true) ? Keyboard.RIGHT : Keyboard.DOWN), scrollForward );
-			//keyMap.clear(Keyboard.SPACE);
-			
-			// GameState
-			//transition = new TransitionManager(view);
-			
-			heardKeyInput.add(keyMap.receiveKeyInput);
-			
+
 			// defining signals
 			buttonPressed = new Signal(String);
 		}
@@ -122,7 +115,7 @@ package dreamwisp.ui.menu {
 				//view.container.addChild(btn.view.movieClip);
 				
 				btn.update();
-				btn.render(); // immediate render after 
+				btn.render(1); // immediate render after 
 			}
 			
 			/// disabling all specified buttons 
@@ -136,16 +129,8 @@ package dreamwisp.ui.menu {
 					btn.dataProperty = disabledButtons[k].dependency.name;
 					//btn.enableUpon(Data.getText(disabledButtons[k].dependency));
 					btn.update();
-					btn.render();
+					btn.render(1);
 				}
-			}
-		}
-		
-		override public function hearMouseInput(type:String, mouseX:int, mouseY:int):void {
-			if (paused || !inActiveHalf()) return;
-			checkForButtonAt(mouseX, mouseY);
-			if (type == MouseEvent.CLICK) {
-				if (checkForButtonAt(mouseX, mouseY)) hitButton();//button.hit();
 			}
 		}
 		
@@ -186,7 +171,15 @@ package dreamwisp.ui.menu {
 				button = buttons[this.buttonNum];
 				button.highlight();
 			}
-			
+		}
+		
+		override public function handleInput(inputState:InputState):void {
+			super.handleInput(inputState);
+			checkForButtonAt(inputState.mouseX, inputState.mouseY);
+			if (inputState.wasMouseClicked()) {
+				if (checkForButtonAt(inputState.mouseX, inputState.mouseY))
+					hitButton();
+			}
 		}
 		
 		/// Runs all the visual animations of graphics.
@@ -211,12 +204,12 @@ package dreamwisp.ui.menu {
 			isDrawing = true;
 		}
 		
-		override public function render():void {
+		override public function render(interpolation:Number):void {
 			if (paused) return;
-			super.render();
+			super.render(interpolation);
 			for each (var asset:IGraphicsObject in assets) asset.render();
-			for each (var button:MenuButton in buttons) button.render();
-			view.render();
+			for each (var button:MenuButton in buttons) button.render(interpolation);
+			view.render(interpolation);
 		}
 		
 		override public function enter():void {
@@ -233,9 +226,8 @@ package dreamwisp.ui.menu {
 		}
 		
 		private function hitButton():void {
-			if (buttonPressed.numListeners == 0) {
+			if (buttonPressed.numListeners == 0)
 				throw new Error("The Menu's buttonPressed signal has no listeners! Add some!");
-			}
 			buttonPressed.dispatch(button.name);
 		}
 		

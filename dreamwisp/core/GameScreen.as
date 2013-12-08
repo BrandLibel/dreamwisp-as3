@@ -1,24 +1,22 @@
 package dreamwisp.core {
 	
-	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.core.Game;
-	import dreamwisp.entity.components.Body;
-	import dreamwisp.input.IInputManager;
-	import dreamwisp.input.IInputReceptor;
 	import dreamwisp.core.ScreenManager;
+	import dreamwisp.entity.components.Body;
+	import dreamwisp.entity.components.View;
+	import dreamwisp.input.InputState;
+	import dreamwisp.input.KeyMap;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.visual.camera.ICamUser;
 	import dreamwisp.visual.ContainerView;
 	import dreamwisp.world.base.EntityManager;
-	import org.osflash.signals.Signal;
-	import project.world.World;
 	
 	/**
 	 * ...
 	 * @author Brandon
 	 */
-	public class GameScreen implements IInputManager {
+	public class GameScreen {
 		
 		public var screenManager:ScreenManager;
 		/// Whether this screen allows logic & drawing of those behind it.
@@ -32,6 +30,8 @@ package dreamwisp.core {
 		protected var paused:Boolean = false;
 	
 		private var _view:ContainerView;
+		
+		protected var keyMap:KeyMap;
 		
 		// transition related
 		public static const STATE_TRANSITION_IN:uint = 0;
@@ -48,21 +48,17 @@ package dreamwisp.core {
 		protected var transitionPosition:Number = 0;
 		protected var transitionTimeIn:Number = 0.05;
 		protected var transitionTimeOut:Number = 0.05;
+		private var transitionDelta:Number;
 		/// The transitionPosition above which this screen is considered active for input.
 		protected var activeThreshold:Number = 0;
 				
-		private var _heardMouseInput:Signal;
-		private var _heardKeyInput:Signal;
-		private var _enabledInput:Signal;
-		private var _disabledInput:Signal;
-		
 		private var _rect:SwiftRectangle;
 		private var _entityManager:EntityManager;
 		private var _camera:Camera;
 		
+		
 		public function GameScreen() {
-			heardMouseInput = new Signal(String, int, int);
-			heardKeyInput = new Signal(String, uint);
+			
 		}
 		
 		public function cleanup():void {
@@ -77,9 +73,16 @@ package dreamwisp.core {
 			paused = false;
 		}
 		
+		public function handleInput(inputState:InputState):void {
+			// if this screen personally handles key input, let it
+			if (keyMap)
+				keyMap.readInput(inputState);
+			// if the entitys want to handle input in their special way, let them
+			if (entityManager)
+				entityManager.handleInput(inputState);
+		}
+		
 		public function update():void {
-			
-			//if (entityManager) entityManager.update();
 			if (state == STATE_TRANSITION_IN) {
 				if (!updateTransition(DIR_ON))
 					state = STATE_ACTIVE;
@@ -95,14 +98,12 @@ package dreamwisp.core {
 			
 			if (inActiveHalf()) {
 				if (entityManager) entityManager.update();
-				if (camera) camera.update();
 			}
-	
 		}
 		
 		private function updateTransition(direction:int):Boolean {
 			//TODO: use timer & milliseconds to determine delta
-			const transitionDelta:Number = (direction < 0) ? transitionTimeOut : transitionTimeIn;
+			transitionDelta = (direction < 0) ? transitionTimeOut : transitionTimeIn;
 			
 			transitionPosition += transitionDelta * direction;
 			
@@ -119,14 +120,14 @@ package dreamwisp.core {
 		 * Draws the transition in the style decided by the Screen.
 		 * @param	direction
 		 */
-		protected function renderTransition():void {
+		protected function renderTransition(interpolation:Number):void {
 			var direction:int = (state == STATE_TRANSITION_IN) ? 1 : -1;
 			var transitionOffset:Number = Number(Math.pow(transitionPosition, 2));
 			
-			view.alpha = transitionPosition;
-			view.x = -direction * (1 - transitionPosition) * 768;
-			view.scaleX = transitionPosition;
-			view.scaleY = transitionPosition;
+			view.alpha = transitionPosition;// += (transitionDelta * interpolation);
+			//view.x = -direction * (1 - transitionPosition) * 768;
+			//view.scaleX = transitionPosition;
+			//view.scaleY = transitionPosition;
 		}
 		
 		public function inTransition():Boolean {
@@ -137,10 +138,10 @@ package dreamwisp.core {
 			return ((state == STATE_TRANSITION_IN && transitionPosition >= activeThreshold) || state == STATE_ACTIVE);
 		}
 		
-		public function render():void {
+		public function render(interpolation:Number):void {
 			//if (paused) return;
-			renderTransition();
-			if (entityManager) entityManager.render();
+			renderTransition(interpolation);
+			if (entityManager) entityManager.render(interpolation);
 			if (view) {
 				// TODO: this block is temporary; it allows the ContainerView to be synced
 				// 		 with the x and y values of the actual Location (necessary for proper placement
@@ -150,8 +151,10 @@ package dreamwisp.core {
 					view.y = rect.y;
 				}
 				
-				view.render();
+				view.render(interpolation);
 			}
+			if (inActiveHalf())
+				if (camera) camera.update(interpolation);
 		}
 		
 		/**
@@ -182,24 +185,13 @@ package dreamwisp.core {
 			else {
 				// go invisible instantly
 				transitionPosition = 0;
-				render();
+				render(1);
 				screenManager.removeScreen(this);
 			}
-			
 		}
 		
 		public function setGame(game:Game):void {
 			this.game = game;
-		}
-
-		public function hearMouseInput(type:String, mouseX:int, mouseY:int):void {
-			if (paused || !inActiveHalf()) return;
-			heardMouseInput.dispatch(type, mouseX, mouseY);
-		}
-		
-		public function hearKeyInput(type:String, keyCode:uint):void {
-			if (paused || !inActiveHalf()) return;
-			heardKeyInput.dispatch(type, keyCode);
 		}
 		
 		public function positionCamera(user:ICamUser = null, boundary:SwiftRectangle = null, focus:Body = null):void {
@@ -209,36 +201,17 @@ package dreamwisp.core {
 				camera.focus = focus;
 			}
 		}
-				
-		public function addInputReceptor(receptor:IInputReceptor):void {
-			MonsterDebugger.trace(this, "Added input receptor");
-			receptor.enabledInput.add( addInputReceptor );
-			receptor.disabledInput.add ( removeInputReceptor );
-			heardMouseInput.add( receptor.hearMouseInput );
-			heardKeyInput.add( receptor.hearKeyInput );
+		public function positionCameraView(user:ICamUser = null, boundary:SwiftRectangle = null, focusView:View = null):void {
+			if (camera) {
+				camera.user = user;
+				camera.setBounds(boundary);
+				camera.focusView = focusView;
+			}
 		}
-		
-		public function removeInputReceptor(receptor:IInputReceptor):void {
-			receptor.disabledInput.remove( removeInputReceptor );
-			heardMouseInput.remove( receptor.hearMouseInput );
-			heardKeyInput.remove( receptor.hearKeyInput );
-		}
-		
-		public function get heardMouseInput():Signal { return _heardMouseInput; }
-		public function set heardMouseInput(value:Signal):void { _heardMouseInput = value; }
-		
-		public function get heardKeyInput():Signal { return _heardKeyInput; }
-		public function set heardKeyInput(value:Signal):void { _heardKeyInput = value; }
 		
 		public function get view():ContainerView { return _view; }
 		public function set view(value:ContainerView):void { _view = value; }
-		
-		public function get enabledInput():Signal { return _enabledInput; }
-		public function set enabledInput(value:Signal):void { _enabledInput = value; }
-		
-		public function get disabledInput():Signal { return _disabledInput; }
-		public function set disabledInput(value:Signal):void { _disabledInput = value; }
-		
+
 		public function get rect():SwiftRectangle { return _rect; }
 		public function set rect(value:SwiftRectangle):void { _rect = value; }
 		

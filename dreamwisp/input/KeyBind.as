@@ -11,10 +11,10 @@ package dreamwisp.input {
 	
 	internal class KeyBind {
 		
-		public var keyPressed:Signal;
-		public var keyReleased:Signal;
+		private var keyPressed:Signal;
+		private var keyReleased:Signal;
 		
-		public var keyCodes:Object;
+		private var keyCodes:Object;
 		internal var isDown:Boolean = false;
 		
 		public function KeyBind( keyCodes:Object, pressActions:Object, releaseActions:Object ) {
@@ -81,8 +81,8 @@ package dreamwisp.input {
 			//MonsterDebugger.trace(this, "pressing");
 			if (!isDown) {
 				isDown = true;
-				if (keyPressed.numListeners != 0) keyPressed.dispatch(); //pressAction.call();
-				//trace("one press");
+				if (keyPressed.numListeners != 0)
+					keyPressed.dispatch();
 			}
 		}
 		
@@ -90,9 +90,8 @@ package dreamwisp.input {
 			//MonsterDebugger.trace(this, "releasing");
 			if (isDown) {
 				isDown = false;
-				
-				if (keyReleased.numListeners != 0) keyReleased.dispatch(); //releaseAction.call()
-				//trace("one release");
+				if (keyReleased.numListeners != 0)
+					keyReleased.dispatch(); 
 			}
 		}
 		
@@ -100,6 +99,21 @@ package dreamwisp.input {
 			// returns true if keyBinds share a single member
 			var keyToTest:uint = (keyCodes is Array) ? keyCodes[0] : uint(keyCodes);
 			return (other.hasKey(keyToTest));
+		}
+		
+		/**
+		 * Returns a list of the keyCodes associated with this KeyBind.
+		 * @return
+		 */
+		internal function getKeyCodes():Vector.<uint> {
+			var keyCodeList:Vector.<uint> = new Vector.<uint>;
+			if (keyCodes is Array) {
+				for each (var keyCode:uint in keyCodes)
+					keyCodeList.push(keyCode);
+			} else {
+				keyCodeList[0] = uint(keyCodes);
+			}
+			return keyCodeList;
 		}
 		
 	}

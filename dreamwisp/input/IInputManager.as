@@ -11,6 +11,8 @@ package dreamwisp.input {
 	
 	public interface IInputManager extends IInputReceptor {
 		
+		function impossibleAction():void;
+		
 		function addInputReceptor(receptor:IInputReceptor):void;
 		function removeInputReceptor(receptor:IInputReceptor):void;
 		

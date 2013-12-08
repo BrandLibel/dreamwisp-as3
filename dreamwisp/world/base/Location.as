@@ -4,8 +4,9 @@ package dreamwisp.world.base {
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.hosts.IEntity;
 	import dreamwisp.entity.hosts.IEntityFactory;
-	import dreamwisp.entity.hosts.IPlayer;
+	import dreamwisp.entity.hosts.IPlayerControllable;
 	import dreamwisp.core.GameScreen;
+	import dreamwisp.input.InputState;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.ContainerView;
 	import dreamwisp.entity.hosts.Entity;
@@ -30,7 +31,7 @@ package dreamwisp.world.base {
 		
 		public var firstEntry:Boolean = true;
 		
-		private var _player:IPlayer;
+		private var _player:IPlayerControllable;
 		private var _tileScape:TileScape;
 		
 		public function Location() {
@@ -45,16 +46,16 @@ package dreamwisp.world.base {
 			super.update();
 		}
 		
-		override public function render():void {
+		override public function render(interpolation:Number):void {
 			if (paused) return;
 			if (tileScape) tileScape.render();
 			
-			if (subLocation) subLocation.render();
-			super.render();
+			if (subLocation) subLocation.render(interpolation);
+			super.render(interpolation);
 			
 		}
 		
-		public function goto(location:Object, ...address):void {
+		public function moveTo(location:Object, ...address):void {
 			if (location) {
 				 
 			} else {
@@ -75,8 +76,8 @@ package dreamwisp.world.base {
 			
 		}
 		
-		public function get player():IPlayer { return _player; }
-		public function set player(value:IPlayer):void { _player = value; }
+		public function get player():IPlayerControllable { return _player; }
+		public function set player(value:IPlayerControllable):void { _player = value; }
 		
 		public function get tileScape():TileScape { return _tileScape; }
 		public function set tileScape(value:TileScape):void { _tileScape = value; }

@@ -15,9 +15,7 @@ package dreamwisp.world.editor {
 		
 		private var tileScapeEditor:TileScapeEditor;
 		private var _location:Location;
-		
-		private var keyMap:KeyMap;
-		
+				
 		private var isActive:Boolean = false;
 		
 		public function Editor(location:Location) {
@@ -50,17 +48,17 @@ package dreamwisp.world.editor {
 			location.resume();
 		}*/
 		
-		override public function hearKeyInput(type:String, keyCode:uint):void {
-			keyMap.receiveKeyInput(type, keyCode);
-		}
+		//override public function hearKeyInput(type:String, keyCode:uint):void {
+			//keyMap.receiveKeyInput(type, keyCode);
+		//}
 		
-		override public function hearMouseInput(type:String, mouseX:int, mouseY:int):void {
+		/*override public function hearMouseInput(type:String, mouseX:int, mouseY:int):void {
 			if (type == MouseEvent.MOUSE_DOWN) {
 				MonsterDebugger.trace(this, "pressing mouse");
 			} else {
 				//MonsterDebugger.trace(this, "other mouse action");
 			}
-		}
+		}*/
 		
 		public function get location():Location {
 			return _location;

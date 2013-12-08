@@ -9,6 +9,7 @@ package dreamwisp.entity.hosts {
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.components.Weapon;
 	import dreamwisp.entity.hosts.IEntity;
+	import dreamwisp.input.InputState;
 	import dreamwisp.visual.lighting.LightSource;
 	import dreamwisp.world.base.Location;
 	import org.osflash.signals.Signal;
@@ -78,8 +79,8 @@ package dreamwisp.entity.hosts {
 			//if (hasLeftBounds()) leftBounds.dispatch(this);
 		}
 		
-		public function render():void {
-			if (view) view.render();
+		public function render(interpolation:Number):void {
+			if (view) view.render(interpolation);
 			if (lightSource) lightSource.render();
 		}
 		
@@ -101,7 +102,7 @@ package dreamwisp.entity.hosts {
 		
 		// IEntity extends IRecptor, so all entitys get input listeners 
 		
-		public function enableInput():void {
+		/*public function enableInput():void {
 			//takesInput = true;
 			enabledInput.dispatch(this);
 		}
@@ -109,15 +110,15 @@ package dreamwisp.entity.hosts {
 		public function disableInput():void {
 			//takesInput = false;
 			disabledInput.dispatch(this);
-		}
+		}*/
 		
-		public function hearMouseInput(type:String, mouseX:int, mouseY:int):void {
+		/*public function hearMouseInput(type:String, mouseX:int, mouseY:int):void {
 			
-		}
+		}*/
 		
-		public function hearKeyInput(type:String, keyCode:uint):void {
+		/*public function hearKeyInput(type:String, keyCode:uint):void {
 			
-		}
+		}*/
 		
 		protected function hasLeftBounds():Boolean {
 			if (myLocation) {

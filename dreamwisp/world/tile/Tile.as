@@ -3,6 +3,7 @@ package dreamwisp.world.tile {
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.hosts.Entity;
+	import dreamwisp.input.InputState;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Point;
@@ -144,7 +145,7 @@ package dreamwisp.world.tile {
 			}
 		}
 		
-		override public function render():void {
+		override public function render(interpolation:Number):void {
 			drawTile();
 			//erase();
 		}

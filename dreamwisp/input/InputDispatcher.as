@@ -1,6 +1,5 @@
 package dreamwisp.input {
 	
-	
 	import com.demonsters.debugger.MonsterDebugger;
 	import flash.display.Stage;
 	import flash.events.KeyboardEvent;
@@ -22,10 +21,10 @@ package dreamwisp.input {
 		private var isEnabled:Boolean;
 		
 		public function InputDispatcher(stage:Stage, inputReceptor:IInputReceptor) {
-			stage.addEventListener(MouseEvent.CLICK, mouseHandler);
-			stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseHandler);
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyHandler);
-			stage.addEventListener(KeyboardEvent.KEY_UP, keyHandler);
+			//stage.addEventListener(MouseEvent.CLICK, mouseHandler);
+			//stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseHandler);
+			//stage.addEventListener(KeyboardEvent.KEY_DOWN, keyHandler);
+			//stage.addEventListener(KeyboardEvent.KEY_UP, keyHandler);
 			
 			receptor = inputReceptor;
 			
@@ -41,7 +40,7 @@ package dreamwisp.input {
 		}
 		
 		public function mouseHandler(e:MouseEvent):void {
-			if (receptor) receptor.hearMouseInput(e.type, int(e.stageX), int(e.stageY));
+			//if (receptor) receptor.hearMouseInput(e.type, int(e.stageX), int(e.stageY));
 		}
 		
 		public function keyHandler(e:KeyboardEvent):void {

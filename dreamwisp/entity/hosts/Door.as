@@ -37,7 +37,7 @@ package dreamwisp.entity.hosts {
 			// destination contains the travelling entity;
 			destination.entity = entity;
 			// open the door to enter a new area
-			myLocation.highestLocation.goto(destination);
+			myLocation.highestLocation.moveTo(destination);
 			
 			MonsterDebugger.trace(this, "interacted with door");
 		}

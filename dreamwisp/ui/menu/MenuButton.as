@@ -24,6 +24,7 @@
 		private function init():void {
 			view = new View(this);
 			view.movieClip = Belt.addClassFromLibrary(name, Belt.CLASS_MOVIECLIP);
+			
 			// buttonMode on MovieClips add overhead; it must handle events and frame seeking
 			// buttonMode causes framerate to drop when rapidly clicking a button, it is unneeded
 			// see: http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/display/Sprite.html#buttonMode

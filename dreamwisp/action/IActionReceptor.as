@@ -6,7 +6,7 @@ package dreamwisp.action {
 	 */
 	public interface IActionReceptor {
 		
-		function update():void;
+		function update(interpolation:Number):void;
 		
 		function queueAction(action:Object):void;
 		function executeAction(action:Object):void;

@@ -21,10 +21,6 @@ package dreamwisp.input {
 		public static const KEY_PRESSED:Boolean = true;
 		public static const KEY_RELEASED:Boolean = false;
 		
-		public function KeyMap() {
-			
-		}
-		
 		/**
 		 * Binds the specified key(s) to the selected function(s). Remaps if necessary.
 		 * @param	pressActions 
@@ -146,34 +142,67 @@ package dreamwisp.input {
 			keySequences.push( new KeySequence(keys, action, delay) );
 		}
 		
+		private var prevKeyList:Vector.<Boolean> = new Vector.<Boolean>(InputState.TOTAL_KEYCODES + 1, true);
+		
+		/**
+		 * Mimics key event behavior by reading the key states from an inputState.
+		 * @param	inputState
+		 */
+		public function readInput(inputState:InputState):void {
+			//TODO: seek only the keys needed from the list of keyPresStates
+			
+			var i:uint = 0;
+			
+			// compare the current list to the prev list; any differences cause a key event
+			for (i = 0; i < inputState.keyPressStates.length; i++) {
+				// key is same as before? no change
+				if (prevKeyList[i] == inputState.keyPressStates[i])
+					continue;
+				// current key is now pressed down (TRUE)
+				if (prevKeyList[i] == false) {
+					
+					pressKey(i);
+				}
+				// current key is now released (FALSE) 
+				else {
+					//MonsterDebugger.trace(this, i + " " + prevKeyList);
+					releaseKey(i);
+				}
+			}
+			
+			// store a list of the key states to be compared with in the future cycle
+			for (i = 0; i < inputState.keyPressStates.length; i++) {
+				prevKeyList[i] = inputState.keyPressStates[i];
+			}
+		}
+		
+		private function pressKey(keyCode:uint):void {
+			var keyBind:KeyBind = find(keyCode);
+			if (!keyBind) return;
+			if (keysPressed.indexOf(keyBind) == -1) {
+				keysPressed.push(keyBind);
+				checkCombo();
+			}
+			// checking for keySequence and keyCombo match, no holding down key
+			if (!keyBind.isDown) {
+				checkSequence(keyCode, KEY_PRESSED);
+			}
+			// letting the keyBind know it is being pressed
+			keyBind.press();
+		}
+		
+		private function releaseKey(keyCode:uint):void {
+			var keyBind:KeyBind = find(keyCode);
+			if (!keyBind) return;
+			keyBind.release();
+			checkSequence(keyCode, KEY_RELEASED);
+			keysPressed.splice(keysPressed.indexOf(keyBind), 1);
+		}
+		
 		public function update():void {
 			// use this for keeping time for Keycombos
 			for each (var sequence:KeySequence in keySequences) {
 				sequence.update();
-			}
-		}
-		 
-		public function receiveKeyInput(type:String, keyCode:uint):void {
-			var keyBind:KeyBind = find(keyCode);
-			if (!keyBind) return;
-			if (type == KeyboardEvent.KEY_DOWN) {
-				// resgistering as key being pressed
-				if (keysPressed.indexOf(keyBind) == -1) {
-					keysPressed.push(keyBind);
-					checkCombo();
-					MonsterDebugger.trace(this, keysPressed);
-				}
-				// checking for keySequence and keyCombo match, no holding down key
-				if (!keyBind.isDown) {
-					checkSequence(keyCode, KEY_PRESSED);
-				}
-				// letting the keyBind know it is being pressed
-				keyBind.press();
-			}
-			if (type == KeyboardEvent.KEY_UP) {
-				keyBind.release();
-				checkSequence(keyCode, KEY_RELEASED);
-				keysPressed.splice(keysPressed.indexOf(keyBind), 1);
 			}
 		}
 		

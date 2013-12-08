@@ -3,6 +3,7 @@ package dreamwisp.visual.camera {
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.action.IActionReceptor;
 	import dreamwisp.entity.components.Body;
+	import dreamwisp.entity.components.View;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import flash.display.Sprite;
 	import flash.geom.Point;
@@ -41,6 +42,7 @@ package dreamwisp.visual.camera {
 		
 		private var _user:ICamUser;
 		private var _focus:Body;
+		private var _focusView:View;
 		
 		private var currentState:ICameraState;
 		private var lastState:ICameraState;
@@ -79,7 +81,7 @@ package dreamwisp.visual.camera {
 			changeToState(initialStateName);
 		}
 		
-		public function update():void {
+		public function update(interpolation:Number):void {
 			// no need to update in a location the size of the camera
 			if (isScrollable()) currentState.scroll();
 			
@@ -239,7 +241,9 @@ package dreamwisp.visual.camera {
 		
 		/// The focus is the body of the entity which the camera follows.
 		public function get focus():Body { return _focus; }
-		public function set focus(value:Body):void { _focus = value; }
+		public function set focus(value:Body):void {
+			_focus = value;
+		}
 		
 		public function get center():Point { return _center; }
 		public function set center(value:Point):void { _center = value; }
@@ -247,6 +251,14 @@ package dreamwisp.visual.camera {
 		/// Camera users are usually a View subclass implementing ICamUser.
 		public function get user():ICamUser { return _user; }
 		public function set user(value:ICamUser):void { _user = value; }
+		
+		public function get focusView():View {
+			return _focusView;
+		}
+		
+		public function set focusView(value:View):void {
+			_focusView = value;
+		}
 		
 	}
 

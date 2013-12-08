@@ -7,20 +7,20 @@ package dreamwisp.entity.hosts {
 	import dreamwisp.entity.components.Physics;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.components.Weapon;
-	import dreamwisp.input.IInputReceptor;
+	import dreamwisp.input.InputState;
 	import dreamwisp.visual.lighting.LightSource;
 	import dreamwisp.world.base.Location;
 	import org.osflash.signals.Signal;
 	
 	
 	
-	public interface IEntity extends IInputReceptor {
+	public interface IEntity {
 		// Actions
 		function destroy():void;
 		function update():void;
-		function render():void;
-		function enableInput():void;
-		function disableInput():void;
+		function render(interpolation:Number):void;
+		//function enableInput():void;
+		//function disableInput():void;
 		
 		function get state():String;
 		function set state(value:String):void;

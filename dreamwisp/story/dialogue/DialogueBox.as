@@ -4,6 +4,8 @@ package dreamwisp.story.dialogue {
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.hosts.Entity;
+	import dreamwisp.entity.hosts.IPlayerControllable;
+	import dreamwisp.input.InputState;
 	import dreamwisp.input.KeyMap;
 	import flash.ui.Keyboard;
 	import org.osflash.signals.Signal;
@@ -15,7 +17,7 @@ package dreamwisp.story.dialogue {
 	 * @author Brandon
 	 */
 	
-	public class DialogueBox extends Entity {
+	public class DialogueBox extends Entity implements IPlayerControllable {
 		
 		/// The current conversation being handled by the DialogueBox.
 		private var conversation:Conversation;
@@ -134,9 +136,13 @@ package dreamwisp.story.dialogue {
 			initiator.mobilize();
 		}
 		
-		override public function hearKeyInput(type:String, keyCode:uint):void {
+		//override public function hearKeyInput(type:String, keyCode:uint):void {
 			//MonsterDebugger.trace(this, "receiving input");
-			keyMap.receiveKeyInput(type, keyCode);
+			//keyMap.receiveKeyInput(type, keyCode);
+		//}
+		
+		public function handleInput(inputState:InputState):void {
+			keyMap.readInput(inputState);
 		}
 		
 	}

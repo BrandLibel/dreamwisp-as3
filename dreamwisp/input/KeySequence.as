@@ -29,12 +29,13 @@ package dreamwisp.input {
 			timeLimit = delay;			
 		}
 		
-		public function registerKeyPress(keyCode:uint):void {
+		internal function registerKeyPress(keyCode:uint):void {
 			// combo reacts instantly upon key press - use only on final key of the combo
 			var matchedKey:Boolean = false;
-			if (keys[progress].keyCodes is Array) {
+			var keyBind:KeyBind = keys[progress];
+			
+			if (keyBind.getKeyCodes().length > 1) {
 				// more than one key possible in the KeyBind
-				var keyBind:KeyBind = keys[progress];
 				if (keyBind.hasKey(keyCode)) {
 					// matched one of the keyCodes in the KeyBind
 					matchedKey = true;
@@ -44,7 +45,7 @@ package dreamwisp.input {
 				}
 			} else {
 				// the KeyBind only contains one keyCode
-				if (keys[progress].hasKey(keyCode)) matchedKey = true;
+				if (keyBind.hasKey(keyCode)) matchedKey = true;
 			}			
 			//MonsterDebugger.trace(this, "matched a key press: " + matchedKey);
 			if (matchedKey) {
@@ -55,12 +56,14 @@ package dreamwisp.input {
 			}
 		}
 		
-		public function registerKeyRelease(keyCode:uint):void {
+		internal function registerKeyRelease(keyCode:uint):void {
 			// combo reacts upon key release - regular combo proceeding
 			var matchedKey:Boolean = false;
-			if (keys[progress].keyCodes is Array) {
+			var keyBind:KeyBind = keys[progress];
+			
+			if (keyBind.getKeyCodes().length > 1) {
 				// more than one key possible in the KeyBind
-				var keyBind:KeyBind = keys[progress];
+				
 				if (keyBind.hasKey(keyCode)) {
 					// matched one of the keyCodes in the KeyBind
 					matchedKey = true;
@@ -70,7 +73,7 @@ package dreamwisp.input {
 				}
 			} else {
 				// the KeyBind only contains one keyCode
-				if (keys[progress].hasKey(keyCode)) {
+				if (keyBind.hasKey(keyCode)) {
 					matchedKey = true;
 				}
 			}			
@@ -82,7 +85,7 @@ package dreamwisp.input {
 			}
 		}
 		
-		public function update():void {
+		internal function update():void {
 			// handling timing
 			if (isCounting) {
 				timePassed++;

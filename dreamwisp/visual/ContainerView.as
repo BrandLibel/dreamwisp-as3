@@ -63,7 +63,7 @@ package dreamwisp.visual {
 		 * x and y positions. 
 		 */
 		
-		public function render():void {
+		public function render(interpolation:Number):void {
 			container.x = x;
 			container.y = y;
 			container.alpha = alpha;

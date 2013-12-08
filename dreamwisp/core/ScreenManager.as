@@ -1,8 +1,10 @@
 package dreamwisp.core {
 	
 	import com.demonsters.debugger.MonsterDebugger;
+	import dreamwisp.input.InputState;
 	import dreamwisp.visual.IGraphicsObject;
 	import flash.display.Sprite;
+	import flash.ui.Keyboard;
 	import project.world.World;
 	
 	/**
@@ -33,8 +35,26 @@ package dreamwisp.core {
 		//		When transitioning, only the content would transition and the background would
 		//		remain in place. 
 		
-		public function update():void {
-			game.input.receptor = top;
+		public function update(inputState:InputState):void {
+			//if (inputState.isKeyDown(Keyboard.RIGHT) && inputState.isKeyDown(Keyboard.LEFT))
+				//MonsterDebugger.trace(this, "BOTH LEFT AND RIGHT ARE DOWN");
+			//if (inputState.isKeyDown(Keyboard.RIGHT) && inputState.isKeyDown(Keyboard.LEFT) 
+				//&& inputState.isKeyDown(Keyboard.SPACE)) {
+				//MonsterDebugger.trace(this, "Holding left and right and SPACE");	
+			//}
+			//if (inputState.isKeyDown(Keyboard.SPACE))
+				//MonsterDebugger.trace(this, inputState.keysPressed);
+			//if (inputState.isKeyDown(Keyboard.RIGHT))
+				//MonsterDebugger.trace(this, "right is down!");
+			//if (inputState.isKeyDown(Keyboard.LEFT))
+				//MonsterDebugger.trace(this, "left is down!");
+			//if (inputState.isMousePressed)
+				//MonsterDebugger.trace(this, "mouse is down");
+			//if (inputState.wasMouseClicked())
+				//MonsterDebugger.trace(this, "click!");
+			
+			//game.input.receptor = top;
+			
 			// item on the wait list already exists in master list and is holding up the line
 			// process it immediately so it is removed
 			if (waitList.length > 0 && top == waitList[0])
@@ -59,6 +79,7 @@ package dreamwisp.core {
 			while (tempScreensList.length > 0) {
 				// pop the screen being worked on from the working list
 				screen = tempScreensList.pop();
+				
 				// run screen if uncovered. it always runs if in middle of a transition
 				// ...because 
 				// when a screen bypasses waitlist, the screen under it doesn't get
@@ -70,11 +91,14 @@ package dreamwisp.core {
 				// in early because processPendingScreen() gets caused twice in a row.
 				// The latter part of the OR makes sure it can properly register as hidden.
 				if (!coveredByOtherScreen || screen.inTransition()) {
+					// screens between transition in and active state are considered in Active half
+					if (screen.inActiveHalf())
+						screen.handleInput(inputState);
 					screen.update();
 					if (screen.state == GameScreen.STATE_HIDDEN) {
 						// necessary because if it gets hidden before rendering,
 						// the screen will still appear at a very low alpha
-						screen.render();
+						screen.render(1);
 						// let a waiting screen come in when screen finishes transitioning out
 						processPendingScreens();
 					}
@@ -88,38 +112,24 @@ package dreamwisp.core {
 			}
 		}
 		
-		public function render():void {
+		public function render(interpolation:Number):void {
 			for each (var screen:GameScreen in screens) {
 				if (screen.state == GameScreen.STATE_HIDDEN)
 					continue;
-				screen.render();
+				screen.render(interpolation);
 			}
 		}
 		
 		public function pendScreen(screen:GameScreen):void {
-			//TODO: A screen can be added to the waitList even though it is 
-			//		already present in the master list. This happens
-			//		because when a popup screen appears it does not tell the screen
-			//		below it to exit. So when the popup screen exits itself and returns 
-			//		to the previous screen, it pends a duplicate of the previous screen
-			//		into the waitList, 
 			screen.screenManager = this;
-			// only consider adding if it hasn't already been added, attemps to fix above bug
-			// problem: cannot start game
-			//if (screens.indexOf(screen) == -1)
-				waitList.push( screen );
+			waitList.push( screen );
 			//MonsterDebugger.trace(this, waitList, "", "Wait List");
-			// Attempts to fix the above bug by treating the covered screen as removed
-			// problem: unintuitive, messy. Do not remove, simply have isPopup set isCoveredByScreen.
-			//if (screen.isPopup)
-				//removeScreen( top );
 			if (screens.length != 0 && !screen.isPopup) {
 				// exit all screens below that aren't the new screen
 				for each (var screenBelow:GameScreen in screens) {
 					if (screenBelow == screen) continue;
 					screenBelow.exit();
 				}
-				//top.exit();
 			}
 		}
 		

@@ -1,4 +1,4 @@
-package dreamwisp.engine.world.base {
+package dreamwisp.world.base {
 		
 	/**
 	 * ...

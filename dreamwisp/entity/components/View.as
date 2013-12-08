@@ -5,6 +5,7 @@ package dreamwisp.entity.components {
 	import dreamwisp.entity.hosts.Entity;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import project.entity.hosts.Player;
 	
 	/**
 	 * This class is for anything that can be visually rendered on the screen.
@@ -28,12 +29,20 @@ package dreamwisp.entity.components {
 			host = entity;
 		}
 		
-		public function render():void {
+		public function render(interpolation:Number):void {
 			if (!movieClip) return;
 			
 			if (host.animation) movieClip.gotoAndStop(host.animation.frame.currentValue);
-            movieClip.x = host.body.x;
-            movieClip.y = host.body.y;
+			if (host.physics) {
+				movieClip.x = host.body.x + (host.physics.xVelocity * interpolation);
+				movieClip.y = host.body.y + (host.physics.yVelocity * interpolation);
+				
+			} else {
+				movieClip.x = host.body.x;
+				movieClip.y = host.body.y;
+			}
+            /*movieClip.x = host.body.x;
+			movieClip.y = host.body.y;*/
             movieClip.rotation = host.body.angle * rotAngle;
             movieClip.alpha = alpha;
             movieClip.scaleX = 1;//scale;

@@ -73,7 +73,7 @@ package dreamwisp.world.tile {
 					destPoint.x = tile.x;
 					destPoint.y = tile.y
 					if (tile.hasAnimation) tileCoords.push(new Point(b, a));
-					tile.render();
+					tile.render(1);
 					canvasData.copyPixels(tile.bitmap.bitmapData, tileRect, destPoint);
 					//if (tile.body) Level(location).solidBodys.push(tile.body);
 				}
@@ -87,7 +87,7 @@ package dreamwisp.world.tile {
 		public function drawTile(row:uint, col:uint):void {
 			const destPoint:Point = new Point(col * tileWidth, row * tileHeight);
 			var tile:Tile = tileGrid[row][col];
-			tile.render();
+			tile.render(1);
 			canvasData.copyPixels(tile.bitmap.bitmapData, tileRect, destPoint);	
 		}
 		
