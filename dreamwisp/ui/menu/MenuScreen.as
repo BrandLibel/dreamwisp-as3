@@ -80,6 +80,7 @@ package dreamwisp.ui.menu {
 		}
 		
 		private function scrollForward():void {
+			// this is a simple great 
 			selectButton(0, 1);
 		}
 		
