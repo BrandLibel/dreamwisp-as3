@@ -11,7 +11,6 @@ package dreamwisp.world.base {
 	import dreamwisp.visual.ContainerView;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.world.tile.TileScape;
-	import project.world.World;
 	
 	/**
 	 * This superclass contains basic functionality

@@ -5,7 +5,6 @@ package dreamwisp.entity.components {
 	import dreamwisp.entity.hosts.Entity;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
-	import project.entity.hosts.Player;
 	
 	/**
 	 * This class is for anything that can be visually rendered on the screen.

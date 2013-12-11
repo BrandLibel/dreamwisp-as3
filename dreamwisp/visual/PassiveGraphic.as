@@ -1,4 +1,5 @@
-package dreamwisp.visual {
+package dreamwisp.visual
+{
 	
 	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
@@ -9,19 +10,22 @@ package dreamwisp.visual {
 	 * @author Brandon
 	 */
 	
-	public class PassiveGraphic extends GraphicsObject {
+	public class PassiveGraphic extends GraphicsObject
+	{
 		
 		private var bitmap:Bitmap;
 		
-		public function PassiveGraphic(displayObject:DisplayObject, x:Object = 0, y:Object = 0) {
+		public function PassiveGraphic(displayObject:DisplayObject, x:Object = 0, y:Object = 0)
+		{
 			this.bitmap = Belt.convertToBitmap(displayObject);
 			super(displayObject, x, y);
 		}
-				
-		override public function getGraphicsData():DisplayObject {
+		
+		override public function getGraphicsData():DisplayObject
+		{
 			return bitmap;
 		}
-		
+	
 	}
 
 }

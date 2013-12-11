@@ -5,7 +5,6 @@ package dreamwisp.core {
 	import dreamwisp.visual.IGraphicsObject;
 	import flash.display.Sprite;
 	import flash.ui.Keyboard;
-	import project.world.World;
 	
 	/**
 	 * The ScreenManager is a core class that allows multiple GameScreens
