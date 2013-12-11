@@ -48,8 +48,15 @@ package dreamwisp.ui.menu {
 		private var drawHeadX:Number = 0;
 		private var drawHeadY:Number = 0;
 		
+		/// Amount of game cycles between key input button selections.
+		protected var MIN_CYCLES_BETWEEN_SEEKS:uint = 3;
+		protected var CYCLES_FOR_INITIAL_PRESS:uint = 15;
+		private var currentCyclesToWait:uint = 3;
+		
+		private var seekCounter:uint = 0;
+		
 		public function MenuScreen(layout:Object, graphicsFactory:IGraphicsFactory) {
-			this.graphicsFactory = graphicsFactory;		
+			this.graphicsFactory = graphicsFactory;
 			
 			view = new ContainerView();
 			//view.container.visible = false;
@@ -72,19 +79,11 @@ package dreamwisp.ui.menu {
 		private function init():void {
 			keyMap = new KeyMap();
 			keyMap.bind( [Keyboard.SPACE, Keyboard.ENTER, Keyboard.Z, Keyboard.X], null, hitButton );
-			keyMap.bind( ((isLayoutHorizontal == true) ? Keyboard.LEFT : Keyboard.UP), scrollBack );
-			keyMap.bind( ((isLayoutHorizontal == true) ? Keyboard.RIGHT : Keyboard.DOWN), scrollForward );
+			keyMap.bind( [Keyboard.LEFT , Keyboard.UP], setInitialPressDelay, removeInitialPressDelay );
+			keyMap.bind( [Keyboard.RIGHT , Keyboard.DOWN], setInitialPressDelay, removeInitialPressDelay );
 
 			// defining signals
 			buttonPressed = new Signal(String);
-		}
-		
-		private function scrollForward():void {
-			selectButton(0, 1);
-		}
-		
-		private function scrollBack():void {
-			selectButton(0, -1);
 		}
 				
 		private function build(layout:Object):void {
@@ -134,6 +133,127 @@ package dreamwisp.ui.menu {
 			}
 		}
 		
+		override public function handleInput(inputState:InputState):void {
+			super.handleInput(inputState);
+			checkForButtonAt(inputState.mouseX, inputState.mouseY);
+			if (inputState.wasMouseClicked()) {
+				if (checkForButtonAt(inputState.mouseX, inputState.mouseY))
+					hitButton();
+			}
+			
+			if (seekCounter == 0) {
+				if (keyMap.isDown(Keyboard.UP))
+					seekPrevButton();
+				if (keyMap.isDown(Keyboard.DOWN))
+					seekNextButton();
+			}
+			
+		}
+		
+		/// Runs all the visual animations of graphics.
+		override public function update():void {
+			if (paused) return;
+			super.update();
+			for each (var asset:IGraphicsObject in assets) asset.update();
+			for each (var button:MenuButton in buttons) button.update();
+			const stepDist:uint = 8;
+			drawHeadX += stepDist;
+			drawHeadY += stepDist;
+			if (isDrawing) {
+				view.container.graphics.lineTo(drawHeadX, drawHeadY);
+				/*view.container.graphics.moveTo(drawHeadX - 8*2, drawHeadY - 8*2);
+				view.container.graphics.lineStyle(8, 0xFFFFFF);
+				view.container.graphics.lineTo(drawHeadX, drawHeadY);
+				view.container.graphics.lineStyle(16, 0xBBF8FB);*/
+			}
+			if (seekCounter > 0)
+				seekCounter--;
+		}
+		
+		private function drawTo(targetX:Number, targetY:Number):void {
+			isDrawing = true;
+		}
+		
+		override public function render(interpolation:Number):void {
+			if (paused) return;
+			super.render(interpolation);
+			for each (var asset:IGraphicsObject in assets) asset.render();
+			for each (var button:MenuButton in buttons) button.render(interpolation);
+			view.render(interpolation);
+		}
+		
+		override public function enter():void {
+			super.enter();
+			/*takesInput = true;
+			view.container.visible = true;
+			view.container.alpha = 0;*/
+			selectButton();
+			/// check disabled buttons to see if they've become enabled
+			for (var i:uint = 1; i < buttons.length; i++) {
+				//buttons[i].watcher.check();
+				if (buttons[i].isEnabled == false) buttons[i].check();
+			}
+		}
+		
+		private function setInitialPressDelay():void {
+			currentCyclesToWait = CYCLES_FOR_INITIAL_PRESS;
+		}
+		
+		private function removeInitialPressDelay():void {
+			MonsterDebugger.trace(this, "zero");
+			currentCyclesToWait = 0;
+			seekCounter = 0;
+		}
+		
+		private function resetSeekCounter():void {
+			MonsterDebugger.trace(this, "setting seek counter");
+			seekCounter = currentCyclesToWait;
+			// if min cycl btw seeks > some amount, reset it to default
+			if (currentCyclesToWait >= MIN_CYCLES_BETWEEN_SEEKS)
+				currentCyclesToWait = MIN_CYCLES_BETWEEN_SEEKS;
+		}
+		
+		private function seekNextButton():void {
+			resetSeekCounter();
+			var tempButtonNum:int = buttonNum;
+			// currently on the last button? loop by going to the first
+			if (tempButtonNum == buttons.length -1)
+				tempButtonNum = 0;
+			else
+				tempButtonNum++;
+			// visuals - unselect current, select new
+			buttons[buttonNum].deselect();
+			buttonNum = tempButtonNum;
+			button = buttons[buttonNum];
+			button.highlight();
+
+			//selectButton(tempButtonNum);
+		}
+		
+		private function seekPrevButton():void {
+			resetSeekCounter();
+			var tempButtonNum:int = buttonNum;
+			// currently on the first button? loop by going to the last
+			if (tempButtonNum == 0)
+				tempButtonNum = buttons.length -1;
+			else 
+				tempButtonNum--;
+			// visuals - unselect current, select new
+			buttons[buttonNum].deselect();
+			buttonNum = tempButtonNum;
+			button = buttons[buttonNum];
+			button.highlight();
+			//selectButton(tempButtonNum);
+		}
+		
+		private function scrollForward():void {
+			selectButton(0, 1);
+		}
+		
+		private function scrollBack():void {
+			selectButton(0, -1);
+		}
+		
 		private function checkForButtonAt(mouseX:int, mouseY:int):Boolean {
 			for (var i:uint = 0; i < buttons.length; i++) {
 				var btn:MenuButton = buttons[i];
@@ -145,6 +265,8 @@ package dreamwisp.ui.menu {
 			}
 			return false;
 		}
+		
+		
 		
 		/**
 		 * Makes the specified button the active button and visually highlights it.
@@ -170,58 +292,6 @@ package dreamwisp.ui.menu {
 			} else {
 				button = buttons[this.buttonNum];
 				button.highlight();
-			}
-		}
-		
-		override public function handleInput(inputState:InputState):void {
-			super.handleInput(inputState);
-			checkForButtonAt(inputState.mouseX, inputState.mouseY);
-			if (inputState.wasMouseClicked()) {
-				if (checkForButtonAt(inputState.mouseX, inputState.mouseY))
-					hitButton();
-			}
-		}
-		
-		/// Runs all the visual animations of graphics.
-		override public function update():void {
-			if (paused) return;
-			super.update();
-			for each (var asset:IGraphicsObject in assets) asset.update();
-			for each (var button:MenuButton in buttons) button.update();
-			const stepDist:uint = 8;
-			drawHeadX += stepDist;
-			drawHeadY += stepDist;
-			if (isDrawing) {
-				view.container.graphics.lineTo(drawHeadX, drawHeadY);
-				/*view.container.graphics.moveTo(drawHeadX - 8*2, drawHeadY - 8*2);
-				view.container.graphics.lineStyle(8, 0xFFFFFF);
-				view.container.graphics.lineTo(drawHeadX, drawHeadY);
-				view.container.graphics.lineStyle(16, 0xBBF8FB);*/
-			}
-		}
-		
-		private function drawTo(targetX:Number, targetY:Number):void {
-			isDrawing = true;
-		}
-		
-		override public function render(interpolation:Number):void {
-			if (paused) return;
-			super.render(interpolation);
-			for each (var asset:IGraphicsObject in assets) asset.render();
-			for each (var button:MenuButton in buttons) button.render(interpolation);
-			view.render(interpolation);
-		}
-		
-		override public function enter():void {
-			super.enter();
-			/*takesInput = true;
-			view.container.visible = true;
-			view.container.alpha = 0;*/
-			selectButton();
-			/// check disabled buttons to see if they've become enabled
-			for (var i:uint = 1; i < buttons.length; i++) {
-				//buttons[i].watcher.check();
-				if (buttons[i].isEnabled == false) buttons[i].check();
 			}
 		}
 		
