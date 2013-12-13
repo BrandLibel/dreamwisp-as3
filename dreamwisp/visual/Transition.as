@@ -3,7 +3,7 @@ package dreamwisp.visual {
 	import com.demonsters.debugger.MonsterDebugger;
 	import org.osflash.signals.Signal;
 	/**
-	 * ...
+	 * THIS IS AN UNREFERENCED CLASS LEFT INTACT FOR LEARNING FROM MISTAKES.
 	 * @author Brandon
 	 */
 	public class Transition extends AnimHandler {

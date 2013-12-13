@@ -38,12 +38,7 @@
 			
 			if (view.movieClip.totalFrames > 1){
 				animation = new Animation(this);
-				animation.mapFrameLabels(view.movieClip);
 			}
-		}
-		
-		private function testPress(btnCode:String):void {
-			MonsterDebugger.trace(this, btnCode, "", "GAME_TEST", 0xF70DD3);
 		}
 		
 		override public function update():void {
@@ -78,12 +73,12 @@
 		
 		public final function highlight():void {
 			//var frameLabel:FrameLabel;
-			animation.frame.animateTo(animation.findFrame("over", view.movieClip));
+			animation.runTo(animation.findFrame("over"));
 		}
 		
 		public final function deselect():void {
 			//_buttonMC.gotoAndStop("up");
-			animation.frame.animateTo(animation.findFrame("up", view.movieClip));
+			animation.runTo(animation.findFrame("up"));
 		}
 				
 	}

@@ -5,7 +5,7 @@ package dreamwisp.visual {
 	import tools.Belt;
 	
 	/**
-	 * This class
+	 * THIS IS AN UNREFERENCED CLASS LEFT INTACT FOR LEARNING FROM MISTAKES.
 	 * @author Brandon
 	 */
 	public class AnimHandler {
