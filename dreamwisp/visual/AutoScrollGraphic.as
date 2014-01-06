@@ -87,9 +87,8 @@ package dreamwisp.visual
 			scrollingGraphic.scrollRect = scrollRect;
 		}
 		
-		override public function initialize(parentWidth:Number = 768, parentHeight:Number = 480):void
+		override public function initialize():void
 		{
-			super.initialize(parentWidth, parentHeight);
 			scrollRect = new Rectangle(0, 0, parentWidth, parentHeight);
 			scrollingGraphic.scrollRect = scrollRect;
 		}

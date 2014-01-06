@@ -5,7 +5,7 @@ package dreamwisp.world.base {
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.entity.hosts.IEntityFactory;
 	import dreamwisp.entity.hosts.IInteractible;
-	import dreamwisp.entity.hosts.IPlatformEntity;
+	//import dreamwisp.entity.hosts.IPlatformEntity;
 	import dreamwisp.entity.hosts.Door;
 	import dreamwisp.entity.hosts.IPlayerControllable;
 	import dreamwisp.input.InputState;
@@ -19,8 +19,7 @@ package dreamwisp.world.base {
 	 */
 	public dynamic class EntityManager {
 
-		private var entityList:Object;
-		private var dialogue:Object;
+		private var prototypesJSON:Object;
 		private var entitys:Vector.<Entity> = new Vector.<Entity>;
 		private var tempEntityList:Vector.<Entity> = new Vector.<Entity>;
 		private var controllableEntitys:Vector.<IPlayerControllable> = new Vector.<IPlayerControllable>;
@@ -34,10 +33,9 @@ package dreamwisp.world.base {
 		/// Signal to dispatch AFTER destroyEntity has been called
 		public var entityRemoved:Signal;
 		
-		public function EntityManager(factory:IEntityFactory, entityList:Object, dialogue:Object = null) {
+		public function EntityManager(factory:IEntityFactory, prototypesJSON:Object) {
 			this.factory = factory;
-			this.entityList = entityList;
-			if (dialogue) this.dialogue = dialogue;
+			this.prototypesJSON = prototypesJSON;
 			init();
 		}
 		
@@ -83,7 +81,7 @@ package dreamwisp.world.base {
 		 */
 		public function spawnEntity(actionData:Object):Entity {
 			// entityList is the JSON file
-			const entityData:Object = entityList[actionData.entityNum];
+			const entityData:Object = prototypesJSON[actionData.entityNum];
 			var entity:Entity = factory.createEntity(entityData.className);
 			// TODO: make it so that any aspect of the Entity can be overriden through the specific JSON action call, like HP, color, light, etc.
 			
@@ -105,9 +103,9 @@ package dreamwisp.world.base {
 			}
 			
 			// attaching entity according to actionData
-			if (actionData.conversation) {
-				entity.actor.setConversation( dialogue[actionData.conversation] );
-			}
+			//if (actionData.conversation) {
+				//entity.actor.setConversation( dialogue[actionData.conversation] );
+			//}
 			if (actionData.destination) {
 				// for doors
 				Door(entity).destination = actionData.destination;
@@ -120,6 +118,13 @@ package dreamwisp.world.base {
 			
 			//addEntity(entity);
 			
+			return entity;
+		}
+		
+		public function spawnEntity2(prototypeID:uint):Entity 
+		{
+			var entity:Entity = factory.createEntity2(prototypeID);
+			addEntity(entity);
 			return entity;
 		}
 		
@@ -165,14 +170,14 @@ package dreamwisp.world.base {
 				entity.interactibles = this["Interactibles"];
 			}
 			
-			if (entity is IPlatformEntity) {
+			//if (entity is IPlatformEntity) {
 				// Interface casting must be done this way in order to access platformController
 				// and pass the tileGrid to the entity.
 				// TODO: make a better system for keeping entitys with tileGrids;
 				//var iEntity:IPlatformEntity = entity as IPlatformEntity;
 				//iEntity.platformController.tileGrid = location.tileScape.tileGrid;
 				//iEntity = null;
-			}
+			//}
 			if (entity.hasOwnProperty("lightSource")) {
 				
 			}

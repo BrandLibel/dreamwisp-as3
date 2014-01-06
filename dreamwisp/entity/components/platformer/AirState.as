@@ -1,7 +1,7 @@
 package dreamwisp.entity.components.platformer {
 	
 	import com.demonsters.debugger.MonsterDebugger;
-	import dreamwisp.entity.hosts.IPlatformEntity;
+	import dreamwisp.entity.hosts.Entity;
 	
 	/**
 	 * ...
@@ -11,7 +11,7 @@ package dreamwisp.entity.components.platformer {
 	public class AirState implements IPlatformMovementState {
 		
 		private var platformController:PlatformController;
-		private var host:IPlatformEntity;
+		private var host:Entity;
 		
 		private var maxJumps:uint = 0;
 		private var jumps:uint;
@@ -79,7 +79,6 @@ package dreamwisp.entity.components.platformer {
 				host.physics.yVelocity = -9;
 				jumps--;
 			}
-			
 		}
 		
 		public function crouch():void {

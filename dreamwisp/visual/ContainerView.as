@@ -105,10 +105,12 @@ package dreamwisp.visual {
 			}
 		}
 		
-		public function addGraphicsObject(graphicsObject:IGraphicsObject, layer:uint = 0, label:String = ""):void {
+		public function addGraphicsObject(graphicsObject:GraphicsObject, layer:uint = 0, label:String = ""):void {
 			
 			addGenericView( new GenericView(graphicsObject.getGraphicsData(), layer, label ) );
-			graphicsObject.initialize(width, height);
+			graphicsObject.parentWidth = width;
+			graphicsObject.parentHeight = height;
+			graphicsObject.initialize();
 			if (graphicsObject.relativeX != null && graphicsObject.relativeX != "")
 				
 				graphicsObject.x = graphicsObject.getGraphicsData().x = calculateRelativePosition( graphicsObject.relativeX, graphicsObject.getGraphicsData() );
@@ -141,11 +143,11 @@ package dreamwisp.visual {
 		
 		public function getViewByLabel(label:String):GenericView {
 			for each (var genericView:GenericView in genericViews) {
-				if (genericView.label != "") {
+				//if (genericView.label != "") {
 					if (genericView.label == label) {
 						return genericView;
 					}
-				}
+				//}
 			}
 			throw new Error("Could not find a GenericView by that label in this container.");
 		}

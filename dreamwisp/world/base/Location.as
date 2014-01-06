@@ -2,7 +2,6 @@ package dreamwisp.world.base {
 	
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
-	import dreamwisp.entity.hosts.IEntity;
 	import dreamwisp.entity.hosts.IEntityFactory;
 	import dreamwisp.entity.hosts.IPlayerControllable;
 	import dreamwisp.core.GameScreen;

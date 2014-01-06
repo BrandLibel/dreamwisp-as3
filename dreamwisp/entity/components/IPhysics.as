@@ -1,0 +1,1 @@
+package dreamwisp.entity.components {	/**	 * IPhysics is the component interface for 	 * @author Brandon	 */	public interface IPhysics 	{			function moveLeft():void;		function moveRight():void;		function moveDown():void;		function moveUp():void;		function jump():void;				function update():void;	}	}

@@ -1,25 +1,28 @@
-package dreamwisp.entity.hosts {
-	
+package dreamwisp.entity.hosts
+{
 	import com.demonsters.debugger.MonsterDebugger;
+	import dreamwisp.core.GameScreen;
 	import dreamwisp.entity.components.Actor;
 	import dreamwisp.entity.components.Animation;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.Health;
+	import dreamwisp.entity.components.IPhysics;
 	import dreamwisp.entity.components.Physics;
+	import dreamwisp.entity.components.platformer.PlatformController;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.components.Weapon;
-	import dreamwisp.entity.hosts.IEntity;
 	import dreamwisp.input.InputState;
 	import dreamwisp.visual.lighting.LightSource;
 	import dreamwisp.world.base.Location;
 	import org.osflash.signals.Signal;
+	import tools.Belt;
 	
 	/**
 	 * Entitys are objects which populate GameStates (containers). 
 	 */
 	
-	public class Entity implements IEntity {
-		
+	public class Entity implements IEntity
+	{
 		private var _name:String;
 		public var actorID:uint;
 		public var groupName:String;
@@ -33,7 +36,9 @@ package dreamwisp.entity.hosts {
 		private var _weapon:Weapon;
 		private var _animation:Animation;
 		private var _view:View;
+		private var _platformController:PlatformController;
 		private var _lightSource:LightSource;
+		public var physicsComponent:IPhysics;
 		
 		private var _entityCreated:Signal;
 		private var _destroyed:Signal;
@@ -45,21 +50,54 @@ package dreamwisp.entity.hosts {
 		private var _interactibles:Vector.<Entity>;
 		private var _group:Vector.<Entity>;
 		
-		private var _state:String = "falling";
 		private var _myLocation:Location;
+		private var _myScreen:GameScreen;
 		
-		protected var isMobile:Boolean = true;
+		protected var isMobile:Boolean = true;		
 		
-		//protected var takesInput:Boolean = false;
-		
-		
-		public function Entity() {
+		public function Entity(prototypeData:Object = null, prototypeID:uint = 0) 
+		{
 			entityCreated = new Signal(Entity);
 			destroyed = new Signal(Entity);
 			leftBounds = new Signal(Entity);
 			
 			enabledInput = new Signal(Entity);
 			disabledInput = new Signal(Entity);
+			
+			if (!prototypeData)
+				return;
+			// Any prototype data not handled here should be intercepted in the subclass constructor
+			var hosts:Array = prototypeData.hosts;
+			var components:Object = prototypeData.components;
+			var myData:Object = hosts[prototypeID];
+			if (myData.name)
+			{
+				name = myData.name;
+			}
+			if (myData.body != null)
+			{
+				var bodyData:Object = components["body"][myData.body];
+				body = new Body(this, bodyData.width, bodyData.height);
+			}
+			if (myData.health != null)
+			{
+				health = new Health(this, myData.health);
+			}
+			if (myData.platformer != null)
+			{
+				var platformer:Object = components["platformer"][myData.platformer];
+				platformController = new PlatformController(this, platformer.maxWalkSpeed,
+					platformer.walkAcceleration, platformer.jumpPower);
+			}
+			if (myData.view != null)
+			{
+				view = new View(this);
+				var strings:Array = myData.view.split("_");
+				if (strings[0] == "mc")
+					view.movieClip = Belt.addClassFromLibrary( strings[1], Belt.CLASS_MOVIECLIP );
+				//else
+					// "ss" - access spritesheet statically 
+			}
 		}
 		
 		/**
@@ -166,6 +204,10 @@ package dreamwisp.entity.hosts {
 		
 		public function set view(value:View):void { _view = value; }
 		
+		public function get platformController():PlatformController { return _platformController; }
+			
+		public function set platformController(value:PlatformController):void { _platformController = value; }
+		
 		public function get entityCreated():Signal { return _entityCreated; }
 		
 		public function set entityCreated(value:Signal):void { _entityCreated = value; }
@@ -173,11 +215,7 @@ package dreamwisp.entity.hosts {
 		public function get destroyed():Signal { return _destroyed; }
 		
 		public function set destroyed(value:Signal):void { _destroyed = value; }
-		
-		public function get state():String { return _state; }
-		
-		public function set state(value:String):void { _state = value; }
-		
+					
 		public function get targets():Vector.<Entity> { return _targets; }
 		
 		public function set targets(value:Vector.<Entity>):void { _targets = value; }
@@ -229,6 +267,10 @@ package dreamwisp.entity.hosts {
 		public function set name(value:String):void {
 			_name = value;
 		}
+		
+		public function get myScreen():GameScreen { return _myScreen; }
+		
+		public function set myScreen(value:GameScreen):void { _myScreen = value; }
 		
 		
 	}

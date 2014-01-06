@@ -2,7 +2,6 @@ package dreamwisp.entity.components.platformer {
 	
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.hosts.Entity;
-	import dreamwisp.entity.hosts.IPlatformEntity;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.Physics;
 	import dreamwisp.world.tile.Tile;
@@ -15,7 +14,7 @@ package dreamwisp.entity.components.platformer {
 	 */
 	public class PlatformController {
 		
-		public var host:IPlatformEntity;
+		public var host:Entity;
 		private var body:Body;
 		private var physics:Physics;
 		
@@ -79,7 +78,7 @@ package dreamwisp.entity.components.platformer {
 		internal var below:Tile;
 		internal var below_right:Tile;
 		
-		public function PlatformController(entity:IPlatformEntity, maxWalkSpeed:uint, walkAcceleration:Number, jumpPower:int):void {
+		public function PlatformController(entity:Entity, maxWalkSpeed:uint, walkAcceleration:Number, jumpPower:int):void {
 			host = entity;
 			body = host.body;
 			physics = host.physics;
@@ -116,9 +115,7 @@ package dreamwisp.entity.components.platformer {
 			
 		}
 		
-		public function update():void {
-			tileGrid = host.myLocation.tileScape.tileGrid;
-			
+		public function update():void {			
 			registerGround();
 			checkCollisions();
 			currentState.update();
@@ -144,11 +141,13 @@ package dreamwisp.entity.components.platformer {
 		}
 		
 		public function jump():void {
+			MonsterDebugger.trace(this, "canJump: " + canJump());
 			// prevent re-grabbing ladder while holding up
 			if (currentState is LadderState && pressingUp) canGrabLadder = false;
 			// disallow jumping while there's a solid edge directly above
 			//if (above_left.solid.down || above_right.solid.down) { // causes problems when hugging walls 
 			if (above.solid.down && below.solid.up){ // doesn't work if above is not exactly centered
+			//if (hasTileAbove()){
 				return;
 			}
 			
@@ -174,6 +173,11 @@ package dreamwisp.entity.components.platformer {
 		public function releaseUp():void {
 			pressingUp = false;
 			canGrabLadder = true;
+		}
+		
+		public function setTileGrid(tileGrid:Vector.<Vector.<Tile>>):void 
+		{
+			this.tileGrid = tileGrid;
 		}
 		
 		private function registerGround():void {
@@ -231,7 +235,6 @@ package dreamwisp.entity.components.platformer {
 					}
 				}
 			}
-			
 			body.x += physics.xVelocity;
 			getEdges();
 			/// Collision to the left. 
@@ -292,7 +295,6 @@ package dreamwisp.entity.components.platformer {
 			//react();
 			//MonsterDebugger.trace(this, "colliding right" );
 			currentState.collideRight();
-			
 		}
 		
 		private function getEdges():void {
@@ -510,6 +512,12 @@ package dreamwisp.entity.components.platformer {
 			body.y = centerY - body.height / 2;
 			
 		}
+		
+		private function canJump():Boolean {
+			if (above_left.solid.down || above_right.solid.down) return false;
+			
+			return true;
+		}	
 		
 		public function testY(height:Number):Number {
 			return -(height / 2) + y_slope_detector * tileHeight + tileHeight / 2 + 1;

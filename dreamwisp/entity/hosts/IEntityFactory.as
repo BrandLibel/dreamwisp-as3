@@ -7,6 +7,7 @@ package dreamwisp.entity.hosts {
 	public interface IEntityFactory {
 		
 		function createEntity(name:String):Entity;
+		function createEntity2(id:uint):Entity;
 		
 	}
 	

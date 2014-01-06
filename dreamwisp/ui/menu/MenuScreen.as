@@ -9,7 +9,7 @@ package dreamwisp.ui.menu {
 	import dreamwisp.visual.BasicGraphicsFactory;
 	import dreamwisp.visual.ContainerView;
 	import dreamwisp.visual.IGraphicsFactory;
-	import dreamwisp.visual.IGraphicsObject;
+	import dreamwisp.visual.GraphicsObject;
 	import flash.display.Bitmap;
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
@@ -94,7 +94,7 @@ package dreamwisp.ui.menu {
 					//assets.push(new Asset(layout.assets[j]));
 					var asset:Object = layout.assets[j];
 					if (!asset.hasOwnProperty("type") || !asset.hasOwnProperty("name")) continue;
-					var graphicsObject:IGraphicsObject = graphicsFactory.getGraphicsObject(asset.type, asset.name, asset);
+					var graphicsObject:GraphicsObject = graphicsFactory.getGraphicsObject(asset.type, asset.name, asset);
 					assets.push(graphicsObject);
 					view.addGraphicsObject(graphicsObject, ContainerView.LAYER_BOTTOM);
 				}
@@ -154,7 +154,7 @@ package dreamwisp.ui.menu {
 		override public function update():void {
 			if (paused) return;
 			super.update();
-			for each (var asset:IGraphicsObject in assets) asset.update();
+			for each (var asset:GraphicsObject in assets) asset.update();
 			for each (var button:MenuButton in buttons) button.update();
 			const stepDist:uint = 8;
 			drawHeadX += stepDist;
@@ -177,7 +177,7 @@ package dreamwisp.ui.menu {
 		override public function render(interpolation:Number):void {
 			if (paused) return;
 			super.render(interpolation);
-			for each (var asset:IGraphicsObject in assets) asset.render();
+			for each (var asset:GraphicsObject in assets) asset.render();
 			for each (var button:MenuButton in buttons) button.render(interpolation);
 			view.render(interpolation);
 		}

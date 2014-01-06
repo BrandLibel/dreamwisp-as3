@@ -2,7 +2,6 @@ package dreamwisp.core {
 	
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.input.InputState;
-	import dreamwisp.visual.IGraphicsObject;
 	import flash.display.Sprite;
 	import flash.ui.Keyboard;
 	

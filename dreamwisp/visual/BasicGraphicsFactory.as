@@ -33,7 +33,7 @@ package dreamwisp.visual {
 		 * @param	data Object with all data required by a specific GraphicsOject.
 		 * @return
 		 */
-		public function getGraphicsObject(type:String, name:String, data:Object = null):IGraphicsObject {
+		public function getGraphicsObject(type:String, name:String, data:Object = null):GraphicsObject {
 			MonsterDebugger.trace(this, graphics[name]);
 			var displayObject:DisplayObject = findDisplayObject(name);
 			if (type == "PassiveGraphic")

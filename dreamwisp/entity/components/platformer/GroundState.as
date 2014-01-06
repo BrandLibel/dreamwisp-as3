@@ -1,7 +1,7 @@
 package dreamwisp.entity.components.platformer {
 	
 	import com.demonsters.debugger.MonsterDebugger;
-	import dreamwisp.entity.hosts.IPlatformEntity;
+	import dreamwisp.entity.hosts.Entity;
 	
 	/**
 	 * ...
@@ -11,7 +11,7 @@ package dreamwisp.entity.components.platformer {
 	public class GroundState implements IPlatformMovementState {
 		
 		private var platformController:PlatformController;
-		private var host:IPlatformEntity;
+		private var host:Entity;
 		
 		public function GroundState(platformController:PlatformController) {
 			this.platformController = platformController;

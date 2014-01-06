@@ -1,7 +1,6 @@
 package dreamwisp.world.base {
 	
 	import dreamwisp.entity.hosts.Entity;
-	import dreamwisp.entity.hosts.IEntity;
 	import dreamwisp.entity.hosts.IPlayerControllable;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.camera.Camera;

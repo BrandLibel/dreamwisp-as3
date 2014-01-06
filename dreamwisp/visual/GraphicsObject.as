@@ -8,7 +8,7 @@ package dreamwisp.visual {
 	 * @author Brandon
 	 */
 	
-	public class GraphicsObject implements IGraphicsObject {
+	public class GraphicsObject /*implements IGraphicsObject*/ {
 		
 		private var _x:Number;
 		private var _y:Number;
@@ -17,8 +17,15 @@ package dreamwisp.visual {
 		
 		protected var width:Number;
 		protected var height:Number;
-		protected var parentWidth:Number;
-		protected var parentHeight:Number;
+		private var _parentWidth:Number = 768;
+		private var _parentHeight:Number = 480;
+		
+		private var alpha:Number = 1;
+		private var scaleX:Number = 1;
+		private var scaleY:Number = 1;
+		
+		private var _layer:uint;
+		
 		protected var displayObject:DisplayObject;
 		
 		public function GraphicsObject(displayObject:DisplayObject, x:Object = 0, y:Object = 0 ) {
@@ -35,10 +42,8 @@ package dreamwisp.visual {
 		
 		/* INTERFACE dreamwisp.visual.IGraphicsObject */
 		
-		public function initialize(parentWidth:Number = 768, parentHeight:Number = 480):void {
-			MonsterDebugger.trace(this, parentWidth + ", " + parentHeight +"||" + displayObject.width + ", " + displayObject.height );
-			this.parentWidth = parentWidth;
-			this.parentHeight = parentHeight;
+		public function initialize():void {
+			
 		}
 		
 		public function getGraphicsData():DisplayObject {
@@ -53,21 +58,26 @@ package dreamwisp.visual {
 			return _relativeY;
 		}
 		
-		public function get x():Number {
-			return _x;
-		}
+		public function get x():Number { return _x; }
 		
-		public function set x(value:Number):void {
-			_x = value;
-		}
+		public function set x(value:Number):void { _x = value; }
 		
-		public function get y():Number {
-			return _y;
-		}
+		public function get y():Number { return _y; }
 		
-		public function set y(value:Number):void {
-			_y = value;
-		}
+		public function set y(value:Number):void { _y = value; }
+		
+		public function get parentWidth():Number { return _parentWidth; }
+		
+		public function set parentWidth(value:Number):void { _parentWidth = value; }
+		
+		public function get parentHeight():Number { return _parentHeight; }
+		
+		public function set parentHeight(value:Number):void { _parentHeight = value; }
+		
+		public function get layer():uint { return _layer; }
+		
+		public function set layer(value:uint):void { _layer = value; }
+		
 		
 		public function update():void {
 			

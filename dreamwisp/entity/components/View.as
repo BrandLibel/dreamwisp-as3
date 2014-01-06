@@ -1,5 +1,5 @@
-package dreamwisp.entity.components {
-	
+package dreamwisp.entity.components
+{
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.entity.hosts.Entity;
@@ -19,8 +19,8 @@ package dreamwisp.entity.components {
 	//		included in this class. some special GraphicsObjects will handle animation,
 	//		some will handle relative positioning.
 	 
-	public class View {
-		
+	public class View
+	{
 		private var host:Entity;
 		
 		public var displayObject:DisplayObject;
@@ -31,18 +31,23 @@ package dreamwisp.entity.components {
 		/// Layer for if this View gets added into a ContainerView
 		private var _layer:uint = uint.MAX_VALUE;
 		
-		public function View(entity:Entity) {
+		public function View(entity:Entity)
+		{
 			host = entity;
 		}
 		
-		public function render(interpolation:Number):void {
+		public function render(interpolation:Number):void
+		{
 			if (!movieClip) return;
 			
 			if (host.animation) movieClip.gotoAndStop(host.animation.currentFrame());
-			if (host.physics) {
+			if (host.physics)
+			{
 				movieClip.x = host.body.x + (host.physics.xVelocity * interpolation);
 				movieClip.y = host.body.y + (host.physics.yVelocity * interpolation);
-			} else {
+			} 
+			else
+			{
 				movieClip.x = host.body.x;
 				movieClip.y = host.body.y;
 			}

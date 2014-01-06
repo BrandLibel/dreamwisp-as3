@@ -9,7 +9,7 @@ package dreamwisp.visual {
 	
 	public interface IGraphicsFactory {
 		
-		function getGraphicsObject(type:String, name:String, data:Object = null):IGraphicsObject;
+		function getGraphicsObject(type:String, name:String, data:Object = null):GraphicsObject;
 		
 	}
 	

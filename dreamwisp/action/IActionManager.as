@@ -1,0 +1,1 @@
+package dreamwisp.action {		/**	 * ...	 * @author Brandon	 */	public interface IActionManager 	{			}	}

@@ -20,7 +20,8 @@ package dreamwisp.visual {
 			this.displayObject = displayData;
 		}
 				
-		public function addChild(child:DisplayObject):void {
+		public function addChild(child:DisplayObject):void 
+		{
 			if (displayObject is DisplayObjectContainer) {
 				DisplayObjectContainer(displayObject).addChild(child);
 			}
@@ -30,7 +31,6 @@ package dreamwisp.visual {
 			if (displayObject is DisplayObjectContainer) {
 				DisplayObjectContainer(displayObject).removeChild(child);
 			}
-			
 		}
 		
 	}

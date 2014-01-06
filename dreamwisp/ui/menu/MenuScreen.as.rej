@@ -1,0 +1,9 @@
+diff a/dreamwisp/ui/menu/MenuScreen.as b/dreamwisp/ui/menu/MenuScreen.as	(rejected hunks)
+@@ -80,6 +80,7 @@
+ 		}
+ 		
+ 		private function scrollForward():void {
++			// this is a simple great 
+ 			selectButton(0, 1);
+ 		}
+ 		

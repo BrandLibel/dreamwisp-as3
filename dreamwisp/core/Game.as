@@ -61,7 +61,7 @@
 		 * and render() to run at the SWF set framerate using interpolation.
 		 * @param	e
 		 */ 
-		public function loop(e:Event):void {
+		public function loop():void {
 			loops = 0;
 			while ( getTimer() > nextGameTick && loops < MAX_FRAMESKIP) {
 				screenManager.update(inputState.update());

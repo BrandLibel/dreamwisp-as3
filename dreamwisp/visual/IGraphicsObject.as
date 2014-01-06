@@ -12,8 +12,7 @@ package dreamwisp.visual {
 	public interface IGraphicsObject extends IUpdatable {
 		
 		/// Activates and gives context to this GraphicsObject after attaching it.
-		
-		function initialize(parentWidth:Number = 768, parentHeight:Number = 480):void;
+		function initialize():void;
 		function getGraphicsData():DisplayObject;
 		
 		function get x():Number;
@@ -23,6 +22,11 @@ package dreamwisp.visual {
 		
 		function get relativeX():String;
 		function get relativeY():String;
+		
+		function get parentWidth():Number;
+		function set parentWidth(value:Number):void;
+		function get parentHeight():Number;
+		function set parentHeight(value:Number):void;
 		
 	}
 	

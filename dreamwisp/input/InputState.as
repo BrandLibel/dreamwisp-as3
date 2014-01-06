@@ -47,27 +47,15 @@ package dreamwisp.input {
 			return this;
 		}
 		
-		public function hasChanged():Boolean {
-			return true;
-		}
-		
 		public function isKeyDown(keyCode:uint):Boolean {
-			// check if an impossible keycode value was passed 
+			// return false if impossible key code was entered
 			if (keyCode > TOTAL_KEYCODES) return false;
 			return (keyPressStates[keyCode]);
 		}
 		
-		public function setKeyState(keyCode:uint, state:Boolean):void {
-			lastKeySet = keyCode;
-			keyPressStates[keyCode] = state;
-			if (state == true)
-				_keysPressed.push(keyCode);
-			else {
-				_keysPressed.splice( _keysPressed.indexOf(keyCode), 1 );
-				keysReleased.push( keyCode );
-			}
-		}
-		
+		/**
+		 * Returns true if the mouse was clicked this cycle, false otherwise.
+		 */
 		public function wasMouseClicked():Boolean {
 			// the mouse click is only counted once
 			var wasClickedTemp:Boolean = wasClicked;
@@ -76,6 +64,9 @@ package dreamwisp.input {
 			return wasClickedTemp;
 		}
 		
+		/**
+		 * Returns a list of keys that were released this cycle.
+		 */
 		public function getKeysReleased():Vector.<uint> {
 			var tempKeyList:Vector.<uint> = new Vector.<uint>;
 			for each (var keyCode:uint in keysReleased) {
@@ -103,6 +94,17 @@ package dreamwisp.input {
 		
 		public function set keyPressStates(value:Vector.<Boolean>):void {
 			_keyPressStates = value;
+		}
+		
+		private function setKeyState(keyCode:uint, state:Boolean):void {
+			lastKeySet = keyCode;
+			keyPressStates[keyCode] = state;
+			if (state == true)
+				_keysPressed.push(keyCode);
+			else {
+				_keysPressed.splice( _keysPressed.indexOf(keyCode), 1 );
+				keysReleased.push( keyCode );
+			}
 		}
 		
 		private function registerKeyboard(e:KeyboardEvent):void {
