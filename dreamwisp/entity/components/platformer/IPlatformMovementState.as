@@ -17,7 +17,6 @@ package dreamwisp.entity.components.platformer {
 		function moveUp():void;
 		function moveDown():void;
 		function jump():void;
-		function crouch():void;
 		// collision handling
 		function collideLeft():void;
 		function collideRight():void;

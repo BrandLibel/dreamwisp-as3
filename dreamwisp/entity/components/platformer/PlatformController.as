@@ -7,7 +7,7 @@ package dreamwisp.entity.components.platformer {
 	import dreamwisp.world.tile.Tile;
 	import statemachine.StateMachine;
 	import statemachine.StateMachineEvent;
-	
+
 	/**
 	 * ...
 	 * @author Brandon Li
@@ -19,7 +19,7 @@ package dreamwisp.entity.components.platformer {
 		private var physics:Physics;
 		
 		public var movementSM:StateMachine;
-		public var currentState:IPlatformMovementState;
+		private var currentState:IPlatformMovementState;
 		private var groundState:IPlatformMovementState;
 		private var ladderState:IPlatformMovementState;
 		private var airState:IPlatformMovementState;
@@ -145,8 +145,8 @@ package dreamwisp.entity.components.platformer {
 			// prevent re-grabbing ladder while holding up
 			if (currentState is LadderState && pressingUp) canGrabLadder = false;
 			// disallow jumping while there's a solid edge directly above
-			//if (above_left.solid.down || above_right.solid.down) { // causes problems when hugging walls 
-			if (above.solid.down && below.solid.up){ // doesn't work if above is not exactly centered
+			//if (above_left.isSolidDown() || above_right.isSolidDown()) { // causes problems when hugging walls 
+			if (above.isSolidDown() && below.isSolidUp()){ // doesn't work if above is not exactly centered
 			//if (hasTileAbove()){
 				return;
 			}
@@ -193,7 +193,7 @@ package dreamwisp.entity.components.platformer {
 					var right_foot:Tile = tileGrid[foot_y][right_foot_x];
 				}
 			}
-			if (left_foot && left_foot.solid.up == true) {
+			if (left_foot && left_foot.isSolidUp() == true) {
 				currentTile = left_foot;
 			} else {
 				//MonsterDebugger.trace(this, "using right tile");
@@ -202,7 +202,7 @@ package dreamwisp.entity.components.platformer {
 			
 			if (currentTile) {
 				over = currentTile.type;
-				if (!currentTile.solid.up && !(currentState is LadderState) && !onSlope) movementSM.changeState("airState"); 
+				if (!currentTile.isSolidUp() && !(currentState is LadderState) && !onSlope) movementSM.changeState("airState"); 
 				acceleration = currentTile.acceleration;
 				friction = currentTile.friction;
 				//if (host is Player) MonsterDebugger.trace(this, friction);
@@ -220,7 +220,7 @@ package dreamwisp.entity.components.platformer {
 			/// Collision to the bottom.
 			if (physics.yVelocity > 0 && !onSlope) {
 				if (bottom < tileGrid.length){
-					if (bottom_right.solid.up || bottom_left.solid.up) {
+					if (bottom_right.isSolidUp() || bottom_left.isSolidUp()) {
 						// ignoring platform-ladders when climbing down ladder
 						if (currentState is LadderState && bottom_center.type == "ladder" ) return;
 						collideBottom();
@@ -230,7 +230,7 @@ package dreamwisp.entity.components.platformer {
 			/// Collision to the top. 
 			if (physics.yVelocity < 0) {
 				if (top_right && top_left) {
-					if (top_right.solid.down || top_left.solid.down) {
+					if (top_right.isSolidDown() || top_left.isSolidDown()) {
 						collideTop();
 					}
 				}
@@ -239,14 +239,14 @@ package dreamwisp.entity.components.platformer {
 			getEdges();
 			/// Collision to the left. 
 			if (physics.xVelocity < 0) {
-				if ((top_left.solid.right || bottom_left.solid.right) && !onSlope){
+				if ((top_left.isSolidRight() || bottom_left.isSolidRight()) && !onSlope){
 					collideLeft();
 				}
 			}
 			/// Collision to the right. 
 			if (physics.xVelocity > 0) {
 				if (bottom < tileGrid.length){
-					if ((top_right.solid.left || bottom_right.solid.left) && !onSlope){
+					if ((top_right.isSolidLeft() || bottom_right.isSolidLeft()) && !onSlope){
 						collideRight();
 					}
 				}
@@ -514,7 +514,7 @@ package dreamwisp.entity.components.platformer {
 		}
 		
 		private function canJump():Boolean {
-			if (above_left.solid.down || above_right.solid.down) return false;
+			if (above_left.isSolidDown() || above_right.isSolidDown()) return false;
 			
 			return true;
 		}	

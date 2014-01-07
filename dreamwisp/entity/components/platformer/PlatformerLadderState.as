@@ -8,15 +8,15 @@ package dreamwisp.entity.components.platformer {
 	 * @author Brandon
 	 */
 	
-	public class LadderState implements IPlatformMovementState {
+	public class PlatformerLadderState implements IPlatformMovementState {
 		
-		private var platformController:PlatformController;
+		private var platformPhysics:PlatformPhysics;
 		private var host:Entity;
 		private var climbSpeed:uint = 4;
 		
-		public function LadderState(platformController:PlatformController) {
-			this.platformController = platformController;
-			this.host = platformController.host;
+		public function PlatformerLadderState(platformController:PlatformPhysics, host:Entity) {
+			this.platformPhysics = platformController;
+			this.host = host;
 		}
 		
 		/* INTERFACE dreamwisp.state.platform.IPlatformMovementState */
@@ -34,27 +34,27 @@ package dreamwisp.entity.components.platformer {
 		}
 		
 		public function moveUp():void {
-			if (platformController.top_center.type != "ladder") {
+			if (platformPhysics.top_center.type != "ladder") {
 				// reaching a platform that doesn't cont. up w/ a ladder stops the climb
-				if (platformController.center.isSolidUp()) return;
+				if (platformPhysics.center.solid.up) return;
 				// gets off of ladder when 
-				platformController.movementSM.changeState( "airState" );
+				platformPhysics.movementSM.changeState( "airState" );
 			}
-			if (platformController.center.type != "ladder") { 
+			if (platformPhysics.center.type != "ladder") { 
 				MonsterDebugger.trace(this, "leaving ladder");
-				platformController.movementSM.changeState( "groundState" );
+				platformPhysics.movementSM.changeState( "groundState" );
 			}
 			host.physics.yVelocity = -climbSpeed;
 		}
 		
 		public function moveDown():void {
-			if (platformController.center.type != "ladder") return;
+			if (platformPhysics.center.type != "ladder") return;
 			host.physics.yVelocity = climbSpeed;
 		}
 		
 		public function jump():void {
-			host.physics.yVelocity = platformController.jumpPower;
-			platformController.movementSM.changeState( "airState" );
+			host.physics.yVelocity = platformPhysics.jumpPower;
+			platformPhysics.movementSM.changeState( "airState" );
 			//MonsterDebugger.trace(this, "JUMP!");
 		}
 		
@@ -77,7 +77,7 @@ package dreamwisp.entity.components.platformer {
 		public function collideBottom():void {
 			// reaching bottom of the ladder, transition to ground state
 			MonsterDebugger.trace(this, "hit ground from ladder");
-			platformController.movementSM.changeState( "groundState" );
+			platformPhysics.movementSM.changeState( "groundState" );
 			
 		}
 		

@@ -70,10 +70,6 @@ package dreamwisp.entity.components.platformer {
 			host.physics.yVelocity = platformController.jumpPower;
 			platformController.movementSM.changeState("airState");
 		}
-		
-		public function crouch():void {
-			
-		}
 				
 		public function enter():void {
 			

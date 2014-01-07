@@ -40,7 +40,7 @@ package dreamwisp.world.tile
 		public var type:String;
 		///Object containing booleans left, right, up, down determining 
 		///whether a SolidBody collides or passes through that direction.
-		public var solid:Object;
+		private var solid:Object;
 		public var acceleration:Number;
 		public var friction:Number;
 		public var bonusSpeed:Number;
@@ -200,6 +200,14 @@ package dreamwisp.world.tile
 		{
 			bitmap.bitmapData.fillRect(tileRect, 0);
 		}
+		
+		public function isSolidUp():Boolean { return solid.up; }
+		
+		public function isSolidLeft():Boolean { return solid.left; }
+		
+		public function isSolidRight():Boolean { return solid.right; }
+		
+		public function isSolidDown():Boolean { return solid.down; }
 		
 		public final function hit(damage:int = 1):void
 		{

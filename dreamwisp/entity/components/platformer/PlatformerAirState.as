@@ -8,18 +8,18 @@ package dreamwisp.entity.components.platformer {
 	 * @author Brandon
 	 */
 	
-	public class AirState implements IPlatformMovementState {
+	public class PlatformerAirState implements IPlatformMovementState {
 		
-		private var platformController:PlatformController;
+		private var platformPhysics:PlatformPhysics;
 		private var host:Entity;
 		
 		private var maxJumps:uint = 0;
 		private var jumps:uint;
 		
 		
-		public function AirState(platformController:PlatformController) {
-			this.platformController = platformController;
-			this.host = platformController.host;
+		public function PlatformerAirState(platformController:PlatformPhysics, host:Entity) {
+			this.platformPhysics = platformController;
+			this.host = host;
 			jumps = maxJumps;
 		}
 		
@@ -29,41 +29,41 @@ package dreamwisp.entity.components.platformer {
 			/*if (platformController.onSlope == false) {
 				MonsterDebugger.trace(this, "falling from gravity");
 			}*/
-			host.physics.yVelocity += platformController.environment.gravity;
+			host.physics.yVelocity += platformPhysics.environment.gravity;
 			
-			if (host.physics.yVelocity > platformController.terminalVelocityY) {
+			if (host.physics.yVelocity > platformPhysics.terminalVelocityY) {
 				MonsterDebugger.trace(this, "terminal fall velocity");
-				host.physics.yVelocity = platformController.terminalVelocityY;
+				host.physics.yVelocity = platformPhysics.terminalVelocityY;
 			}
 			
-			if (!platformController.walking) {
-				host.physics.xVelocity *= (platformController.friction);
-				if (Math.abs(host.physics.xVelocity) < platformController.maxWalkSpeed*0.1) host.physics.xVelocity = 0;
+			if (!platformPhysics.walking) {
+				host.physics.xVelocity *= (platformPhysics.friction);
+				if (Math.abs(host.physics.xVelocity) < platformPhysics.maxWalkSpeed*0.1) host.physics.xVelocity = 0;
 			}
-			if (platformController.center.type != "ladder") {
-				platformController.canGrabLadder = true;
+			if (platformPhysics.center.type != "ladder") {
+				platformPhysics.canGrabLadder = true;
 			}
 		}
 		
 		public function moveLeft():void {
 			// walk left
-			platformController.walking = true;
-			if (host.physics.xVelocity > -platformController.maxWalkSpeed) {
-				host.physics.xVelocity -= platformController.acceleration;
+			platformPhysics.walking = true;
+			if (host.physics.xVelocity > -platformPhysics.maxWalkSpeed) {
+				host.physics.xVelocity -= platformPhysics.acceleration;
 			}
 		}
 		
 		public function moveRight():void {
 			// walk right
-			platformController.walking = true;
-			if (host.physics.xVelocity < platformController.maxWalkSpeed) {
-				host.physics.xVelocity += platformController.acceleration;
+			platformPhysics.walking = true;
+			if (host.physics.xVelocity < platformPhysics.maxWalkSpeed) {
+				host.physics.xVelocity += platformPhysics.acceleration;
 			}
 		}
 		
 		public function moveUp():void {
-			if (platformController.above.type == "ladder" && platformController.center.type == "ladder") {
-				platformController.grabLadder();
+			if (platformPhysics.above.type == "ladder" && platformPhysics.center.type == "ladder") {
+				platformPhysics.grabLadder();
 				//MonsterDebugger.trace(this, "grab ladder");
 			}
 		}
@@ -102,7 +102,7 @@ package dreamwisp.entity.components.platformer {
 		
 		public function collideBottom():void {
 			//MonsterDebugger.trace(this, "hit the bottom from air");
-			platformController.movementSM.changeState( "groundState" );
+			platformPhysics.movementSM.changeState( "groundState" );
 			jumps = maxJumps;
 		}
 		

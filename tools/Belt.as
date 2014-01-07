@@ -76,8 +76,8 @@
 		}
 		
 		public static function getSignOf(number:Number):int {
-			var sign:int = number / Math.abs(number);
-			return sign;
+			//var sign:int = number / Math.abs(number);
+			return (number < 0) ? -1 : 1;//sign;
 		}
 		
 		/// Converts a 2d array to a string
