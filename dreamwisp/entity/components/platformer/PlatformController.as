@@ -158,8 +158,8 @@ package dreamwisp.entity.components.platformer {
 		
 		public function grabLadder():void {
 			if (canGrabLadder) {
-				physics.xVelocity = 0;
-				physics.yVelocity = 0;
+				physics.velocityX = 0;
+				physics.velocityY = 0;
 				movementSM.changeState( "ladderState" );
 				// centering the entity in the ladder, x = 0 + 
 				body.x = ( center_x * tileWidth) + (tileWidth - body.width ) / 2;
@@ -215,10 +215,10 @@ package dreamwisp.entity.components.platformer {
 			//checkForSlope();
 			collideSlopes();
 		
-			body.y += physics.yVelocity;
+			body.y += physics.velocityY;
 			getEdges();
 			/// Collision to the bottom.
-			if (physics.yVelocity > 0 && !onSlope) {
+			if (physics.velocityY > 0 && !onSlope) {
 				if (bottom < tileGrid.length){
 					if (bottom_right.isSolidUp() || bottom_left.isSolidUp()) {
 						// ignoring platform-ladders when climbing down ladder
@@ -228,23 +228,23 @@ package dreamwisp.entity.components.platformer {
 				}
 			}
 			/// Collision to the top. 
-			if (physics.yVelocity < 0) {
+			if (physics.velocityY < 0) {
 				if (top_right && top_left) {
 					if (top_right.isSolidDown() || top_left.isSolidDown()) {
 						collideTop();
 					}
 				}
 			}
-			body.x += physics.xVelocity;
+			body.x += physics.velocityX;
 			getEdges();
 			/// Collision to the left. 
-			if (physics.xVelocity < 0) {
+			if (physics.velocityX < 0) {
 				if ((top_left.isSolidRight() || bottom_left.isSolidRight()) && !onSlope){
 					collideLeft();
 				}
 			}
 			/// Collision to the right. 
-			if (physics.xVelocity > 0) {
+			if (physics.velocityX > 0) {
 				if (bottom < tileGrid.length){
 					if ((top_right.isSolidLeft() || bottom_right.isSolidLeft()) && !onSlope){
 						collideRight();
@@ -266,7 +266,7 @@ package dreamwisp.entity.components.platformer {
 			body.y = bottom * tileHeight-body.height;
 			//MonsterDebugger.trace(this, "colliding bottom", "", "", 0x1FC501);
 			
-			physics.yVelocity = 0;
+			physics.velocityY = 0;
 			currentState.collideBottom();
 			//react();
 			//MonsterDebugger.trace(this, "collided");
@@ -274,7 +274,7 @@ package dreamwisp.entity.components.platformer {
 		
 		protected function collideTop():void {
 			body.y = bottom * tileHeight + 1 /*+ (body.height-1)*/;
-			physics.yVelocity = 0;
+			physics.velocityY = 0;
 			//react();
 			currentState.collideTop();
 			
@@ -282,7 +282,7 @@ package dreamwisp.entity.components.platformer {
 		
 		protected function collideLeft():void {
 			body.x = (left + 1) * tileWidth /*+ body.width*/;
-			physics.xVelocity = 0;
+			physics.velocityX = 0;
 			//react();
 			//MonsterDebugger.trace(this, "colliding left" );
 			currentState.collideLeft();
@@ -291,7 +291,7 @@ package dreamwisp.entity.components.platformer {
 		
 		protected function collideRight():void {
 			body.x = right * tileWidth-body.width;
-			physics.xVelocity = 0;
+			physics.velocityX = 0;
 			//react();
 			//MonsterDebugger.trace(this, "colliding right" );
 			currentState.collideRight();
@@ -367,10 +367,10 @@ package dreamwisp.entity.components.platformer {
 							//MonsterDebugger.trace(this, "on slope from air", "", "", 0x0073F2);
 							x_offset = (body.x + body.width / 2) % tileWidth;
 						}
-						if (physics.yVelocity < 0) {
+						if (physics.velocityY < 0) {
 							trace("");
 						}
-						if ((body.y + body.height / 2) > Math.floor((body.y /*+ body.height / 2*/)/tileHeight)*tileHeight-body.height+x_offset && physics.yVelocity > 0) {
+						if ((body.y + body.height / 2) > Math.floor((body.y /*+ body.height / 2*/)/tileHeight)*tileHeight-body.height+x_offset && physics.velocityY > 0) {
 							/// rebounce fix here
 							trace("bounce!");
 							/*MonsterDebugger.trace(this, "bouncey bouncey", "", "", 0x0073F2);
@@ -399,13 +399,13 @@ package dreamwisp.entity.components.platformer {
 						}
 						body.y = Math.floor((body.y /*+ body.height / 2*/)/tileHeight)*tileHeight-body.height+x_offset;
 						onSlope = true;
-						if (physics.xVelocity > 15){
+						if (physics.velocityX > 15){
 							trace("reducing speed");
-							physics.xVelocity = 15;
+							physics.velocityX = 15;
 						}
-						if (physics.xVelocity < -15){
+						if (physics.velocityX < -15){
 							trace("reducing speed");
-							physics.xVelocity = -15;
+							physics.velocityX = -15;
 						}
 						//trace("onaslope");
 					}

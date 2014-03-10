@@ -22,8 +22,8 @@ package dreamwisp.entity.components.platformer {
 		
 		public function update():void {
 			if (!platformController.walking) {
-				host.physics.xVelocity *= (platformController.friction);
-				if (Math.abs(host.physics.xVelocity) < platformController.maxWalkSpeed*0.1) host.physics.xVelocity = 0;
+				host.physics.velocityX *= (platformController.friction);
+				if (Math.abs(host.physics.velocityX) < platformController.maxWalkSpeed*0.1) host.physics.velocityX = 0;
 			}
 			
 		}
@@ -31,10 +31,10 @@ package dreamwisp.entity.components.platformer {
 		public function moveLeft():void {
 			// walk left
 			platformController.walking = true;
-			if (host.physics.xVelocity > -platformController.maxWalkSpeed) {
-				host.physics.xVelocity -= platformController.acceleration;
+			if (host.physics.velocityX > -platformController.maxWalkSpeed) {
+				host.physics.velocityX -= platformController.acceleration;
 			} else {
-				host.physics.xVelocity = -platformController.maxWalkSpeed;
+				host.physics.velocityX = -platformController.maxWalkSpeed;
 			}
 			//MonsterDebugger.trace(this, "walking");
 		}
@@ -42,10 +42,10 @@ package dreamwisp.entity.components.platformer {
 		public function moveRight():void {
 			// walk right
 			platformController.walking = true;
-			if (host.physics.xVelocity < platformController.maxWalkSpeed) {
-				host.physics.xVelocity += platformController.acceleration;
+			if (host.physics.velocityX < platformController.maxWalkSpeed) {
+				host.physics.velocityX += platformController.acceleration;
 			} else {
-				host.physics.xVelocity = platformController.maxWalkSpeed;
+				host.physics.velocityX = platformController.maxWalkSpeed;
 			}
 			
 		}
@@ -67,7 +67,7 @@ package dreamwisp.entity.components.platformer {
 		}
 		
 		public function jump():void {
-			host.physics.yVelocity = platformController.jumpPower;
+			host.physics.velocityY = platformController.jumpPower;
 			platformController.movementSM.changeState("airState");
 		}
 				

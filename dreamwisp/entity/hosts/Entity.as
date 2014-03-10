@@ -6,9 +6,8 @@ package dreamwisp.entity.hosts
 	import dreamwisp.entity.components.Animation;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.Health;
-	import dreamwisp.entity.components.IPhysics;
 	import dreamwisp.entity.components.Physics;
-	import dreamwisp.entity.components.platformer.PlatformController;
+	import dreamwisp.entity.components.platformer.PlatformPhysics;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.components.Weapon;
 	import dreamwisp.input.InputState;
@@ -30,15 +29,14 @@ package dreamwisp.entity.hosts
 		public var targetName:String;
 		
 		private var _actor:Actor;
-		private var _physics:Physics;
+		//private var _physics:Physics;
 		private var _body:Body;
 		private var _health:Health;
 		private var _weapon:Weapon;
 		private var _animation:Animation;
 		private var _view:View;
-		private var _platformController:PlatformController;
 		private var _lightSource:LightSource;
-		public var physicsComponent:IPhysics;
+		public var _physics:Physics;
 		
 		private var _entityCreated:Signal;
 		private var _destroyed:Signal;
@@ -86,7 +84,7 @@ package dreamwisp.entity.hosts
 			if (myData.platformer != null)
 			{
 				var platformer:Object = components["platformer"][myData.platformer];
-				platformController = new PlatformController(this, platformer.maxWalkSpeed,
+				physics = new PlatformPhysics(this, platformer.maxWalkSpeed,
 					platformer.walkAcceleration, platformer.jumpPower);
 			}
 			if (myData.view != null)
@@ -112,7 +110,7 @@ package dreamwisp.entity.hosts
 		
 		public function update():void {
 			
-			if (physics) physics.update();
+			//if (physics) physics.update();
 			if (animation) animation.update();
 			//if (hasLeftBounds()) leftBounds.dispatch(this);
 		}
@@ -203,11 +201,7 @@ package dreamwisp.entity.hosts
 		public function get view():View { return _view; }
 		
 		public function set view(value:View):void { _view = value; }
-		
-		public function get platformController():PlatformController { return _platformController; }
-			
-		public function set platformController(value:PlatformController):void { _platformController = value; }
-		
+							
 		public function get entityCreated():Signal { return _entityCreated; }
 		
 		public function set entityCreated(value:Signal):void { _entityCreated = value; }

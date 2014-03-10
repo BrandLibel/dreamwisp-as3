@@ -22,7 +22,7 @@ package dreamwisp.entity.components.platformer {
 		/* INTERFACE dreamwisp.state.platform.IPlatformMovementState */
 		
 		public function update():void {
-			host.physics.yVelocity = 0;
+			host.physics.velocityY = 0;
 		}
 		
 		public function moveLeft():void {
@@ -44,16 +44,16 @@ package dreamwisp.entity.components.platformer {
 				MonsterDebugger.trace(this, "leaving ladder");
 				platformController.movementSM.changeState( "groundState" );
 			}
-			host.physics.yVelocity = -climbSpeed;
+			host.physics.velocityY = -climbSpeed;
 		}
 		
 		public function moveDown():void {
 			if (platformController.center.type != "ladder") return;
-			host.physics.yVelocity = climbSpeed;
+			host.physics.velocityY = climbSpeed;
 		}
 		
 		public function jump():void {
-			host.physics.yVelocity = platformController.jumpPower;
+			host.physics.velocityY = platformController.jumpPower;
 			platformController.movementSM.changeState( "airState" );
 			//MonsterDebugger.trace(this, "JUMP!");
 		}

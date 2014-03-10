@@ -29,16 +29,16 @@ package dreamwisp.entity.components.platformer {
 			/*if (platformController.onSlope == false) {
 				MonsterDebugger.trace(this, "falling from gravity");
 			}*/
-			host.physics.yVelocity += platformController.environment.gravity;
+			host.physics.velocityY += platformController.environment.gravity;
 			
-			if (host.physics.yVelocity > platformController.terminalVelocityY) {
+			if (host.physics.velocityY > platformController.terminalVelocityY) {
 				MonsterDebugger.trace(this, "terminal fall velocity");
-				host.physics.yVelocity = platformController.terminalVelocityY;
+				host.physics.velocityY = platformController.terminalVelocityY;
 			}
 			
 			if (!platformController.walking) {
-				host.physics.xVelocity *= (platformController.friction);
-				if (Math.abs(host.physics.xVelocity) < platformController.maxWalkSpeed*0.1) host.physics.xVelocity = 0;
+				host.physics.velocityX *= (platformController.friction);
+				if (Math.abs(host.physics.velocityX) < platformController.maxWalkSpeed*0.1) host.physics.velocityX = 0;
 			}
 			if (platformController.center.type != "ladder") {
 				platformController.canGrabLadder = true;
@@ -48,16 +48,16 @@ package dreamwisp.entity.components.platformer {
 		public function moveLeft():void {
 			// walk left
 			platformController.walking = true;
-			if (host.physics.xVelocity > -platformController.maxWalkSpeed) {
-				host.physics.xVelocity -= platformController.acceleration;
+			if (host.physics.velocityX > -platformController.maxWalkSpeed) {
+				host.physics.velocityX -= platformController.acceleration;
 			}
 		}
 		
 		public function moveRight():void {
 			// walk right
 			platformController.walking = true;
-			if (host.physics.xVelocity < platformController.maxWalkSpeed) {
-				host.physics.xVelocity += platformController.acceleration;
+			if (host.physics.velocityX < platformController.maxWalkSpeed) {
+				host.physics.velocityX += platformController.acceleration;
 			}
 		}
 		
@@ -76,7 +76,7 @@ package dreamwisp.entity.components.platformer {
 			// do nothing, unless double jump
 			if (jumps > 0) {
 				
-				host.physics.yVelocity = -9;
+				host.physics.velocityY = -9;
 				jumps--;
 			}
 		}

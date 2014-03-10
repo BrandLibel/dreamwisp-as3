@@ -1,6 +1,6 @@
 package dreamwisp.entity.hosts {
 	
-	import dreamwisp.entity.components.platformer.PlatformController;
+	import dreamwisp.entity.components.platformer.PlatformPhysics;
 	
 	/**
 	 * ...
@@ -8,11 +8,10 @@ package dreamwisp.entity.hosts {
 	 */
 	public interface IPlatformEntity extends IEntity {
 		
-		/*function get platformPhysics():PlatformPhysics;
-		function set platformPhysics(value:PlatformPhysics):void;*/
+		function setTileGrid(tileGrid:Vector.<Vector.<Tile>>):void;
 		
-		function get platformController():PlatformController;
-		function set platformController(value:PlatformController):void;
+		function get platformPhysics():PlatformPhysics;
+		function set platformPhysics(value:PlatformPhysics):void;
 		
 	}
 	

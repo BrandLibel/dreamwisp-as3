@@ -43,8 +43,8 @@ package dreamwisp.entity.components
 			if (host.animation) movieClip.gotoAndStop(host.animation.currentFrame());
 			if (host.physics)
 			{
-				movieClip.x = host.body.x + (host.physics.xVelocity * interpolation);
-				movieClip.y = host.body.y + (host.physics.yVelocity * interpolation);
+				movieClip.x = host.body.x + (host.physics.velocityX * interpolation);
+				movieClip.y = host.body.y + (host.physics.velocityY * interpolation);
 			} 
 			else
 			{

@@ -24,7 +24,7 @@ package dreamwisp.entity.hosts {
 		function get actor():Actor;
         function set actor(value:Actor):void;
         function get physics():Physics;
-        function set physics(value:Physics):void
+        function set physics(value:Physics):void;
 		function get body():Body;
         function set body(value:Body):void;
         function get health():Health
