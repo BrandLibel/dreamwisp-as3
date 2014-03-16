@@ -16,6 +16,8 @@ package dreamwisp.entity.hosts
 	import org.osflash.signals.Signal;
 	import tools.Belt;
 	
+	import flash.utils.getDefinitionByName;
+	
 	/**
 	 * Entitys are objects which populate GameStates (containers). 
 	 */
@@ -52,7 +54,7 @@ package dreamwisp.entity.hosts
 		private var _myScreen:GameScreen;
 		
 		protected var isMobile:Boolean = true;		
-		
+				
 		public function Entity(prototypeData:Object = null, prototypeID:uint = 0) 
 		{
 			entityCreated = new Signal(Entity);
@@ -81,11 +83,12 @@ package dreamwisp.entity.hosts
 			{
 				health = new Health(this, myData.health);
 			}
-			if (myData.platformer != null)
+			if (myData.physics != null)
 			{
-				var platformer:Object = components["platformer"][myData.platformer];
-				physics = new PlatformPhysics(this, platformer.maxWalkSpeed,
-					platformer.walkAcceleration, platformer.jumpPower);
+				var physicsData:Object = components["physics"][myData.physics];
+				var physicsClass:Class = getDefinitionByName(physicsData.classLink) as Class;
+				physics = new physicsClass(this, physicsData.maxWalkSpeed,
+					physicsData.walkAcceleration, physicsData.jumpPower);
 			}
 			if (myData.view != null)
 			{
