@@ -6,6 +6,7 @@ package dreamwisp.entity.components.platformer
 	import dreamwisp.entity.components.platformer.IPlatformMovementState;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.world.tile.Tile;
+	import dreamwisp.world.tile.TileScape;
 	import statemachine.StateMachine;
 	import statemachine.StateMachineEvent;
 	import tools.Belt;
@@ -39,6 +40,7 @@ package dreamwisp.entity.components.platformer
 		private var groundState:IPlatformMovementState;
 		private var ladderState:IPlatformMovementState;
 		private var airState:IPlatformMovementState;
+		private var tileScape:TileScape;
 
 		public function PlatformPhysics(entity:Entity, maxWalkSpeed:uint, walkAcceleration:Number, jumpPower:int) 
 		{
@@ -75,9 +77,10 @@ package dreamwisp.entity.components.platformer
 		
 		/* INTERFACE dreamwisp.entity.components.IPhysics */
 		
-		public function setTileGrid(tileGrid:Vector.<Vector.<Tile>>):void 
+		public function setTileScape(tileScape:TileScape):void 
 		{
-			this.tileGrid = tileGrid;
+			this.tileScape = tileScape;
+			this.tileGrid = tileScape.tileGrid;
 		}
 		
 		override public function moveLeft():void 
