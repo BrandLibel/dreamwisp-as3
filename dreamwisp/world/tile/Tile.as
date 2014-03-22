@@ -5,6 +5,7 @@ package dreamwisp.world.tile
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.input.InputState;
 	import dreamwisp.visual.Blitter;
+	import dreamwisp.visual.SpriteSheet;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Point;
@@ -65,6 +66,7 @@ package dreamwisp.world.tile
 		private var rateOfAnimation:uint;
 		
 		private var tileMap:Array;
+		private var spriteSheet:SpriteSheet;
 		private var blitter:Blitter;
 		
 		public var created:Signal;
@@ -80,10 +82,11 @@ package dreamwisp.world.tile
 		 * @param	tilePresets A list of common tile properties that can be combined.
 		 * @param	tileSheet The PNG image containing all tile graphics.
 		 */
-		public function Tile(blueprint:Object, tilePresets:Object, blitter:Blitter, tileWidth:uint, tileHeight:uint)
+		public function Tile(blueprint:Object, tilePresets:Object, spriteSheet:SpriteSheet, tileWidth:uint, tileHeight:uint)
 		{
 			tileMap;
-			this.blitter = blitter;
+			this.spriteSheet = spriteSheet;
+			//this.blitter = blitter;
 			this.tilePresets = tilePresets;
 			this.tileSheet = tileSheet;
 			this.tileWidth = tileWidth;
@@ -192,8 +195,8 @@ package dreamwisp.world.tile
 			}
 			if (!bitmap.bitmapData) bitmap.bitmapData = new BitmapData(tileWidth, tileHeight);
 			
-			blitter.blit("tiles", tileNum-1, 0, 0, currentFrame-1, bitmap.bitmapData);
-			//bitmap.bitmapData.copyPixels(tileSheet, copyFrom, ORIGIN);
+			//blitter.blit("tiles", tileNum-1, 0, 0, currentFrame-1, bitmap.bitmapData);
+			bitmap.bitmapData.copyPixels(spriteSheet.getImage(), new Rectangle(0, 0, 32, 32), ORIGIN);
 		}
 		
 		private function erase():void

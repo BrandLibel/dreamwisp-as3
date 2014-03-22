@@ -1,7 +1,6 @@
 package dreamwisp.world.tile
 {
 	import com.demonsters.debugger.MonsterDebugger;
-	import dreamwisp.visual.Blitter;
 	import dreamwisp.visual.SpriteSheet;
 	import dreamwisp.world.base.Location;
 	import flash.display.Bitmap;
@@ -29,12 +28,11 @@ package dreamwisp.world.tile
 		private var canvasData:BitmapData;
 		public var canvas:Bitmap;
 		
-		//private var tileComposer:TileComposer;
 		/// JSON object containing all tile blueprints
 		private var tileList:Object;
 		/// PNG spritesheet of all tiles
 		private var tileSheet:BitmapData;
-		private var blitter:Blitter;
+		private var spriteSheet:SpriteSheet;
 		private var tileData:Array;
 		private var tilePresets:Object;
 		
@@ -42,7 +40,7 @@ package dreamwisp.world.tile
 		 *
 		 * @param	width The width of the client level in pixels.
 		 * @param	height The height of the client level in pixels.
-		 * @param	spriteSheet The spritesheet with tile sheet and sheet map for blitter.
+		 * @param	spriteSheet The spritesheet containing tile bitmaps this draws from
 		 * @param	tiles The JSON file with all tile information, incl. properties and dimensions.
 		 */
 		public function TileScape(width:Number, height:Number, spriteSheet:SpriteSheet, tiles:Object)
@@ -53,7 +51,7 @@ package dreamwisp.world.tile
 			canvasData = new BitmapData(width, height, true, 0x00000000);
 			canvas = new Bitmap(canvasData);
 			
-			blitter = new Blitter(canvasData, spriteSheet);
+			this.spriteSheet = spriteSheet;
 		}
 		
 		private function readTileData(tiles:Object):void
@@ -91,8 +89,9 @@ package dreamwisp.world.tile
 		}
 		
 		/**
-		 * Constructs the entire level by blitting all tiles.
+		 * Constructs a grid of tiles tiles.
 		 * The tiles are separated into the correct layer in the LevelView.
+		 * @param	tileMap A 2d-array of uints representing tile types.
 		 */
 		public function build(tileMap:Array):void
 		{
@@ -174,7 +173,7 @@ package dreamwisp.world.tile
 			const blueprint:Object = tileData[tileNum]; //tileList.tiles[tileNum];
 			//const presets:Object = tilePresets;
 			MonsterDebugger.trace(this, tileNum);
-			return new Tile(blueprint, tilePresets, blitter, tileWidth, tileHeight);
+			return new Tile(blueprint, tilePresets, spriteSheet, tileWidth, tileHeight);
 		}
 		
 		public function get tileGrid():Vector.<Vector.<Tile>>
