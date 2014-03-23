@@ -109,10 +109,28 @@ package dreamwisp.entity.components.platformer
 		
 		override public function update():void 
 		{
-			travelY();
 			travelX();
+			travelY();
 			
 			currentState.update();
+		}
+		
+		/**
+		 * Aligns view with body to prevent visual clipping collisions.
+		 */
+		public function render(interpolation:Number):void
+		{
+			var prevX:Number = body.x;
+			var prevY:Number = body.y;
+			body.x = entity.view.movieClip.x;
+			body.y = entity.view.movieClip.y;
+			if (bodyCollides())
+			{
+				body.x = entity.view.movieClip.x = prevX;
+				body.y = entity.view.movieClip.y = prevY;
+			}
+			body.x = prevX;
+			body.y = prevY;
 		}
 		
 		/**
@@ -154,8 +172,8 @@ package dreamwisp.entity.components.platformer
 		override protected function travelY():void
 		{
 			super.travelY();
-			// check collision below
 			if (velocityY > 0)
+			// check collision below
 			{
 				if (bottomLeftTile().isSolidUp() || bottomRightTile().isSolidUp())
 				{
@@ -163,6 +181,8 @@ package dreamwisp.entity.components.platformer
 					body.y = bottomEdge() * tileHeight-body.height;
 					velocityY = 0;
 					currentState.collideBottom();
+					MonsterDebugger.trace(this, "hit floor");
+					MonsterDebugger.trace(this, bottomRightTile());
 				}
 			}
 			// check collision above
@@ -181,6 +201,11 @@ package dreamwisp.entity.components.platformer
 		public function jump():void 
 		{
 			currentState.jump();
+		}
+		
+		public function bodyCollides():Boolean
+		{
+			return (topLeftTile().isSolidUp() || topRightTile().isSolidUp() || bottomLeftTile().isSolidUp() || bottomRightTile().isSolidUp());
 		}
 		
 		// currentState.update() calls these internal methods in the order they decide
@@ -214,7 +239,7 @@ package dreamwisp.entity.components.platformer
 			if (edgeVal < 0) return 0;
 			
 			// Entity is beyond right of the tileGrid
-			if (edgeVal >= tileGrid[0].length) edgeVal = (tileGrid.length - 1);
+			if (edgeVal >= tileGrid[0].length) edgeVal = (tileGrid[0].length - 1);
 			
 			return edgeVal;
 		}
@@ -326,6 +351,8 @@ package dreamwisp.entity.components.platformer
 		{
 			return tileGrid[bottomEdge()][rightEdge()];
 		}
+		
+		// Getting the tiles BELOW the player
 		
 		internal function belowLeftTile():Tile 
 		{

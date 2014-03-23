@@ -172,7 +172,7 @@ package dreamwisp.world.tile
 		{
 			const blueprint:Object = tileData[tileNum]; //tileList.tiles[tileNum];
 			//const presets:Object = tilePresets;
-			MonsterDebugger.trace(this, tileNum);
+			//MonsterDebugger.trace(this, tileNum);
 			return new Tile(blueprint, tilePresets, spriteSheet, tileWidth, tileHeight);
 		}
 		
