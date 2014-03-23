@@ -1,22 +1,20 @@
 package dreamwisp.entity.hosts
 {
-	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.core.GameScreen;
 	import dreamwisp.entity.components.Actor;
 	import dreamwisp.entity.components.Animation;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.Health;
 	import dreamwisp.entity.components.Physics;
-	import dreamwisp.entity.components.platformer.PlatformPhysics;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.components.Weapon;
-	import dreamwisp.input.InputState;
 	import dreamwisp.visual.lighting.LightSource;
+	import dreamwisp.world.base.EntityManager;
 	import dreamwisp.world.base.Location;
+	import flash.utils.getDefinitionByName;
 	import org.osflash.signals.Signal;
 	import tools.Belt;
 	
-	import flash.utils.getDefinitionByName;
 	
 	/**
 	 * Entitys are objects which populate GameStates (containers). 
@@ -26,12 +24,8 @@ package dreamwisp.entity.hosts
 	{
 		private var _name:String;
 		public var actorID:uint;
-		public var groupName:String;
-		/// Name of the entitys it can target for combat
-		public var targetName:String;
 		
 		private var _actor:Actor;
-		//private var _physics:Physics;
 		private var _body:Body;
 		private var _health:Health;
 		private var _weapon:Weapon;
@@ -46,11 +40,8 @@ package dreamwisp.entity.hosts
 		private var _disabledInput:Signal;
 		private var _enabledInput:Signal;
 		
-		private var _targets:Vector.<Entity>;
-		private var _interactibles:Vector.<Entity>;
-		private var _group:Vector.<Entity>;
-		
 		private var _myLocation:Location;
+		private var _entityManager:EntityManager;
 		private var _myScreen:GameScreen;
 		
 		protected var isMobile:Boolean = true;		
@@ -103,12 +94,9 @@ package dreamwisp.entity.hosts
 		
 		/**
 		 * Simple destruction of this Entity object.
-		 * Involves removing Entity from its Location and Group, so that
-		 * it might be created again.
 		 */
 		public function destroy():void {
 			destroyed.dispatch(this);
-			if (group) group.splice ( group.indexOf(this), 1 );
 		}
 		
 		public function update():void {
@@ -212,38 +200,21 @@ package dreamwisp.entity.hosts
 		public function get destroyed():Signal { return _destroyed; }
 		
 		public function set destroyed(value:Signal):void { _destroyed = value; }
-					
-		public function get targets():Vector.<Entity> { return _targets; }
 		
-		public function set targets(value:Vector.<Entity>):void { _targets = value; }
+		public function get entityManager():EntityManager { return _entityManager; }
 		
-		public function get group():Vector.<Entity> { return _group; }
-		
-		public function set group(value:Vector.<Entity>):void {
-			// When setting the group of an entity, the entity
-			// automatically removes itself from the old and adds
-			// itself to the new
-			if (_group) _group.splice ( _group.indexOf(this), 1 );
-			_group = value;
-			_group.push(this);
-		}
+		public function set entityManager(value:EntityManager):void { _entityManager = value; }
 		
 		public function get myLocation():Location { return _myLocation; }
 		
 		public function set myLocation(value:Location):void {
 			// entity has switched locations...
 			_myLocation = value;
-			/*leftBounds.removeAll();
-			leftBounds.addOnce(myLocation.parent.transfer);*/
 		}
 		
 		public function get leftBounds():Signal { return _leftBounds; }
 		
 		public function set leftBounds(value:Signal):void { _leftBounds = value; }
-		
-		public function get interactibles():Vector.<Entity> { return _interactibles; }
-		
-		public function set interactibles(value:Vector.<Entity>):void { _interactibles = value; }
 		
 		public function get disabledInput():Signal { return _disabledInput; }
 		

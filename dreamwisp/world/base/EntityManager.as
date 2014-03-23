@@ -1,12 +1,9 @@
 package dreamwisp.world.base {
 	
 	import com.demonsters.debugger.MonsterDebugger;
-	import dreamwisp.entity.components.platformer.IPlatformMovementState;
+	import dreamwisp.entity.hosts.Door;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.entity.hosts.IEntityFactory;
-	import dreamwisp.entity.hosts.IInteractible;
-	//import dreamwisp.entity.hosts.IPlatformEntity;
-	import dreamwisp.entity.hosts.Door;
 	import dreamwisp.entity.hosts.IPlayerControllable;
 	import dreamwisp.input.InputState;
 	import org.osflash.signals.Signal;
@@ -91,8 +88,8 @@ package dreamwisp.world.base {
 			
 			// Values normally defined in the entity's own class, but if specified
 			// here it will override the class values. 
-			if (entityData.group) entity.groupName = entityData.group;
-			if (entityData.targetGroup) entity.targetName = entityData.targetGroup;
+			//if (entityData.group) entity.groupName = entityData.group;
+			//if (entityData.targetGroup) entity.targetName = entityData.targetGroup;
 			if (entity.view) {
 				// attach movieClip if it hasn't defined one for itself
 				if (!entity.view.movieClip) {
@@ -137,38 +134,39 @@ package dreamwisp.world.base {
 			entitys.push(entity);
 			entity.destroyed.add(onEntityDestroyed);
 			entity.entityCreated.add(addEntity);
+			entity.entityManager = this;
 			
 			if (entity is IPlayerControllable)
 				controllableEntitys.push( entity );
 			
-			if (entity.interactibles) entity.interactibles = new Vector.<Entity>;
+			//if (entity.interactibles) entity.interactibles = new Vector.<Entity>;
 			
 			// give the entity a reference to the Location.
 			// each specific Project entity class decides what to do with it,
 			// grabbing optional data such as tileGrid
 			//entity.myLocation = this.location;
 			// group creation and management whenever an entity enters a location
-			if (entity.groupName) {
+			/*if (entity.groupName) {
 				if (!this[entity.groupName]) {
 					this[entity.groupName] = new Vector.<Entity>;
 				}
 				entity.group = this[entity.groupName];
-			}
+			}*/
 			
 			// HANDLING CREATION OF 
 			// even if does not exist, reserve the space and pass a reference to the empty
 			// space so anything that spawns later can be reached by the entity
 			
 			// target-group management; finding groups whenever entity enters a locatoin
-			if (entity.targetName) {
+			/*if (entity.targetName) {
 				if (!this[entity.targetName]) this[entity.targetName] = new Vector.<Entity>;
 				entity.targets = this[entity.targetName];
-			}
+			}*/
 			
-			if (entity.interactibles) {
+			/*if (entity.interactibles) {
 				if (!this["Interactibles"]) this["Interactibles"] = new Vector.<Entity>;
 				entity.interactibles = this["Interactibles"];
-			}
+			}*/
 			
 			//if (entity is IPlatformEntity) {
 				// Interface casting must be done this way in order to access platformController
@@ -216,6 +214,11 @@ package dreamwisp.world.base {
 			throw new Error("No entity found by requested name: " + name);
 		}
 		
+		public function getEntitys():Vector.<Entity>
+		{
+			return entitys;
+		}
+		
 		/**
 		 * Retrieves a group of entitys with the specified name.
 		 * @param	name 
@@ -246,7 +249,7 @@ package dreamwisp.world.base {
 			if (controllableEntitys.indexOf(entity) != -1)
 				controllableEntitys.splice( entitys.indexOf(entity), 1 );
 			// remove the entity from its own group
-			if (entity.group) entity.group.splice ( entity.group.indexOf(entity), 1 );
+			//if (entity.group) entity.group.splice ( entity.group.indexOf(entity), 1 );
 			//if (entity.view) location.view.removeChild(entity.view.movieClip);
 			entity.destroyed.remove(onEntityDestroyed);
 			entity.entityCreated.remove(addEntity);

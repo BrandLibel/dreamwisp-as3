@@ -7,8 +7,8 @@ package dreamwisp.entity.hosts {
 	import dreamwisp.entity.components.Physics;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.components.Weapon;
-	import dreamwisp.input.InputState;
 	import dreamwisp.visual.lighting.LightSource;
+	import dreamwisp.world.base.EntityManager;
 	import dreamwisp.world.base.Location;
 	import org.osflash.signals.Signal;
 	
@@ -47,10 +47,8 @@ package dreamwisp.entity.hosts {
 		function set leftBounds(value:Signal):void;
 		
 		// Dependencies
-		function get targets():Vector.<Entity>;
-		function set targets(value:Vector.<Entity>):void;
-		function get group():Vector.<Entity>;
-		function set group(value:Vector.<Entity>):void;
+		function get entityManager():EntityManager;
+		function set entityManager(value:EntityManager):void;
 		function get myLocation():Location;
 		function set myLocation(value:Location):void;
 		
