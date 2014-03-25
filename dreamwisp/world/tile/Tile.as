@@ -2,12 +2,14 @@ package dreamwisp.world.tile
 {
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
+	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.input.InputState;
 	import dreamwisp.visual.Blitter;
 	import dreamwisp.visual.SpriteSheet;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import org.osflash.signals.Signal;
@@ -28,13 +30,13 @@ package dreamwisp.world.tile
 		private static const ORIGIN:Point = new Point();
 		private var tileRect:Rectangle;
 		
-		private var tileNum:uint = 0;
-		
 		private static const TYPE_AIR:String = "air";
-		private static const TYPE_CUSTOM:String = "custom";
+		
+		private var tileScape:TileScape;
 		
 		private var _x:uint = 0;
 		private var _y:uint = 0;
+		internal var point:Point;
 		private var tileWidth:uint;
 		private var tileHeight:uint;
 		
@@ -46,17 +48,10 @@ package dreamwisp.world.tile
 		public var friction:Number;
 		public var bonusSpeed:Number;
 		
-		public var slopeUp:Boolean;
-		public var slopeDown:Boolean;
-		public var isLadder:Boolean;
-		public var isWater:Boolean;
-		
 		public var isOpaque:Boolean = false;
 		
 		/// Bitmap, which is how the tile currently looks 
-		private var bitmap:Bitmap = new Bitmap();
-		/// Object containing x, y, w, and h of bitmap in the spritesheet
-		//public var frame:Object;
+		private var bitmap:Bitmap;
 		/// Array of objects containing x, y, w, and h of bitmap in the spritesheet
 		private var frames:Array;
 	
@@ -65,43 +60,51 @@ package dreamwisp.world.tile
 		/// The amount of game ticks it takes to equal one currentFrame change
 		private var rateOfAnimation:uint;
 		
-		private var tileMap:Array;
 		private var spriteSheet:SpriteSheet;
-		private var blitter:Blitter;
-		
-		public var created:Signal;
-		//public var destroyed:Signal;
-		
-		//private var state:uint;
-		//private static const STATE_IDLE:uint = 0;
-		//private static const STATE_
-		
+				
 		/**
 		 * 
 		 * @param	blueprint The properties to create this tile with.
 		 * @param	tilePresets A list of common tile properties that can be combined.
 		 * @param	tileSheet The PNG image containing all tile graphics.
 		 */
-		public function Tile(blueprint:Object, tilePresets:Object, spriteSheet:SpriteSheet, tileWidth:uint, tileHeight:uint)
+		public function Tile(blueprint:Object, tilePresets:Object, tileScape:TileScape)
 		{
-			tileMap;
-			this.spriteSheet = spriteSheet;
+			this.spriteSheet = tileScape.spriteSheet;
 			//this.blitter = blitter;
 			this.tilePresets = tilePresets;
 			this.tileSheet = tileSheet;
-			this.tileWidth = tileWidth;
-			this.tileHeight = tileHeight;
+			this.tileWidth = tileScape.tileWidth;
+			this.tileHeight = tileScape.tileHeight;
 			this.tileRect = new Rectangle(0, 0, tileWidth, tileHeight);
 			
+			this.tileScape = tileScape;
+			
+			bitmap = new Bitmap();
+			bitmap.bitmapData = new BitmapData(tileWidth, tileHeight);
+			view = new View(this, bitmap);
+			
+			body = new Body(this, tileWidth, tileHeight);
+			point = new Point();
+			destroyed = new Signal(Tile);
+			
 			// TODO: create tile maps, a 1d array containing list of all surrounding tiles NW, N, NE, W, E, SW, S, SE
-			init(blueprint);
+			if (blueprint)
+				init(blueprint);
+			else
+			{
+				solid = new Object();
+				solid.up = false;
+				solid.left = false;
+				solid.down = false;
+				solid.right = false;
+			}
 		}
 		
 		private function init(blueprint:Object):void
 		{
 			if (blueprint.presets) unpack(blueprint.presets);
 			// unique tile properties, if specified in the blueprint, which override the presets
-			if (blueprint.guid) tileNum = blueprint.guid;
 			if (blueprint.solid) solid = blueprint.solid;
 			if (blueprint.tileType)  type = blueprint.tileType;
 			
@@ -114,11 +117,6 @@ package dreamwisp.world.tile
 				frames = new Array()
 				frames = blueprint.frames.concat();
 			}
-			
-			body = new Body(this, tileWidth, tileHeight);
-			
-			created = new Signal(Tile);
-			destroyed = new Signal(Tile);
 		}
 
 		/**
@@ -172,6 +170,15 @@ package dreamwisp.world.tile
 			//erase();
 		}
 		
+		public function drawSelfOnGrid():void 
+		{
+			// update tile appearance
+			//tileScape.drawTile(this);
+			var matrix:Matrix = new Matrix();
+			matrix.translate(x, y);
+			tileScape.getCanvas().bitmapData.draw(view.displayObject, matrix, view.displayObject.transform.colorTransform);
+		}
+		
 		/**
 		 * 
 		 * @param	erase Whether or not to erase the prev tile bitmap before drawing
@@ -180,23 +187,20 @@ package dreamwisp.world.tile
 		{
 			if (type == TYPE_AIR)
 			{
-				bitmap.bitmapData = new BitmapData(tileWidth, tileHeight);
 				bitmap.bitmapData.fillRect(tileRect, 0); // air is blank
 				return;
 			}
 			
 			var frame:Object = (frames) ? frames[currentFrame-1] : frame;
-			//var copyFrom:Rectangle = new Rectangle(frame.x, frame.y, frame.w, frame.h);
 			
 			if (erase && bitmap.bitmapData)
 			{
-				//bitmap.bitmapData.dispose();
 				bitmap.bitmapData.fillRect(tileRect, 0);
 			}
-			if (!bitmap.bitmapData) bitmap.bitmapData = new BitmapData(tileWidth, tileHeight);
 			
 			//blitter.blit("tiles", tileNum-1, 0, 0, currentFrame-1, bitmap.bitmapData);
-			bitmap.bitmapData.copyPixels(spriteSheet.getImage(), new Rectangle(0, 0, 32, 32), ORIGIN);
+			spriteSheet.getImage()
+			bitmap.bitmapData.copyPixels(spriteSheet.getImage(), new Rectangle(0, 0, tileWidth, tileHeight), ORIGIN);
 		}
 		
 		private function erase():void
@@ -224,15 +228,7 @@ package dreamwisp.world.tile
 			}
 		}
 		
-		public final function setFire():void
-		{
-			// if (flammable)
-		}
-		
-		public function bitmapData():BitmapData
-		{
-			return bitmap.bitmapData;
-		}
+		public function bitmapData():BitmapData { return bitmap.bitmapData; }
 		
 		/**
 		 * If the tile has more than one frame, it has animation.
@@ -248,11 +244,35 @@ package dreamwisp.world.tile
 		
 		public function get x():uint { return body.x; }
 		
-		public function set x(value:uint):void { body.x = value; }
+		public function set x(value:uint):void 
+		{
+			body.x = value;
+			point.x = value;
+		}
 		
 		public function get y():uint { return body.y; }
 		
-		public function set y(value:uint):void { body.y = value; }
+		public function set y(value:uint):void 
+		{
+			body.y = value;
+			point.y = value;
+		}
+		
+		/**
+		 * The x-position in grid
+		 */
+		public function col():uint
+		{
+			return _x / tileWidth;
+		}
+		
+		/**
+		 * The y-position in grid
+		 */
+		public function row():uint
+		{
+			return _y / tileHeight;
+		}
 		
 		public function isCompleteSolid():Boolean
 		{

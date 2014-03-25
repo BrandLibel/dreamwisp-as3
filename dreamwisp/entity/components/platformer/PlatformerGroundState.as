@@ -2,6 +2,7 @@ package dreamwisp.entity.components.platformer
 {
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.hosts.Entity;
+	import dreamwisp.world.tile.Tile;
 	
 	/**
 	 * ...
@@ -12,6 +13,7 @@ package dreamwisp.entity.components.platformer
 	{
 		private var platformPhysics:PlatformPhysics;
 		private var host:Entity;
+		private var lastStableTile:Tile;
 		
 		public function PlatformerGroundState(platformController:PlatformPhysics, host:Entity)
 		{
@@ -30,8 +32,16 @@ package dreamwisp.entity.components.platformer
 				if (Math.abs(host.physics.velocityX) < platformPhysics.maxWalkSpeed * 0.1)
 					host.physics.velocityX = 0;
 			}
-			// no longer on ground if neither feet are on solid ground
-			if (!platformPhysics.primaryFoot().isSolidUp())
+			
+			var tileUnderFoot:Tile = platformPhysics.primaryFoot();
+			if (tileUnderFoot.isSolidUp())
+			{
+				if (tileUnderFoot != lastStableTile)
+					platformPhysics.steppedNewTile.dispatch(tileUnderFoot);
+				lastStableTile = tileUnderFoot;
+			}
+			// no longer on ground if neither feet are on solid ground)
+			else
 				platformPhysics.changeState("airState");
 		}
 		

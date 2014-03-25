@@ -83,10 +83,9 @@ package dreamwisp.entity.hosts
 			}
 			if (myData.view != null)
 			{
-				view = new View(this);
 				var strings:Array = myData.view.split("_");
 				if (strings[0] == "mc")
-					view.movieClip = Belt.addClassFromLibrary( strings[1], Belt.CLASS_MOVIECLIP );
+					view = new View(this, Belt.addClassFromLibrary( strings[1], Belt.CLASS_MOVIECLIP ) );
 				//else
 					// "ss" - access spritesheet statically 
 			}

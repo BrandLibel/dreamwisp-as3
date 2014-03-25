@@ -13,28 +13,36 @@ package dreamwisp.world.tile
 	 * @author Brandon
 	 */
 	
+	//public class TileScape
+	//{
+		//public function TileScape(width:Number, height:Number, spriteSheet:SpriteSheet, tiles:Object) 
+		//{
+			//
+		//}
+	//}
+	 
 	public class TileScape
 	{
 		private var tileRect:Rectangle;
 		private var _tileWidth:uint;
 		private var _tileHeight:uint;
 		
-		private var _tileGrid:Vector.<Vector.<Tile>> = new Vector.<Vector.<Tile>>;
+		private var tileGrid:Vector.<Vector.<Tile>> = new Vector.<Vector.<Tile>>;
 		/// The list of tiles which currently need to be updated.
 		private var activeTiles:Vector.<Tile> = new Vector.<Tile>;
-		/// Vector of points with x & y pos of tile on grid, only for tiles that require updating. 
-		private var tileCoords:Vector.<Point> = new Vector.<Point>;
 		
 		private var canvasData:BitmapData;
-		public var canvas:Bitmap;
+		private var canvas:Bitmap;
 		
 		/// JSON object containing all tile blueprints
 		private var tileList:Object;
 		/// PNG spritesheet of all tiles
 		private var tileSheet:BitmapData;
-		private var spriteSheet:SpriteSheet;
+		internal var spriteSheet:SpriteSheet;
 		private var tileData:Array;
 		private var tilePresets:Object;
+		
+		private static var EMPTY_TILE:Tile;
 		
 		/**
 		 *
@@ -50,6 +58,9 @@ package dreamwisp.world.tile
 			
 			canvasData = new BitmapData(width, height, true, 0x00000000);
 			canvas = new Bitmap(canvasData);
+			
+			if (EMPTY_TILE == null)
+				EMPTY_TILE = new Tile(null, null, this);
 			
 			this.spriteSheet = spriteSheet;
 		}
@@ -78,20 +89,19 @@ package dreamwisp.world.tile
 		
 		public function update():void
 		{
-			for each (var point:Point in tileCoords)
-				tileGrid[point.y][point.x].update();
+			for each (var tile:Tile in activeTiles)
+				tile.update();
 		}
 		
 		public function render():void
 		{
-			for each (var point:Point in tileCoords)
-				drawTile(point.y, point.x);
+			//for each (var tile:Tile in activeTiles)
+				//drawTile(tile.
 		}
 		
 		/**
-		 * Constructs a grid of tiles tiles.
-		 * The tiles are separated into the correct layer in the LevelView.
-		 * @param	tileMap A 2d-array of uints representing tile types.
+		 * Constructs a grid of tiles.
+		 * @param	tileMap a 2d-array of uints representing tile types.
 		 */
 		public function build(tileMap:Array):void
 		{
@@ -101,8 +111,15 @@ package dreamwisp.world.tile
 				tileGrid.push(new <Tile>[]);
 				for (var b:uint = 0; b < tileMap[0].length; b++)
 				{
-					tileGrid[a][b] = compose(tileMap[a][b]);
-					var tile:Tile = tileGrid[a][b];
+					var tileNum:uint = tileMap[a][b];
+					if (tileNum == 0)
+					{
+						tileGrid[a][b] = null;
+						continue;
+					}
+					
+					var tile:Tile = compose(tileNum);
+					tileGrid[a][b] = tile;
 					tile.x = b * tileWidth;
 					tile.y = a * tileHeight;
 					destPoint.x = tile.x;
@@ -110,24 +127,26 @@ package dreamwisp.world.tile
 					if (tile.hasAnimation)
 					{
 						activeTiles.push(tile);
-						tileCoords.push(new Point(b, a));
 					}
+					
 					tile.render(1);
 					canvasData.copyPixels(tile.bitmapData(), tileRect, destPoint);
-						//if (tile.body) Level(location).solidBodys.push(tile.body);
 				}
 			}
-			//MonsterDebugger.trace(this, tileGrid);
+		}
+		
+		public function drawTile(tile:Tile):void 
+		{
+			tile.drawTile();
+			canvasData.copyPixels(tile.bitmapData(), tileRect, tile.point);
 		}
 		
 		/// Visually renders the tile specified at the coordinates.
-		public function drawTile(row:uint, col:uint):void
+		private function drawTileAt(row:uint, col:uint):void
 		{
 			const destPoint:Point = new Point(col * tileWidth, row * tileHeight);
 			var tile:Tile = tileGrid[row][col];
-			//tile.render(1);
-			tile.drawTile();
-			canvasData.copyPixels(tile.bitmapData(), tileRect, destPoint);
+			drawTile(tile);
 		}
 		
 		/**
@@ -152,20 +171,43 @@ package dreamwisp.world.tile
 					activeTiles.push(tile);
 			}
 			
-			// setup - removing update list
-			for (var i:int = 0; i < tileCoords.length; i++)
-			{
-				if (tileCoords[i].equals(newPoint))
-				{
-					tileCoords.splice(i, 1);
-					break;
-				}
-			}
-			
 			tileGrid[row][col] = compose(newTileNum);
-			if (tileGrid[row][col].hasAnimation)
-				tileCoords.push(newPoint);
-			drawTile(row, col);
+			drawTileAt(row, col);
+		}
+		
+		/**
+		 * Gets the tile at the specified grid position.
+		 * Empty locations (null tiles) should be treated as air. 
+		 * @return null if the coordinates are out of bounds
+		 */
+		public function tileAt(row:uint, col:uint):Tile
+		{
+			if (row >= tileGrid.length || col >= tileGrid[0].length)
+				return EMPTY_TILE;
+			if (tileGrid[row][col] == null)
+				return EMPTY_TILE;
+			return tileGrid[row][col];
+		}
+		
+		public function isEmpty(row:uint, col:uint):Boolean
+		{
+			return (tileAt(row, col) == null);
+		}
+		
+		/**
+		 * The number of horizontal spaces on the grid
+		 */
+		public function gridWidth():uint
+		{
+			return tileGrid[0].length;
+		}
+		
+		/**
+		 * The number of vertical spaces on the grid
+		 */
+		public function gridHeight():uint
+		{
+			return tileGrid.length;
 		}
 		
 		private function compose(tileNum:uint):Tile
@@ -173,17 +215,7 @@ package dreamwisp.world.tile
 			const blueprint:Object = tileData[tileNum]; //tileList.tiles[tileNum];
 			//const presets:Object = tilePresets;
 			//MonsterDebugger.trace(this, tileNum);
-			return new Tile(blueprint, tilePresets, spriteSheet, tileWidth, tileHeight);
-		}
-		
-		public function get tileGrid():Vector.<Vector.<Tile>>
-		{
-			return _tileGrid;
-		}
-		
-		public function set tileGrid(value:Vector.<Vector.<Tile>>):void
-		{
-			_tileGrid = value;
+			return new Tile(blueprint, tilePresets, this);
 		}
 		
 		public function get tileWidth():uint
@@ -205,7 +237,9 @@ package dreamwisp.world.tile
 		{
 			_tileHeight = value;
 		}
-	
+		
+		public function getCanvas():Bitmap { return canvas; }
+			
 	}
 
 }

@@ -7,6 +7,7 @@ package dreamwisp.entity.components.platformer
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.world.tile.Tile;
 	import dreamwisp.world.tile.TileScape;
+	import org.osflash.signals.Signal;
 	import statemachine.StateMachine;
 	import statemachine.StateMachineEvent;
 	import tools.Belt;
@@ -22,7 +23,6 @@ package dreamwisp.entity.components.platformer
 		
 		private var tileWidth:uint = DEFAULT_TILE_WIDTH;
 		private var tileHeight:uint = DEFAULT_TILE_HEIGHT;
-		private var tileGrid:Vector.<Vector.<Tile>> = new Vector.<Vector.<Tile>>;
 		
 		private var entity:Entity;
 		private var body:Body;
@@ -41,6 +41,8 @@ package dreamwisp.entity.components.platformer
 		private var ladderState:IPlatformMovementState;
 		private var airState:IPlatformMovementState;
 		private var tileScape:TileScape;
+		
+		public var steppedNewTile:Signal;
 
 		public function PlatformPhysics(entity:Entity, maxWalkSpeed:uint, walkAcceleration:Number, jumpPower:int) 
 		{
@@ -60,6 +62,8 @@ package dreamwisp.entity.components.platformer
 			movementSM.addState( "ladderState", { enter: onStateChange }  );
 			movementSM.addState( "airState", { enter: onStateChange } );
 			movementSM.initialState =  "airState";
+			
+			steppedNewTile = new Signal(Tile);
 		}
 		
 		// State machine
@@ -80,7 +84,6 @@ package dreamwisp.entity.components.platformer
 		public function setTileScape(tileScape:TileScape):void 
 		{
 			this.tileScape = tileScape;
-			this.tileGrid = tileScape.tileGrid;
 		}
 		
 		override public function moveLeft():void 
@@ -234,13 +237,7 @@ package dreamwisp.entity.components.platformer
 		 */
 		internal function rightEdge():int
 		{
-			var edgeVal:int = Math.floor((body.x + (body.width - 1)) / tileWidth);
-			// Entity is beyond left of the tileGrid
-			if (edgeVal < 0) return 0;
-			
-			// Entity is beyond right of the tileGrid
-			if (edgeVal >= tileGrid[0].length) edgeVal = (tileGrid[0].length - 1);
-			
+			var edgeVal:int = Math.floor((body.x + (body.width - 1)) / tileWidth);			
 			return edgeVal;
 		}
 		
@@ -250,13 +247,7 @@ package dreamwisp.entity.components.platformer
 		 */
 		internal function leftEdge():int
 		{
-			// Entity is beyond left of the tileGrid
-			if (body.x < 0) return 0;
-			
 			var edgeVal:int = Math.floor((body.x) / tileWidth);
-			// Entity is beyond right of the tileGrid
-			if (edgeVal >= tileGrid[0].length) edgeVal = (tileGrid[0].length -1);
-			
 			return edgeVal;
 		}
 		
@@ -267,11 +258,6 @@ package dreamwisp.entity.components.platformer
 		internal function bottomEdge():int
 		{
 			var edgeVal:int = Math.floor((body.y + (body.height - 1)) / tileHeight);
-			// Entity is beyond top of the tileGrid
-			if (edgeVal < 0) return 0;
-			
-			// Entity is beyond bottom of the tileGrid
-			if (edgeVal >= tileGrid.length) edgeVal = (tileGrid.length -1);
 			return edgeVal;
 		}
 		
@@ -281,13 +267,7 @@ package dreamwisp.entity.components.platformer
 		 */
 		internal function topEdge():int 
 		{
-			// Entity is beyond top of the tileGrid
-			if (body.y < 0) return 0;
-			
 			var edgeVal:int = Math.floor((body.y) / tileHeight);
-			// Entity is beyond bottom of the tileGrid
-			if (edgeVal >= tileGrid.length) edgeVal = (tileGrid.length -1);
-			
 			return edgeVal;
 		}
 		
@@ -299,8 +279,6 @@ package dreamwisp.entity.components.platformer
 		internal function midVertical():Number
 		{
 			var lineVal:Number = Math.floor((body.x + (body.width / 2)) / tileWidth);
-			if (lineVal < 0) lineVal = 0;
-			if (lineVal >= tileGrid.length) lineVal = (tileGrid.length -1);
 			return lineVal;
 		}
 		
@@ -315,65 +293,77 @@ package dreamwisp.entity.components.platformer
 		
 		internal function centerTile():Tile
 		{
-			return tileGrid[midHorizontal()][midVertical()];
+			return tileScape.tileAt(midHorizontal(), midVertical());
 		}
 		
 		// Getting the tiles along TOP edge
 		
 		internal function topLeftTile():Tile
 		{
-			return tileGrid[topEdge()][leftEdge()];
+			return tileScape.tileAt(topEdge(), leftEdge());
 		}
 		
 		internal function topMidTile():Tile
 		{
-			return tileGrid[topEdge()][midVertical()];
+			return tileScape.tileAt(topEdge(), midVertical());
 		}
 		
 		internal function topRightTile():Tile
 		{
-			return tileGrid[topEdge()][rightEdge()];
+			return tileScape.tileAt(topEdge(), rightEdge());
 		}
 		
 		// Getting the tiles along BOTTOM edge
 		
 		internal function bottomLeftTile():Tile
 		{
-			return tileGrid[bottomEdge()][leftEdge()];
+			return tileScape.tileAt(bottomEdge(), leftEdge());
 		}
 		
 		internal function bottomMidTile():Tile
 		{
-			return tileGrid[bottomEdge()][midVertical()];
+			return tileScape.tileAt(bottomEdge(), midVertical());
 		}
 		
 		internal function bottomRightTile():Tile
 		{
-			return tileGrid[bottomEdge()][rightEdge()];
+			return tileScape.tileAt(bottomEdge(), rightEdge());
 		}
 		
 		// Getting the tiles BELOW the player
 		
 		internal function belowLeftTile():Tile 
 		{
-			return tileGrid[bottomEdge()+1][leftEdge()];
+			return tileScape.tileAt(bottomEdge()+1, leftEdge());
 		}
 		
 		internal function belowMidTile():Tile 
 		{
-			return tileGrid[bottomEdge()+1][midVertical()];
+			return tileScape.tileAt(bottomEdge()+1, midVertical());
 		}
 		
 		internal function belowRightTile():Tile 
 		{
-			return tileGrid[bottomEdge()+1][rightEdge()];
+			return tileScape.tileAt(bottomEdge()+1, rightEdge());
+		}
+		
+		/**
+		 * The horizontal line that intersects the feet 
+		 * @return
+		 */
+		internal function footLine():uint
+		{
+			return Math.floor((body.y + body.height + 1) / tileHeight);
 		}
 		
 		internal function primaryFoot():Tile 
 		{
-			var leftFoot:Tile = belowLeftTile();
-			var rightFoot:Tile = belowRightTile();
-			if (leftFoot != null && leftFoot.isSolidUp())
+			var leftFoot:Tile = tileScape.tileAt(footLine(), leftEdge());
+			var midFoot:Tile = tileScape.tileAt(footLine(), midVertical());
+			var rightFoot:Tile = tileScape.tileAt(footLine(), rightEdge());
+			if (midFoot.isSolidUp())
+				return midFoot;
+			else if (leftFoot.isSolidUp())
 				return leftFoot;
 			else
 				return rightFoot;

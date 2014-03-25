@@ -46,8 +46,7 @@ package dreamwisp.story.dialogue {
 		public function DialogueBox(entityList:Object) {
 			this.entityList = entityList;
 			
-			view = new View(this);
-			view.movieClip = Belt.addClassFromLibrary("DialogueGraphic", Belt.CLASS_MOVIECLIP);
+			view = new View(this, Belt.addClassFromLibrary("DialogueGraphic", Belt.CLASS_MOVIECLIP));
 			view.movieClip.visible = false;
 			
 			body = new Body(this, view.movieClip.width, view.movieClip.height);

@@ -20,7 +20,7 @@ package dreamwisp.entity.hosts {
 			
 			body = new Body(this, 48, 96);
 			
-			view = new View(this);
+			//view = new View(this);
 			//view.movieClip = Belt.addClassFromLibrary("E4", Belt.CLASS_MOVIECLIP);
 			
 			//view.layer = Data.text.LAYER_INTERACTIBLES;

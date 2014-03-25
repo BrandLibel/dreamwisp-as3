@@ -135,13 +135,13 @@ package dreamwisp.visual.lighting {
 					var gridX:int = Math.floor((host.body.centerX + (lightPower / lightStep * i) * Math.cos(n)) / tileScape.tileWidth);
 					var gridY:int = Math.floor((host.body.centerY + (lightPower / lightStep * i) * Math.sin(n)) / tileScape.tileHeight);
 					// break when out of bounds or in a square that contains a completely solid tile
-					if (gridY >= host.myLocation.tileScape.tileGrid.length || gridY < 0) {
+					if (gridY >= host.myLocation.tileScape.gridHeight() || gridY < 0) {
 						break stepLoop;
 					}
-					if (gridX >= host.myLocation.tileScape.tileGrid[0].length || gridX < 0) {
+					if (gridX >= host.myLocation.tileScape.gridWidth() || gridX < 0) {
 						break stepLoop;
 					}
-					if (host.myLocation.tileScape.tileGrid[gridY][gridX].isOpaque) {
+					if (host.myLocation.tileScape.tileAt(gridY, gridX).isOpaque) {
 						lightPenetration = (tileScape.tileHeight + tileScape.tileWidth) / 8;
 						break stepLoop;
 					}

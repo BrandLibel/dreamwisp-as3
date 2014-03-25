@@ -6,6 +6,7 @@ package dreamwisp.entity.components
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.geom.ColorTransform;
 	
 	/**
 	 * This class is for anything that can be visually rendered on the screen.
@@ -23,17 +24,22 @@ package dreamwisp.entity.components
 	{
 		private var host:Entity;
 		
-		public var displayObject:DisplayObject;
-		private var _movieClip:MovieClip;
+		private var _displayObject:DisplayObject;
 		private var _alpha:Number = 1;
 		protected const rotAngle:Number = (180 / Math.PI);
+		
+		// color transformation tools
+		private var currentColor:Array = [1, 1, 1];
+		private var colorTransform:ColorTransform;
 		
 		/// Layer for if this View gets added into a ContainerView
 		private var _layer:uint = uint.MAX_VALUE;
 		
-		public function View(entity:Entity)
+		public function View(entity:Entity, displayObject:DisplayObject)
 		{
 			host = entity;
+			this.displayObject = displayObject;
+			colorTransform = displayObject.transform.colorTransform;
 		}
 		
 		public function render(interpolation:Number):void
@@ -43,23 +49,42 @@ package dreamwisp.entity.components
 			if (host.animation) movieClip.gotoAndStop(host.animation.currentFrame());
 			if (host.physics)
 			{
-				movieClip.x = host.body.x + (host.physics.velocityX * interpolation);
-				movieClip.y = host.body.y + (host.physics.velocityY * interpolation);
+				displayObject.x = host.body.x + (host.physics.velocityX * interpolation);
+				displayObject.y = host.body.y + (host.physics.velocityY * interpolation);
 			} 
 			else
 			{
-				movieClip.x = host.body.x;
-				movieClip.y = host.body.y;
+				displayObject.x = host.body.x;
+				displayObject.y = host.body.y;
 			}
-            movieClip.rotation = host.body.angle * rotAngle;
-            movieClip.alpha = alpha;
-            movieClip.scaleX = 1;//scale;
-            movieClip.scaleY = 1;//scale;
+            displayObject.rotation = host.body.angle * rotAngle;
+            displayObject.alpha = alpha;
+            displayObject.scaleX = 1;//scale;
+            displayObject.scaleY = 1;//scale;
 		}
 		
-		public function get movieClip():MovieClip { return _movieClip; }
+		/**
+		 * Alters the tinting of this view
+		 * @param	colors red, green, and blue multiplier (0 - 1) values
+		 */
+		public function setColor(colors:Array):void 
+		{
+			currentColor = colors;
+			colorTransform.redMultiplier = colors[0];
+			colorTransform.greenMultiplier = colors[1];
+			colorTransform.blueMultiplier = colors[2];
+			displayObject.transform.colorTransform = colorTransform;
+		}
 		
-		public function set movieClip(value:MovieClip):void { _movieClip = value; }
+		public function getColor():Array 
+		{
+			return currentColor;
+		}
+		
+		public function hasColor():Boolean
+		{
+			return (currentColor[0] != 1 && currentColor[1] != 1 && currentColor[2] != 1);
+		}
 		
 		public function get alpha():Number { return _alpha; }
 		
@@ -68,8 +93,23 @@ package dreamwisp.entity.components
 		public function get layer():uint { return _layer; }
 		
 		public function set layer(value:uint):void {
-			//MonsterDebugger.trace(this, "set layer: " + value);
 			_layer = value;
+		}
+		
+		public function get movieClip():MovieClip { return displayObject as MovieClip; }
+		
+		public function set movieClip(value:MovieClip):void { displayObject = value; }
+		
+		public function get displayObject():DisplayObject 
+		{
+			if (colorTransform)
+				_displayObject.transform.colorTransform = colorTransform;
+			return _displayObject;
+		}
+		
+		public function set displayObject(value:DisplayObject):void 
+		{
+			_displayObject = value;
 		}
 		
 	}
