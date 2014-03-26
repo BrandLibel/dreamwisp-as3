@@ -209,6 +209,11 @@ package dreamwisp.entity.components.platformer
 			return (topLeftTile().isSolidUp() || topRightTile().isSolidUp() || bottomLeftTile().isSolidUp() || bottomRightTile().isSolidUp());
 		}
 		
+		public function isOnGround():Boolean
+		{
+			return (currentState == groundState);
+		}
+		
 		// currentState.update() calls these internal methods in the order they decide
 		
 		/**
@@ -354,7 +359,7 @@ package dreamwisp.entity.components.platformer
 			return Math.floor((body.y + body.height + 1) / tileHeight);
 		}
 		
-		internal function primaryFoot():Tile 
+		public function primaryFoot():Tile 
 		{
 			var leftFoot:Tile = tileScape.tileAt(footLine(), leftEdge());
 			var midFoot:Tile = tileScape.tileAt(footLine(), midVertical());
