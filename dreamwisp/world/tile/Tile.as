@@ -22,7 +22,7 @@ package dreamwisp.world.tile
 	//		Differentiate between solid/opaque bodies which are able to collide with light, and only
 	//		populate this 'lighting' entity list with solid/opaque things.
 	
-	public dynamic class Tile extends Entity
+	public class Tile extends Entity
 	{
 		private var tilePresets:Object;
 		private var tileSheet:BitmapData;
@@ -32,7 +32,7 @@ package dreamwisp.world.tile
 		
 		private static const TYPE_AIR:String = "air";
 		
-		private var tileScape:TileScape;
+		protected var tileScape:TileScape;
 		
 		private var _x:uint = 0;
 		private var _y:uint = 0;
@@ -134,7 +134,8 @@ package dreamwisp.world.tile
 				// copying all properties from the preset
 				for (var name:String in presetObject)
 				{
-					this[name] = presetObject[name];
+					if (this.hasOwnProperty(name))
+						this[name] = presetObject[name];
 				}
 			}
 			else

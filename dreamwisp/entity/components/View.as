@@ -4,6 +4,7 @@ package dreamwisp.entity.components
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.entity.hosts.Entity;
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.geom.ColorTransform;
@@ -29,7 +30,7 @@ package dreamwisp.entity.components
 		protected const rotAngle:Number = (180 / Math.PI);
 		
 		// color transformation tools
-		private var currentColor:Array = [1, 1, 1];
+		private var currentTint:Array = [1, 1, 1];
 		private var colorTransform:ColorTransform;
 		
 		/// Layer for if this View gets added into a ContainerView
@@ -67,23 +68,23 @@ package dreamwisp.entity.components
 		 * Alters the tinting of this view
 		 * @param	colors red, green, and blue multiplier (0 - 1) values
 		 */
-		public function setColor(colors:Array):void 
+		public function applyTint(colors:Array):void 
 		{
-			currentColor = colors;
+			currentTint = colors;
 			colorTransform.redMultiplier = colors[0];
 			colorTransform.greenMultiplier = colors[1];
 			colorTransform.blueMultiplier = colors[2];
 			displayObject.transform.colorTransform = colorTransform;
 		}
 		
-		public function getColor():Array 
+		public function getTint():Array 
 		{
-			return currentColor;
+			return currentTint;
 		}
 		
-		public function hasColor():Boolean
+		public function hasTint():Boolean
 		{
-			return (currentColor[0] != 1 && currentColor[1] != 1 && currentColor[2] != 1);
+			return (currentTint[0] != 1 && currentTint[1] != 1 && currentTint[2] != 1);
 		}
 		
 		public function get alpha():Number { return _alpha; }
@@ -110,6 +111,11 @@ package dreamwisp.entity.components
 		public function set displayObject(value:DisplayObject):void 
 		{
 			_displayObject = value;
+		}
+		
+		public function get displayObjectContainer():DisplayObjectContainer
+		{
+			return _displayObject as DisplayObjectContainer;
 		}
 		
 	}

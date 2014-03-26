@@ -42,7 +42,7 @@ package dreamwisp.entity.components.platformer
 			if (platformPhysics.topMidTile().type != "ladder")
 			{
 				// reaching a platform that doesn't cont. up w/ a ladder stops the climb
-				if (platformPhysics.centerTile().solid.up)
+				if (platformPhysics.centerTile().isSolidUp())
 					return;
 				// gets off of ladder when 
 				platformPhysics.changeState("airState");

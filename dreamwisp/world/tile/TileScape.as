@@ -39,10 +39,10 @@ package dreamwisp.world.tile
 		/// PNG spritesheet of all tiles
 		private var tileSheet:BitmapData;
 		internal var spriteSheet:SpriteSheet;
-		private var tileData:Array;
-		private var tilePresets:Object;
+		protected var tileData:Array;
+		protected var tilePresets:Object;
 		
-		private static var EMPTY_TILE:Tile;
+		protected static var EMPTY_TILE:Tile;
 		
 		/**
 		 *
@@ -210,7 +210,7 @@ package dreamwisp.world.tile
 			return tileGrid.length;
 		}
 		
-		private function compose(tileNum:uint):Tile
+		protected function compose(tileNum:uint):Tile
 		{
 			const blueprint:Object = tileData[tileNum]; //tileList.tiles[tileNum];
 			//const presets:Object = tilePresets;

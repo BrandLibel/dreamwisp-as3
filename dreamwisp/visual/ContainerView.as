@@ -242,6 +242,10 @@ package dreamwisp.visual {
 		private function sortDisplayList():void {
 			var i:int = container.numChildren;
 			genericViews.sortOn("layer", Array.NUMERIC);
+			// avoid scenarios where my construct GenericViews
+			// becomes out of sync with Flash's display object children
+			if (container.numChildren > genericViews.length)
+				return;
 			while(i--){
 				if (genericViews[i].displayObject != container.getChildAt(i)) {
 					container.setChildIndex(genericViews[i].displayObject, i);
