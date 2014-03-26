@@ -191,7 +191,20 @@ package dreamwisp.world.tile
 		
 		public function isEmpty(row:uint, col:uint):Boolean
 		{
-			return (tileAt(row, col) == null);
+			return (tileAt(row, col) == EMPTY_TILE);
+		}
+		
+		public function purge():void 
+		{
+			for (var i:int = 0; i < tileGrid.length; i++) 
+			{
+				for (var j:int = 0; j < tileGrid[0].length; j++) 
+				{
+					if (!isEmpty(j, i))
+						tileAt(j, i).destroy();
+				}
+			}
+			canvasData.dispose();
 		}
 		
 		/**

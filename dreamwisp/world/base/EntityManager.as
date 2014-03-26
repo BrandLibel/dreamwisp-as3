@@ -257,6 +257,12 @@ package dreamwisp.world.base {
 			entityRemoved.dispatch(entity);
 		}
 		
+		public function purge():void 
+		{
+			for each (var entity:Entity in entitys) 
+				entity.destroy();
+		}
+		
 	}
 
 }

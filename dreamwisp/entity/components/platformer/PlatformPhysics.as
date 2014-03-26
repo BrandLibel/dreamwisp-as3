@@ -184,8 +184,6 @@ package dreamwisp.entity.components.platformer
 					body.y = bottomEdge() * tileHeight-body.height;
 					velocityY = 0;
 					currentState.collideBottom();
-					MonsterDebugger.trace(this, "hit floor");
-					MonsterDebugger.trace(this, bottomRightTile());
 				}
 			}
 			// check collision above
