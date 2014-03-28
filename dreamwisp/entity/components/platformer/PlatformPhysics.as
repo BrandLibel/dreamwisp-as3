@@ -189,7 +189,7 @@ package dreamwisp.entity.components.platformer
 			// check collision above
 			else if (velocityY < 0)
 			{
-				if (topLeftTile().isSolidUp() || topRightTile().isSolidUp())
+				if (topLeftTile().isSolidDown() || topRightTile().isSolidDown())
 				{
 					// hit the ceiling
 					body.y = bottomEdge() * tileHeight + 1;

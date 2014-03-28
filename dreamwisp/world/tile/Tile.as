@@ -41,6 +41,7 @@ package dreamwisp.world.tile
 		private var tileHeight:uint;
 		
 		public var type:String;
+		private var id:uint;
 		///Object containing booleans left, right, up, down determining 
 		///whether a SolidBody collides or passes through that direction.
 		private var solid:Object;
@@ -104,7 +105,9 @@ package dreamwisp.world.tile
 		private function init(blueprint:Object):void
 		{
 			if (blueprint.presets) unpack(blueprint.presets);
+			
 			// unique tile properties, if specified in the blueprint, which override the presets
+			id = blueprint.guid;
 			if (blueprint.solid) solid = blueprint.solid;
 			if (blueprint.tileType)  type = blueprint.tileType;
 			
@@ -199,17 +202,15 @@ package dreamwisp.world.tile
 				bitmap.bitmapData.fillRect(tileRect, 0); // air is blank
 				return;
 			}
-			
-			var frame:Object = (frames) ? frames[currentFrame-1] : frame;
-			
+						
 			if (erase && bitmap.bitmapData)
 			{
 				bitmap.bitmapData.fillRect(tileRect, 0);
 			}
 			
-			//blitter.blit("tiles", tileNum-1, 0, 0, currentFrame-1, bitmap.bitmapData);
-			spriteSheet.getImage()
-			bitmap.bitmapData.copyPixels(spriteSheet.getImage(), new Rectangle(0, 0, tileWidth, tileHeight), ORIGIN);
+			var frame:Object = spriteSheet.access("frames", id).frame;
+			var srcRect:Rectangle = new Rectangle(frame.x, frame.y, tileWidth, tileHeight);
+			bitmap.bitmapData.copyPixels(spriteSheet.getImage(), srcRect, ORIGIN);
 		}
 		
 		private function erase():void
