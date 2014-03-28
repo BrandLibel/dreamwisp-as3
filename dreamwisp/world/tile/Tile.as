@@ -177,7 +177,15 @@ package dreamwisp.world.tile
 			//tileScape.drawTile(this);
 			var matrix:Matrix = new Matrix();
 			matrix.translate(x, y);
-			tileScape.getCanvas().bitmapData.draw(view.displayObject, matrix, view.displayObject.transform.colorTransform);
+			
+			// stop from drawing on a disposed bitmap 
+			try {
+				tileScape.getCanvas().bitmapData.draw(view.displayObject, matrix, view.displayObject.transform.colorTransform);
+			}
+			catch (aError:ArgumentError) {
+				
+			}
+			
 		}
 		
 		/**
