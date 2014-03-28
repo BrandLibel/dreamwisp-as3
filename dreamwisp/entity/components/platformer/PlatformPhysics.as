@@ -158,7 +158,7 @@ package dreamwisp.entity.components.platformer
 			// check collision to the left
 			else if (velocityX < 0)
 			{
-				if (topLeftTile().isSolidRight() || topLeftTile().isSolidRight())
+				if (topLeftTile().isSolidRight() || bottomLeftTile().isSolidRight())
 				{
 					// hit a wall to the left
 					body.x = (leftEdge() + 1) * tileWidth;
