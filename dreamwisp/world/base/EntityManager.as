@@ -259,8 +259,8 @@ package dreamwisp.world.base {
 		
 		public function purge():void 
 		{
-			for each (var entity:Entity in entitys) 
-				entity.destroy();
+			for (var i:int = entitys.length - 1; i >= 0; i--) 
+				entitys[i].destroy();
 		}
 		
 	}

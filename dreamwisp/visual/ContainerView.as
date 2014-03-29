@@ -165,7 +165,7 @@ package dreamwisp.visual {
 			// use this b/c container.contains(child) returns true even when child isnt in container
 			var child:DisplayObject = entity.view.movieClip;
 			if (child.parent == container) {
-				MonsterDebugger.trace(this, "TRUE", "", "", 0xFF28DF);
+				//MonsterDebugger.trace(this, "TRUE", "", "", 0xFF28DF);
 				container.removeChild(child);
 			}
 			
