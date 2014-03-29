@@ -25,7 +25,6 @@ package dreamwisp.world.tile
 	public class Tile extends Entity
 	{
 		private var tilePresets:Object;
-		private var tileSheet:BitmapData;
 		
 		private static const ORIGIN:Point = new Point();
 		private var tileRect:Rectangle;
@@ -37,8 +36,8 @@ package dreamwisp.world.tile
 		private var _x:uint = 0;
 		private var _y:uint = 0;
 		internal var point:Point;
-		private var tileWidth:uint;
-		private var tileHeight:uint;
+		private var tileWidth:uint = 1;
+		private var tileHeight:uint = 1;
 		
 		public var type:String;
 		private var id:uint;
@@ -62,6 +61,8 @@ package dreamwisp.world.tile
 		private var rateOfAnimation:uint;
 		
 		private var spriteSheet:SpriteSheet;
+		
+		public static const NIL:Tile = new Tile(null, null, null);
 				
 		/**
 		 * 
@@ -71,12 +72,16 @@ package dreamwisp.world.tile
 		 */
 		public function Tile(blueprint:Object, tilePresets:Object, tileScape:TileScape)
 		{
-			this.spriteSheet = tileScape.spriteSheet;
-			//this.blitter = blitter;
 			this.tilePresets = tilePresets;
-			this.tileSheet = tileSheet;
-			this.tileWidth = tileScape.tileWidth;
-			this.tileHeight = tileScape.tileHeight;
+			
+			if (tileScape != null)
+			{
+				this.spriteSheet = tileScape.spriteSheet;
+				this.tileWidth = tileScape.tileWidth;
+				this.tileHeight = tileScape.tileHeight;
+				destroyed = new Signal(Tile);
+			}
+			
 			this.tileRect = new Rectangle(0, 0, tileWidth, tileHeight);
 			
 			this.tileScape = tileScape;
@@ -87,7 +92,7 @@ package dreamwisp.world.tile
 			
 			body = new Body(this, tileWidth, tileHeight);
 			point = new Point();
-			destroyed = new Signal(Tile);
+			
 			
 			// TODO: create tile maps, a 1d array containing list of all surrounding tiles NW, N, NE, W, E, SW, S, SE
 			if (blueprint)
@@ -197,6 +202,8 @@ package dreamwisp.world.tile
 		 */
 		public function drawTile(erase:Boolean = false):void
 		{
+			if (this === NIL)
+				return;
 			if (type == TYPE_AIR)
 			{
 				bitmap.bitmapData.fillRect(tileRect, 0); // air is blank

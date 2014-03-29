@@ -13,7 +13,7 @@ package dreamwisp.entity.components.platformer
 	{
 		private var platformPhysics:PlatformPhysics;
 		private var host:Entity;
-		private var lastStableTile:Tile;
+		private var lastTile:Tile;
 		
 		public function PlatformerGroundState(platformController:PlatformPhysics, host:Entity)
 		{
@@ -36,13 +36,16 @@ package dreamwisp.entity.components.platformer
 			var tileUnderFoot:Tile = platformPhysics.primaryFoot();
 			if (tileUnderFoot.isSolidUp())
 			{
-				if (tileUnderFoot != lastStableTile)
+				if (tileUnderFoot != lastTile)
 					platformPhysics.steppedNewTile.dispatch(tileUnderFoot);
-				lastStableTile = tileUnderFoot;
+				lastTile = tileUnderFoot;
 			}
-			// no longer on ground if neither feet are on solid ground)
 			else
+			{
 				platformPhysics.changeState("airState");
+				lastTile = Tile.NIL;
+			}
+			
 		}
 		
 		public function moveLeft():void
@@ -96,11 +99,12 @@ package dreamwisp.entity.components.platformer
 		{
 			host.physics.velocityY = platformPhysics.jumpPower;
 			platformPhysics.changeState("airState");
+			lastTile = Tile.NIL;
 		}
 		
 		public function enter():void
 		{
-		
+			
 		}
 		
 		public function collideLeft():void

@@ -41,9 +41,7 @@ package dreamwisp.world.tile
 		internal var spriteSheet:SpriteSheet;
 		protected var tileData:Array;
 		protected var tilePresets:Object;
-		
-		protected static var EMPTY_TILE:Tile;
-		
+				
 		/**
 		 *
 		 * @param	width The width of the client level in pixels.
@@ -58,9 +56,6 @@ package dreamwisp.world.tile
 			
 			canvasData = new BitmapData(width, height, true, 0x00000000);
 			canvas = new Bitmap(canvasData);
-			
-			if (EMPTY_TILE == null)
-				EMPTY_TILE = new Tile(null, null, this);
 			
 			this.spriteSheet = spriteSheet;
 		}
@@ -183,15 +178,15 @@ package dreamwisp.world.tile
 		public function tileAt(row:uint, col:uint):Tile
 		{
 			if (row >= tileGrid.length || col >= tileGrid[0].length)
-				return EMPTY_TILE;
+				return Tile.NIL;
 			if (tileGrid[row][col] == null)
-				return EMPTY_TILE;
+				return Tile.NIL;
 			return tileGrid[row][col];
 		}
 		
 		public function isEmpty(row:uint, col:uint):Boolean
 		{
-			return (tileAt(row, col) == EMPTY_TILE);
+			return (tileAt(row, col) == Tile.NIL);
 		}
 		
 		public function purge():void 
