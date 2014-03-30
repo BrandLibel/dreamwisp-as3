@@ -44,6 +44,8 @@ package dreamwisp.world.tile
 		///Object containing booleans left, right, up, down determining 
 		///whether a SolidBody collides or passes through that direction.
 		private var solid:Object;
+		/// Object similar to solid but determines kill directions
+		private var kills:Object;
 		public var acceleration:Number;
 		public var friction:Number;
 		public var bonusSpeed:Number;
@@ -104,6 +106,11 @@ package dreamwisp.world.tile
 				solid.left = false;
 				solid.down = false;
 				solid.right = false;
+				kills = new Object();
+				kills.up = false;
+				kills.left = false;
+				kills.down = false;
+				kills.right = false;
 			}
 		}
 		
@@ -114,6 +121,16 @@ package dreamwisp.world.tile
 			// unique tile properties, if specified in the blueprint, which override the presets
 			id = blueprint.guid;
 			if (blueprint.solid) solid = blueprint.solid;
+			if (blueprint.kills)
+				kills = blueprint.kills;
+			else
+			{
+				kills = new Object();
+				kills.up = false;
+				kills.left = false;
+				kills.down = false;
+				kills.right = false;
+			}
 			if (blueprint.tileType)  type = blueprint.tileType;
 			
 			if (blueprint.hits) this["hits"] = blueprint.hits;
@@ -226,12 +243,14 @@ package dreamwisp.world.tile
 		}
 		
 		public function isSolidUp():Boolean { return solid.up; }
-		
 		public function isSolidLeft():Boolean { return solid.left; }
-		
 		public function isSolidRight():Boolean { return solid.right; }
-		
 		public function isSolidDown():Boolean { return solid.down; }
+		
+		public function killsUp():Boolean { return kills.up; }
+		public function killsLeft():Boolean { return kills.left; }
+		public function killsRight():Boolean { return kills.right; }
+		public function killsDown():Boolean { return kills.down; }
 		
 		public final function hit(damage:int = 1):void
 		{
@@ -291,11 +310,14 @@ package dreamwisp.world.tile
 			return _y / tileHeight;
 		}
 		
+		public function isPlatform():Boolean
+		{
+			return (solid.up && !solid.left && !solid.right && !solid.down);
+		}
+		
 		public function isCompleteSolid():Boolean
 		{
-			if (!solid.left || !solid.right || !solid.up || !solid.down)
-				return false;
-			return true;
+			return (solid.left && solid.right && solid.up && solid.down);
 		}
 		
 	}

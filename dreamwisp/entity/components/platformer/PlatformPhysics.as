@@ -41,8 +41,10 @@ package dreamwisp.entity.components.platformer
 		private var ladderState:IPlatformMovementState;
 		private var airState:IPlatformMovementState;
 		private var tileScape:TileScape;
+		private var prevRow:uint;
 		
 		public var steppedNewTile:Signal;
+		public var touchedKillerTile:Signal;
 
 		public function PlatformPhysics(entity:Entity, maxWalkSpeed:uint, walkAcceleration:Number, jumpPower:int) 
 		{
@@ -64,6 +66,7 @@ package dreamwisp.entity.components.platformer
 			movementSM.initialState =  "airState";
 			
 			steppedNewTile = new Signal(Tile);
+			touchedKillerTile = new Signal();
 		}
 		
 		// State machine
@@ -154,6 +157,8 @@ package dreamwisp.entity.components.platformer
 					velocityX = 0;
 					currentState.collideRight();
 				}
+				if (topRightTile().killsLeft() || bottomRightTile().killsLeft())
+					touchedKillerTile.dispatch();
 			}
 			// check collision to the left
 			else if (velocityX < 0)
@@ -165,6 +170,8 @@ package dreamwisp.entity.components.platformer
 					velocityX = 0;
 					currentState.collideLeft();
 				}
+				if (topLeftTile().killsRight() || bottomLeftTile().killsRight())
+					touchedKillerTile.dispatch();
 			}
 		}
 		
@@ -180,11 +187,26 @@ package dreamwisp.entity.components.platformer
 			{
 				if (bottomLeftTile().isSolidUp() || bottomRightTile().isSolidUp())
 				{
-					// hit the floor
-					body.y = bottomEdge() * tileHeight-body.height;
-					velocityY = 0;
-					currentState.collideBottom();
+					if (bottomLeftTile().isPlatform() || bottomRightTile().isPlatform())
+					{
+						if (prevRow < bottomEdge())
+						{
+							// hit the floor
+							body.y = bottomEdge() * tileHeight-body.height;
+							velocityY = 0;
+							currentState.collideBottom();
+						}
+					} 
+					else 
+					{
+						// hit the floor
+						body.y = bottomEdge() * tileHeight-body.height;
+						velocityY = 0;
+						currentState.collideBottom();
+					}	
 				}
+				if (bottomLeftTile().killsUp() || bottomRightTile().killsUp())
+					touchedKillerTile.dispatch();
 			}
 			// check collision above
 			else if (velocityY < 0)
@@ -196,7 +218,10 @@ package dreamwisp.entity.components.platformer
 					velocityY = 0;
 					currentState.collideTop();
 				}
+				if (topLeftTile().killsDown() || topRightTile().killsDown())
+					touchedKillerTile.dispatch();
 			}
+			prevRow = bottomEdge();
 		}
 		
 		public function jump():void 

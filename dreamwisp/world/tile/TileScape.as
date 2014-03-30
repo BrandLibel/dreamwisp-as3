@@ -195,8 +195,8 @@ package dreamwisp.world.tile
 			{
 				for (var j:int = 0; j < tileGrid[0].length; j++) 
 				{
-					if (!isEmpty(j, i))
-						tileAt(j, i).destroy();
+					if (!isEmpty(i, j))
+						tileAt(i, j).destroy();
 				}
 			}
 			canvasData.dispose();
