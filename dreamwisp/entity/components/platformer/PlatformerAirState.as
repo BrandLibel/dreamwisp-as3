@@ -16,6 +16,9 @@ package dreamwisp.entity.components.platformer
 		private var maxJumps:uint = 0;
 		private var jumps:uint;
 		
+		private var timeInAir:uint = 0;
+		private var holdingJump:Boolean = false;
+		
 		public function PlatformerAirState(platformController:PlatformPhysics, host:Entity)
 		{
 			this.platformPhysics = platformController;
@@ -30,19 +33,34 @@ package dreamwisp.entity.components.platformer
 			/*if (platformController.onSlope == false) {
 			   MonsterDebugger.trace(this, "falling from gravity");
 			 }*/
-			platformPhysics.fall(); //host.physics.velocityY += platformPhysics.gravity;
+			timeInAir++;
+			platformPhysics.fall();
+			/*if (holdingJump && timeInAir < 3)
+				platformPhysics.velocityY = platformPhysics.velocityY;
+			else if (holdingJump && timeInAir < platformPhysics.maxJumpTime)
+				platformPhysics.velocityY = platformPhysics.jumpPower;//platformPhysics.velocityY += platformPhysics.jumpPower / platformPhysics.maxJumpTime;
+			else
+			{
+				if (platformPhysics.velocityY < 11)
+				{					
+					platformPhysics.velocityY += 4;
+					if (platformPhysics.velocityY > 11)
+						platformPhysics.velocityY = 11;
+				}
+			}*/
+			holdingJump = false;
 			
-			if (host.physics.velocityY > platformPhysics.maxSpeedY)
+			if (platformPhysics.velocityY > platformPhysics.maxSpeedY)
 			{
 				MonsterDebugger.trace(this, "terminal fall velocity");
-				host.physics.velocityY = platformPhysics.maxSpeedY;
+				platformPhysics.velocityY = platformPhysics.maxSpeedY;
 			}
 			
 			if (!platformPhysics.isWalking)
 			{
-				host.physics.velocityX *= (platformPhysics.friction);
-				if (Math.abs(host.physics.velocityX) < platformPhysics.maxWalkSpeed * 0.1)
-					host.physics.velocityX = 0;
+				platformPhysics.velocityX *= (platformPhysics.friction);
+				if (Math.abs(platformPhysics.velocityX) < platformPhysics.maxWalkSpeed * 0.1)
+					platformPhysics.velocityX = 0;
 			}
 			//if (platformPhysics.centerTile().type != "ladder") {
 			//platformPhysics.canGrabLadder = true;
@@ -53,9 +71,9 @@ package dreamwisp.entity.components.platformer
 		{
 			// walk left
 			platformPhysics.isWalking = true;
-			if (host.physics.velocityX > -platformPhysics.maxWalkSpeed)
+			if (platformPhysics.velocityX > -platformPhysics.maxWalkSpeed)
 			{
-				host.physics.velocityX -= platformPhysics.walkAcceleration;
+				platformPhysics.velocityX -= platformPhysics.walkAcceleration;
 			}
 		}
 		
@@ -63,9 +81,9 @@ package dreamwisp.entity.components.platformer
 		{
 			// walk right
 			platformPhysics.isWalking = true;
-			if (host.physics.velocityX < platformPhysics.maxWalkSpeed)
+			if (platformPhysics.velocityX < platformPhysics.maxWalkSpeed)
 			{
-				host.physics.velocityX += platformPhysics.walkAcceleration;
+				platformPhysics.velocityX += platformPhysics.walkAcceleration;
 			}
 		}
 		
@@ -84,17 +102,18 @@ package dreamwisp.entity.components.platformer
 		
 		public function jump():void
 		{
+			holdingJump = true;
 			// do nothing, unless double jump
 			if (jumps > 0)
 			{
-				host.physics.velocityY = -9;
+				platformPhysics.velocityY = -9;
 				jumps--;
 			}
 		}
 		
 		public function enter():void
 		{
-		
+			timeInAir = 0;
 		}
 		
 		public function collideLeft():void

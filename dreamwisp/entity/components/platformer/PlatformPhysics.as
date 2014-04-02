@@ -28,12 +28,18 @@ package dreamwisp.entity.components.platformer
 		private var body:Body;
 		
 		internal var isWalking:Boolean;
-		internal var maxWalkSpeed:uint;
-		internal var walkAcceleration:Number;
-		internal var jumpPower:int;
+		public var maxWalkSpeed:uint;
+		public var walkAcceleration:Number;
 		
-		internal var friction:Number = 0.25;
-		internal var gravity:Number = DEFAULT_GRAVITY;
+		public var jumpPower:Number;
+		public var gravity:Number = 1.3;
+		internal var maxJumpHeight:uint;
+		internal var maxJumpTime:uint;
+		
+		internal var jumpsMade:uint = 0;
+		internal var jumpsAllowed:uint = 1;
+		
+		public var friction:Number = 0.6;
 		
 		private var movementSM:StateMachine;
 		private var currentState:IPlatformMovementState;
@@ -54,6 +60,10 @@ package dreamwisp.entity.components.platformer
 			this.maxWalkSpeed = maxWalkSpeed;
 			this.entity = entity;
 			this.body = entity.body;
+			
+			// hold to jump higher mechanics
+			maxJumpHeight = 32;
+			maxJumpTime = 10;
 			
 			groundState = new PlatformerGroundState(this, entity);
 			ladderState = new PlatformerLadderState(this, entity);
@@ -119,6 +129,7 @@ package dreamwisp.entity.components.platformer
 			travelY();
 			
 			currentState.update();
+			isWalking = false;
 		}
 		
 		/**
@@ -146,7 +157,6 @@ package dreamwisp.entity.components.platformer
 		override protected function travelX():void 
 		{
 			super.travelX();
-			velocityX *= 0.8;
 			// check collision to the right
 			if (velocityX > 0)
 			{
@@ -226,7 +236,12 @@ package dreamwisp.entity.components.platformer
 		
 		public function jump():void 
 		{
+			if (!canJump())
+				return;
 			currentState.jump();
+			velocityY = jumpPower;
+			changeState("airState");
+			jumpsMade++;
 		}
 		
 		public function bodyCollides():Boolean
@@ -254,7 +269,7 @@ package dreamwisp.entity.components.platformer
 		
 		internal function canJump():Boolean
 		{
-			return false;
+			return jumpsMade < jumpsAllowed;
 		}
 		
 		// Getting the 4 edges

@@ -28,9 +28,9 @@ package dreamwisp.entity.components.platformer
 			// apply friction when stopped moving
 			if (!platformPhysics.isWalking)
 			{
-				host.physics.velocityX *= (platformPhysics.friction);
-				if (Math.abs(host.physics.velocityX) < platformPhysics.maxWalkSpeed * 0.1)
-					host.physics.velocityX = 0;
+				platformPhysics.velocityX *= (platformPhysics.friction);
+				if (Math.abs(platformPhysics.velocityX) < platformPhysics.maxWalkSpeed * 0.1)
+					platformPhysics.velocityX = 0;
 			}
 			
 			var tileUnderFoot:Tile = platformPhysics.primaryFoot();
@@ -45,20 +45,19 @@ package dreamwisp.entity.components.platformer
 				platformPhysics.changeState("airState");
 				lastTile = Tile.NIL;
 			}
-			
 		}
 		
 		public function moveLeft():void
 		{
 			// walk left
 			platformPhysics.isWalking = true;
-			if (host.physics.velocityX > -platformPhysics.maxWalkSpeed)
+			if (platformPhysics.velocityX > -platformPhysics.maxWalkSpeed)
 			{
-				host.physics.velocityX -= platformPhysics.walkAcceleration;
+				platformPhysics.velocityX -= platformPhysics.walkAcceleration;
 			}
 			else
 			{
-				host.physics.velocityX = -platformPhysics.maxWalkSpeed;
+				platformPhysics.velocityX = -platformPhysics.maxWalkSpeed;
 			}
 		}
 		
@@ -66,13 +65,13 @@ package dreamwisp.entity.components.platformer
 		{
 			// walk right
 			platformPhysics.isWalking = true;
-			if (host.physics.velocityX < platformPhysics.maxWalkSpeed)
+			if (platformPhysics.velocityX < platformPhysics.maxWalkSpeed)
 			{
-				host.physics.velocityX += platformPhysics.walkAcceleration;
+				platformPhysics.velocityX += platformPhysics.walkAcceleration;
 			}
 			else
 			{
-				host.physics.velocityX = platformPhysics.maxWalkSpeed;
+				platformPhysics.velocityX = platformPhysics.maxWalkSpeed;
 			}
 		
 		}
@@ -97,14 +96,13 @@ package dreamwisp.entity.components.platformer
 		
 		public function jump():void
 		{
-			host.physics.velocityY = platformPhysics.jumpPower;
-			platformPhysics.changeState("airState");
 			lastTile = Tile.NIL;
 		}
 		
 		public function enter():void
 		{
-			
+			// reset jumps
+			platformPhysics.jumpsMade = 0;
 		}
 		
 		public function collideLeft():void
