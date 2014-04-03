@@ -269,6 +269,11 @@ package dreamwisp.entity.components.platformer
 		
 		internal function canJump():Boolean
 		{
+			var heightDiff:uint = Math.abs(tileHeight - body.height) + 1;
+			var aboveEdge:int =  (Math.floor((body.y - heightDiff) / tileHeight));
+			if (tileScape.tileAt(aboveEdge, leftEdge()).isSolidDown()
+				|| tileScape.tileAt(aboveEdge, rightEdge()).isSolidDown())
+				return false;
 			return jumpsMade < jumpsAllowed;
 		}
 		
@@ -280,7 +285,7 @@ package dreamwisp.entity.components.platformer
 		 */
 		internal function rightEdge():int
 		{
-			var edgeVal:int = Math.floor((body.x + (body.width - 1)) / tileWidth);			
+			var edgeVal:int = Math.floor((body.x + (body.width - 1)) / tileWidth);
 			return edgeVal;
 		}
 		
