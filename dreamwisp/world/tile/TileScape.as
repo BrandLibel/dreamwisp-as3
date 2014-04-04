@@ -184,6 +184,21 @@ package dreamwisp.world.tile
 			return tileGrid[row][col];
 		}
 		
+		public function getTilesWithID(id:uint):Vector.<Tile>
+		{
+			var tiles:Vector.<Tile> = new Vector.<Tile>();
+			for (var i:int = 0; i < tileGrid.length; i++) 
+			{
+				for (var j:int = 0; j < tileGrid[0].length; j++) 
+				{
+					var tile:Tile = tileAt(i, j);
+					if (tile.getID() == id)
+						tiles.push(tile);
+				}
+			}
+			return tiles;
+		}
+		
 		public function isEmpty(row:uint, col:uint):Boolean
 		{
 			return (tileAt(row, col) == Tile.NIL);
@@ -247,7 +262,6 @@ package dreamwisp.world.tile
 		}
 		
 		public function getCanvas():Bitmap { return canvas; }
-			
 	}
 
 }

@@ -43,7 +43,7 @@ package dreamwisp.world.tile
 		private var id:uint;
 		///Object containing booleans left, right, up, down determining 
 		///whether a SolidBody collides or passes through that direction.
-		private var solid:Object;
+		protected var solid:Object;
 		/// Object similar to solid but determines kill directions
 		private var kills:Object;
 		public var acceleration:Number;
@@ -120,7 +120,14 @@ package dreamwisp.world.tile
 			
 			// unique tile properties, if specified in the blueprint, which override the presets
 			id = blueprint.guid;
-			if (blueprint.solid) solid = blueprint.solid;
+			if (blueprint.solid)
+			{
+				solid = new Object();
+				solid.up = blueprint.solid.up;
+				solid.left = blueprint.solid.left;
+				solid.down = blueprint.solid.down;
+				solid.right = blueprint.solid.right;
+			}
 			if (blueprint.kills)
 				kills = blueprint.kills;
 			else
@@ -232,7 +239,7 @@ package dreamwisp.world.tile
 				bitmap.bitmapData.fillRect(tileRect, 0);
 			}
 			
-			var frame:Object = spriteSheet.access("frames", id).frame;
+			var frame:Object = spriteSheet.access("frames", id - 1).frame;  // minus 1 since air is 0 but ommitted from sprite sheet
 			var srcRect:Rectangle = new Rectangle(frame.x, frame.y, tileWidth, tileHeight);
 			bitmap.bitmapData.copyPixels(spriteSheet.getImage(), srcRect, ORIGIN);
 		}
@@ -310,6 +317,11 @@ package dreamwisp.world.tile
 			return _y / tileHeight;
 		}
 		
+		public function getID():uint 
+		{
+			return id;
+		}
+		
 		public function isPlatform():Boolean
 		{
 			return (solid.up && !solid.left && !solid.right && !solid.down);
@@ -318,6 +330,11 @@ package dreamwisp.world.tile
 		public function isCompleteSolid():Boolean
 		{
 			return (solid.left && solid.right && solid.up && solid.down);
+		}
+		
+		public function isEmpty():Boolean
+		{
+			return this == NIL;
 		}
 		
 	}
