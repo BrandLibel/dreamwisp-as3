@@ -16,7 +16,7 @@
 		public var view:Sprite;
 		public var world:Location;
 		
-		private var inputState:InputState;
+		protected var inputState:InputState;
 				
 		protected var screenManager:ScreenManager;
 		protected var graphicsFactory:IGraphicsFactory;

@@ -34,11 +34,11 @@ package dreamwisp.visual.camera {
 			var focus:View = camera.focusView;
 			var center:Point = camera.center;
 
-			if (focus.movieClip.x > center.x && center.x < camera.maxX) center.x = focus.movieClip.x; 
-			if (focus.movieClip.x < center.x && center.x > camera.minX) center.x = focus.movieClip.x;
+			if (focus.displayObject.x > center.x && center.x < camera.maxX) center.x = focus.displayObject.x; 
+			if (focus.displayObject.x < center.x && center.x > camera.minX) center.x = focus.displayObject.x;
 				
-			if (focus.movieClip.y > center.y && center.y < camera.maxY) center.y = focus.movieClip.y; 
-			if (focus.movieClip.y < center.y && center.y > camera.minY) center.y = focus.movieClip.y;
+			if (focus.displayObject.y > center.y && center.y < camera.maxY) center.y = focus.displayObject.y; 
+			if (focus.displayObject.y < center.y && center.y > camera.minY) center.y = focus.displayObject.y;
 			
 			camera.stayInBounds();
 		}

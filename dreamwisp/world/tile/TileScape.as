@@ -1,6 +1,7 @@
 package dreamwisp.world.tile
 {
 	import com.demonsters.debugger.MonsterDebugger;
+	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.SpriteSheet;
 	import dreamwisp.world.base.Location;
 	import flash.display.Bitmap;
@@ -241,27 +242,20 @@ package dreamwisp.world.tile
 			return new Tile(blueprint, tilePresets, this);
 		}
 		
-		public function get tileWidth():uint
-		{
-			return _tileWidth;
-		}
+		public function get tileWidth():uint { return _tileWidth; }
 		
-		public function set tileWidth(value:uint):void
-		{
-			_tileWidth = value;
-		}
+		public function set tileWidth(value:uint):void { _tileWidth = value; }
 		
-		public function get tileHeight():uint
-		{
-			return _tileHeight;
-		}
+		public function get tileHeight():uint { return _tileHeight; }
 		
-		public function set tileHeight(value:uint):void
-		{
-			_tileHeight = value;
-		}
+		public function set tileHeight(value:uint):void { _tileHeight = value; }
 		
 		public function getCanvas():Bitmap { return canvas; }
+		
+		public function bounds():SwiftRectangle 
+		{
+			return new SwiftRectangle(0, 0, gridWidth() * tileWidth, gridHeight() * tileHeight);
+		}
 	}
 
 }

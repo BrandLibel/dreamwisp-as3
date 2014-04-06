@@ -4,6 +4,7 @@ package dreamwisp.visual.camera {
 	import dreamwisp.action.IActionReceptor;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
+	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import flash.display.Sprite;
 	import flash.geom.Point;
@@ -133,6 +134,14 @@ package dreamwisp.visual.camera {
 			velocityX = 0;
 			velocityY = 0;
 			cameraPath = null;
+		}
+		
+		public function position(user:ICamUser, boundary:SwiftRectangle, focus:Entity):void 
+		{
+			this.user = user;
+			setBounds(boundary);
+			this.focus = focus.body;
+			this.focusView = focus.view;
 		}
 		
 		/**
