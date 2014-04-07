@@ -79,7 +79,7 @@ package dreamwisp.entity.hosts
 				var physicsData:Object = components["physics"][myData.physics];
 				var physicsClass:Class = getDefinitionByName(physicsData.classLink) as Class;
 				physics = new physicsClass(this, physicsData.maxWalkSpeed,
-					physicsData.walkAcceleration, physicsData.jumpPower);
+					physicsData.walkAcceleration, physicsData.jumpPower, physicsData.maxSpeedY);
 			}
 			if (myData.view != null)
 			{

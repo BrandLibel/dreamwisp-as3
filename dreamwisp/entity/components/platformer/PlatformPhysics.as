@@ -52,9 +52,9 @@ package dreamwisp.entity.components.platformer
 		public var steppedNewTile:Signal;
 		public var touchedKillerTile:Signal;
 
-		public function PlatformPhysics(entity:Entity, maxWalkSpeed:uint, walkAcceleration:Number, jumpPower:int) 
+		public function PlatformPhysics(entity:Entity, maxWalkSpeed:uint, walkAcceleration:Number, jumpPower:int, maxSpeedY:uint) 
 		{
-			super(entity, maxWalkSpeed, 25);
+			super(entity, maxWalkSpeed, maxSpeedY);
 			this.jumpPower = jumpPower;
 			this.walkAcceleration = walkAcceleration;
 			this.maxWalkSpeed = maxWalkSpeed;
@@ -240,6 +240,14 @@ package dreamwisp.entity.components.platformer
 				return;
 			currentState.jump();
 			velocityY = jumpPower;
+			changeState("airState");
+			jumpsMade++;
+		}
+		
+		public function jumpSpecial(specialJumpPower:int = 0):void 
+		{
+			currentState.jump();
+			velocityY = specialJumpPower;
 			changeState("airState");
 			jumpsMade++;
 		}

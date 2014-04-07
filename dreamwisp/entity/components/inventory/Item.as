@@ -15,18 +15,9 @@ package dreamwisp.entity.components.inventory {
 		private var _description:String;
 		
 		private var _stats:Object;
-		
-		private var _inventory:Inventory;
-		
-		public function Item() {
-			body = new Body(this, 25, 40);
-			
-			view = new View(this);
-			
-		}
-		
-		override public function destroy():void {
-			// 
+				
+		public function Item(protoTypeData:Object = null, id:uint = 0) {
+			super(protoTypeData, id);
 		}
 		
 		public function get description():String {
@@ -43,14 +34,6 @@ package dreamwisp.entity.components.inventory {
 		
 		public function set stats(value:Object):void {
 			_stats = value;
-		}
-		
-		public function get inventory():Inventory {
-			return _inventory;
-		}
-		
-		public function set inventory(value:Inventory):void {
-			_inventory = value;
 		}
 		
 	}
