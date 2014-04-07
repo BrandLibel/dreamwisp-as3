@@ -49,6 +49,7 @@ package dreamwisp.entity.components.platformer
 		private var tileScape:TileScape;
 		private var prevRow:uint;
 		
+		public var jumped:Signal;
 		public var steppedNewTile:Signal;
 		public var touchedKillerTile:Signal;
 
@@ -75,6 +76,7 @@ package dreamwisp.entity.components.platformer
 			movementSM.addState( "airState", { enter: onStateChange } );
 			movementSM.initialState =  "airState";
 			
+			jumped = new Signal();
 			steppedNewTile = new Signal(Tile);
 			touchedKillerTile = new Signal();
 		}
@@ -242,6 +244,7 @@ package dreamwisp.entity.components.platformer
 			velocityY = jumpPower;
 			changeState("airState");
 			jumpsMade++;
+			jumped.dispatch();
 		}
 		
 		public function jumpSpecial(specialJumpPower:int = 0):void 
@@ -250,6 +253,7 @@ package dreamwisp.entity.components.platformer
 			velocityY = specialJumpPower;
 			changeState("airState");
 			jumpsMade++;
+			jumped.dispatch();
 		}
 		
 		public function bodyCollides():Boolean
