@@ -42,15 +42,18 @@ package dreamwisp.world.tile
 		internal var spriteSheet:SpriteSheet;
 		protected var tileData:Array;
 		protected var tilePresets:Object;
+		
+		private var myBounds:SwiftRectangle;
 				
 		/**
 		 *
-		 * @param	width The width of the client level in pixels.
-		 * @param	height The height of the client level in pixels.
-		 * @param	spriteSheet The spritesheet containing tile bitmaps this draws from
-		 * @param	tiles The JSON file with all tile information, incl. properties and dimensions.
+		 * @param	width the width of the entire scape in pixels.
+		 * @param	height the height of the entire scape in pixels.
+		 * @param	spriteSheet contains tile bitmaps & rect data this draws from
+		 * @param	tiles info list in JSON, incl. properties and dimensions.
+		 * @param	tileMap a 2d array with layout of initial level to build; goes empty if null
 		 */
-		public function TileScape(width:Number, height:Number, spriteSheet:SpriteSheet, tiles:Object)
+		public function TileScape(width:Number, height:Number, spriteSheet:SpriteSheet, tiles:Object, tileMap:Array = null)
 		{
 			readTileData(tiles);
 			tileRect = new Rectangle(0, 0, tileWidth, tileHeight);
@@ -59,6 +62,23 @@ package dreamwisp.world.tile
 			canvas = new Bitmap(canvasData);
 			
 			this.spriteSheet = spriteSheet;
+			
+			myBounds = new SwiftRectangle(0, 0, width, height);
+			
+			var rows:uint = 0;
+			var cols:uint = 0;
+			if (tileMap != null)
+			{
+				rows = tileMap.length;
+				cols = tileMap[0].length;
+			}
+			else 
+			{
+				// default to an empty NIL layout 
+				rows = height / tileHeight;
+				cols = width / tileWidth;
+			}
+			build(rows, cols, tileMap);
 		}
 		
 		private function readTileData(tiles:Object):void
@@ -99,18 +119,18 @@ package dreamwisp.world.tile
 		 * Constructs a grid of tiles.
 		 * @param	tileMap a 2d-array of uints representing tile types.
 		 */
-		public function build(tileMap:Array):void
+		private function build(rows:uint, cols:uint, tileMap:Array):void
 		{
 			var destPoint:Point = new Point();
-			for (var a:uint = 0; a < tileMap.length; a++)
+			for (var a:uint = 0; a < rows; a++)
 			{
 				tileGrid.push(new <Tile>[]);
-				for (var b:uint = 0; b < tileMap[0].length; b++)
+				for (var b:uint = 0; b < cols; b++)
 				{
-					var tileNum:uint = tileMap[a][b];
+					var tileNum:uint = (tileMap == null) ? 0 : tileMap[a][b];
 					if (tileNum == 0)
 					{
-						tileGrid[a][b] = null;
+						tileGrid[a][b] = Tile.NIL;
 						continue;
 					}
 					
@@ -172,6 +192,31 @@ package dreamwisp.world.tile
 		}
 		
 		/**
+		 * Adds a new row to the bottom edge of the TileScape
+		 * @param	tileNum the type of tile to add, defaults to 0
+		 */
+		public function addRow(tileNum:uint = 0):void 
+		{
+			tileGrid[tileGrid.length] = new Vector.<Tile>();
+			for (var i:uint = 0; i < tileGrid[0].length; i++){
+				tileGrid[tileGrid.length -1].push( Tile.NIL );
+			}
+			myBounds.height += tileHeight;
+		}
+		
+		/**
+		 * Adds a new column to the right edge of the TileScape
+		 * @param	tileNum the type of tile to add, defaults to 0
+		 */
+		public function addCol(tileNum:uint = 0):void 
+		{
+			for (var i:uint = 0; i < tileGrid.length; i++){
+				tileGrid[i].push( Tile.NIL );
+			}
+			myBounds.width += tileWidth;
+		}
+		
+		/**
 		 * Gets the tile at the specified grid position.
 		 * Empty locations (null tiles) should be treated as air. 
 		 * @return null if the coordinates are out of bounds
@@ -179,8 +224,6 @@ package dreamwisp.world.tile
 		public function tileAt(row:uint, col:uint):Tile
 		{
 			if (row >= tileGrid.length || col >= tileGrid[0].length)
-				return Tile.NIL;
-			if (tileGrid[row][col] == null)
 				return Tile.NIL;
 			return tileGrid[row][col];
 		}
@@ -218,6 +261,16 @@ package dreamwisp.world.tile
 			canvasData.dispose();
 		}
 		
+		public function width():uint
+		{
+			return gridWidth() * tileWidth;
+		}
+		
+		public function height():uint
+		{
+			return gridHeight() * tileHeight;
+		}
+		
 		/**
 		 * The number of horizontal spaces on the grid
 		 */
@@ -242,6 +295,27 @@ package dreamwisp.world.tile
 			return new Tile(blueprint, tilePresets, this);
 		}
 		
+		public function toString():String
+		{
+			var str:String = "";
+			const comma:String = ",";
+			for (var row:int = 0; row < tileGrid.length; row++) 
+			{
+				str += "[";
+				for (var col:int = 0; col < tileGrid[0].length; col++) 
+				{
+					str += tileAt(row, col).getID();
+					if (col != tileGrid[0].length - 1)
+						str += comma + " ";
+				}
+				str += "]";
+				if (row != tileGrid.length -1)
+					str += comma;
+				str += "\n";
+			}
+			return str;
+		}
+		
 		public function get tileWidth():uint { return _tileWidth; }
 		
 		public function set tileWidth(value:uint):void { _tileWidth = value; }
@@ -252,10 +326,7 @@ package dreamwisp.world.tile
 		
 		public function getCanvas():Bitmap { return canvas; }
 		
-		public function bounds():SwiftRectangle 
-		{
-			return new SwiftRectangle(0, 0, gridWidth() * tileWidth, gridHeight() * tileHeight);
-		}
+		public function bounds():SwiftRectangle { return myBounds; }
 	}
 
 }
