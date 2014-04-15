@@ -26,18 +26,6 @@ package dreamwisp.visual.camera {
 						
 		private var _center:Point;// = new Point(width / 2, height / 2);
 		
-		/// The right most edge that the camera center can be, in pixels.
-		internal var maxX:uint = 0;
-		/// The left most edge that the camera center can be, in pixels.
-		internal var minX:uint = 0;
-		/// The bottom most edge that the camera center can be, in pixels.
-		internal var maxY:uint = 0;
-		/// The top most edge that the camera center can be, in pixels.
-		internal var minY:uint = 0;
-		
-		private var rectWidth:uint;
-		private var rectHeight:uint;
-		
 		internal var velocityX:int;
 		internal var velocityY:int;
 		
@@ -69,6 +57,8 @@ package dreamwisp.visual.camera {
 		private var height:uint;
 		private var width:uint;
 		
+		private var boundRect:SwiftRectangle;
+		
 		public function Camera(width:uint = 768, height:uint = 480, initialStateName:String = STATE_FOCUS) {
 			this.width = width;
 			this.height = height;
@@ -83,8 +73,7 @@ package dreamwisp.visual.camera {
 		}
 		
 		public function update(interpolation:Number):void {
-			// no need to update in a location the size of the camera
-			if (isScrollable()) currentState.scroll();
+			currentState.scroll();
 			
 			// camera shake code
 			if (isShaking) {
@@ -119,17 +108,10 @@ package dreamwisp.visual.camera {
 		 * @param	rect The rectangular area that the camera is allowed to scroll through.
 		 */
 		public function setBounds(rect:SwiftRectangle):void { 
-			minX = (width/2) + rect.x;
-			maxX = rect.width - (width/2) + rect.x;
-			minY = (height/2) + rect.y;
-			maxY = rect.height - (height / 2) + rect.y;
-			rectWidth = rect.width;
-			rectHeight = rect.height;
 			// for setting camera to top-left most position of given rect
 			// important for first time entry into locations
 			user.followCamera(minX, minY);
-			center.x = minX;
-			center.y = minY;
+			
 			// camera repositioned, reset the path
 			velocityX = 0;
 			velocityY = 0;
@@ -139,7 +121,7 @@ package dreamwisp.visual.camera {
 		public function position(user:ICamUser, boundary:SwiftRectangle, focus:Entity):void 
 		{
 			this.user = user;
-			setBounds(boundary);
+			this.boundRect = boundary;
 			this.focus = focus.body;
 			this.focusView = focus.view;
 		}
@@ -237,7 +219,7 @@ package dreamwisp.visual.camera {
 		 * If the target rect is bigger than the stage, allows camera to move.
 		 */
 		private function isScrollable():Boolean {
-			return (rectWidth > width || rectHeight > height);
+			return (boundRect.width > width || boundRect.height > height);
 		}
 		
 		internal function centralizeX(value:*):* {
@@ -268,6 +250,18 @@ package dreamwisp.visual.camera {
 		public function set focusView(value:View):void {
 			_focusView = value;
 		}
+		
+		/// The right most edge that the camera center can be, in pixels.
+		public function get maxX():uint { return boundRect.width - (width / 2) + boundRect.x; }
+		
+		/// The left most edge that the camera center can be, in pixels.
+		public function get minX():uint { return (width / 2) + boundRect.x; }
+		
+		/// The bottom most edge that the camera center can be, in pixels.
+		public function get maxY():uint { return boundRect.height - (height / 2) + boundRect.y; }
+		
+		/// The top most edge that the camera center can be, in pixels.
+		public function get minY():uint { return (height / 2) + boundRect.y; }
 		
 	}
 

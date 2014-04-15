@@ -13,14 +13,6 @@ package dreamwisp.world.tile
 	 * ...
 	 * @author Brandon
 	 */
-	
-	//public class TileScape
-	//{
-		//public function TileScape(width:Number, height:Number, spriteSheet:SpriteSheet, tiles:Object) 
-		//{
-			//
-		//}
-	//}
 	 
 	public class TileScape
 	{
@@ -128,25 +120,9 @@ package dreamwisp.world.tile
 				for (var b:uint = 0; b < cols; b++)
 				{
 					var tileNum:uint = (tileMap == null) ? 0 : tileMap[a][b];
-					if (tileNum == 0)
-					{
-						tileGrid[a][b] = Tile.NIL;
-						continue;
-					}
 					
 					var tile:Tile = compose(tileNum);
-					tileGrid[a][b] = tile;
-					tile.x = b * tileWidth;
-					tile.y = a * tileHeight;
-					destPoint.x = tile.x;
-					destPoint.y = tile.y
-					if (tile.hasAnimation)
-					{
-						activeTiles.push(tile);
-					}
-					
-					tile.render(1);
-					canvasData.copyPixels(tile.bitmapData(), tileRect, destPoint);
+					insertTile(a, b, tile);
 				}
 			}
 		}
@@ -155,6 +131,24 @@ package dreamwisp.world.tile
 		{
 			tile.drawTile();
 			canvasData.copyPixels(tile.bitmapData(), tileRect, tile.point);
+		}
+		
+		private function insertTile(row:uint, col:uint, tile:Tile):void 
+		{
+			var destPoint:Point = new Point();
+			tileGrid[row][col] = tile;
+			tile.x = col * tileWidth;
+			tile.y = row * tileHeight;
+			destPoint.x = tile.x;
+			destPoint.y = tile.y;
+			if (tile.hasAnimation)
+			{
+				activeTiles.push(tile);
+			}
+			tile.render(1);
+			canvasData.copyPixels(tile.bitmapData(), tileRect, destPoint);
+			if (tile.isEmpty())
+				canvasData.fillRect(new Rectangle(tile.x, tile.y, tileWidth, tileHeight), 0x00000000);
 		}
 		
 		/// Visually renders the tile specified at the coordinates.
@@ -173,22 +167,7 @@ package dreamwisp.world.tile
 		 */
 		public function alterTile(row:uint, col:uint, newTileNum:uint):void
 		{
-			/*var currentTile:uint = tileGrid[row][col];
-			   tileGrid[row][col] = newTile;
-			 //TilePlacer.pasteTile(row, col, newTile);*/
-			//var newTile:Tile = tileGrid[row][col];
-			const newPoint:Point = new Point(col, row);
-			const tile:Tile = tileGrid[row][col];
-			
-			// no dupes in the active tiles list
-			if (tile.hasAnimation)
-			{
-				if (activeTiles.indexOf(tile) == -1)
-					activeTiles.push(tile);
-			}
-			
-			tileGrid[row][col] = compose(newTileNum);
-			drawTileAt(row, col);
+			insertTile(row, col, compose(newTileNum));
 		}
 		
 		/**
@@ -214,6 +193,31 @@ package dreamwisp.world.tile
 				tileGrid[i].push( Tile.NIL );
 			}
 			myBounds.width += tileWidth;
+		}
+		
+		/**
+		 * Removes the bottom-most row.
+		 * This should not be used because it doesn't visually remove.
+		 * @return the Tiles removed
+		 */
+		public function removeRow():Vector.<Tile>
+		{
+			myBounds.height -= tileHeight;
+			return tileGrid.pop();
+		}
+		
+		/**
+		 * Removes the right-most column
+		 * This should not be used because it doesn't visually remove.
+		 * @return the Tiles removed
+		 */
+		public function removeCol():Vector.<Tile>
+		{
+			myBounds.width -= tileWidth;
+			var tilesRemoved:Vector.<Tile> = new Vector.<Tile>();
+			for (var i:int = 0; i < tileGrid.length; i++) 
+				tilesRemoved.push( tileGrid[i].pop() );
+			return tilesRemoved;
 		}
 		
 		/**
@@ -243,9 +247,23 @@ package dreamwisp.world.tile
 			return tiles;
 		}
 		
+		/**
+		 * Turns all tiles into NIL
+		 */
+		public function empty():void 
+		{
+			for (var i:int = 0; i < tileGrid.length; i++) 
+			{
+				for (var j:int = 0; j < tileGrid[0].length; j++) 
+				{
+					alterTile(i, j, 0);
+				}
+			}
+		}
+		
 		public function isEmpty(row:uint, col:uint):Boolean
 		{
-			return (tileAt(row, col) == Tile.NIL);
+			return (tileAt(row, col).isEmpty());
 		}
 		
 		public function purge():void 
@@ -289,6 +307,8 @@ package dreamwisp.world.tile
 		
 		protected function compose(tileNum:uint):Tile
 		{
+			if (tileNum == 0)
+				return Tile.NIL;
 			const blueprint:Object = tileData[tileNum]; //tileList.tiles[tileNum];
 			//const presets:Object = tilePresets;
 			//MonsterDebugger.trace(this, tileNum);
@@ -301,7 +321,7 @@ package dreamwisp.world.tile
 			const comma:String = ",";
 			for (var row:int = 0; row < tileGrid.length; row++) 
 			{
-				str += "[";
+				str += "\t[";
 				for (var col:int = 0; col < tileGrid[0].length; col++) 
 				{
 					str += tileAt(row, col).getID();

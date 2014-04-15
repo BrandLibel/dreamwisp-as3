@@ -33,8 +33,6 @@ package dreamwisp.world.tile
 		
 		protected var tileScape:TileScape;
 		
-		private var _x:uint = 0;
-		private var _y:uint = 0;
 		internal var point:Point;
 		private var tileWidth:uint = 1;
 		private var tileHeight:uint = 1;
@@ -65,7 +63,8 @@ package dreamwisp.world.tile
 		private var spriteSheet:SpriteSheet;
 		
 		public static const NIL:Tile = new Tile(null, null, null);
-				
+		private var isNIL:Boolean = false;
+		
 		/**
 		 * 
 		 * @param	blueprint The properties to create this tile with.
@@ -74,6 +73,8 @@ package dreamwisp.world.tile
 		 */
 		public function Tile(blueprint:Object, tilePresets:Object, tileScape:TileScape)
 		{
+			isNIL = (blueprint == null && tilePresets == null && tileScape == null);
+			
 			this.tilePresets = tilePresets;
 			
 			if (tileScape != null)
@@ -94,7 +95,6 @@ package dreamwisp.world.tile
 			
 			body = new Body(this, tileWidth, tileHeight);
 			point = new Point();
-			
 			
 			// TODO: create tile maps, a 1d array containing list of all surrounding tiles NW, N, NE, W, E, SW, S, SE
 			if (blueprint)
@@ -226,13 +226,8 @@ package dreamwisp.world.tile
 		 */
 		public function drawTile(erase:Boolean = false):void
 		{
-			if (this === NIL)
+			if (isEmpty())
 				return;
-			if (type == TYPE_AIR)
-			{
-				bitmap.bitmapData.fillRect(tileRect, 0); // air is blank
-				return;
-			}
 						
 			if (erase && bitmap.bitmapData)
 			{
@@ -306,7 +301,7 @@ package dreamwisp.world.tile
 		 */
 		public function col():uint
 		{
-			return _x / tileWidth;
+			return body.x / tileWidth;
 		}
 		
 		/**
@@ -314,7 +309,7 @@ package dreamwisp.world.tile
 		 */
 		public function row():uint
 		{
-			return _y / tileHeight;
+			return body.y / tileHeight;
 		}
 		
 		public function getID():uint 
@@ -334,7 +329,7 @@ package dreamwisp.world.tile
 		
 		public function isEmpty():Boolean
 		{
-			return this == NIL;
+			return isNIL;
 		}
 		
 	}
