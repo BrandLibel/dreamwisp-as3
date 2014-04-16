@@ -52,7 +52,6 @@ package dreamwisp.world.tile
 			
 			canvasData = new BitmapData(width, height, true, 0x00000000);
 			canvas = new Bitmap(canvasData);
-			
 			this.spriteSheet = spriteSheet;
 			
 			myBounds = new SwiftRectangle(0, 0, width, height);
@@ -133,7 +132,7 @@ package dreamwisp.world.tile
 			canvasData.copyPixels(tile.bitmapData(), tileRect, tile.point);
 		}
 		
-		private function insertTile(row:uint, col:uint, tile:Tile):void 
+		public function insertTile(row:uint, col:uint, tile:Tile):void 
 		{
 			var destPoint:Point = new Point();
 			tileGrid[row][col] = tile;
@@ -176,11 +175,12 @@ package dreamwisp.world.tile
 		 */
 		public function addRow(tileNum:uint = 0):void 
 		{
+			updateBitmapSize(0, tileHeight);
 			tileGrid[tileGrid.length] = new Vector.<Tile>();
 			for (var i:uint = 0; i < tileGrid[0].length; i++){
 				tileGrid[tileGrid.length -1].push( Tile.NIL );
 			}
-			myBounds.height += tileHeight;
+			//myBounds.height += tileHeight;
 		}
 		
 		/**
@@ -189,10 +189,11 @@ package dreamwisp.world.tile
 		 */
 		public function addCol(tileNum:uint = 0):void 
 		{
+			updateBitmapSize(tileWidth, 0);
 			for (var i:uint = 0; i < tileGrid.length; i++){
 				tileGrid[i].push( Tile.NIL );
 			}
-			myBounds.width += tileWidth;
+			//myBounds.width += tileWidth;
 		}
 		
 		/**
@@ -202,7 +203,8 @@ package dreamwisp.world.tile
 		 */
 		public function removeRow():Vector.<Tile>
 		{
-			myBounds.height -= tileHeight;
+			updateBitmapSize(0, -tileHeight);
+			//myBounds.height -= tileHeight;
 			return tileGrid.pop();
 		}
 		
@@ -213,11 +215,37 @@ package dreamwisp.world.tile
 		 */
 		public function removeCol():Vector.<Tile>
 		{
-			myBounds.width -= tileWidth;
+			//myBounds.width -= tileWidth;
+			updateBitmapSize(-tileWidth, 0);
 			var tilesRemoved:Vector.<Tile> = new Vector.<Tile>();
-			for (var i:int = 0; i < tileGrid.length; i++) 
-				tilesRemoved.push( tileGrid[i].pop() );
+			for (var i:int = 0; i < tileGrid.length; i++)
+			{
+				//var removedTile:Tile = tileGrid[i].pop();
+				var removedTile:Tile = tileGrid[i][ tileGrid[i].length -1 ];
+				if (!removedTile.isEmpty())
+					insertTile(removedTile.row(), removedTile.col(), Tile.NIL);
+				tileGrid[i].pop();
+				tilesRemoved.push( removedTile );
+			}
 			return tilesRemoved;
+		}
+		
+		/**
+		 * Adjusts the size of my drawable bitmap area,
+		 * usually in response to a change in tileGrid dimensions.
+		 */
+		private function updateBitmapSize(deltaX:int, deltaY:int):void 
+		{
+			var prevBitmapData:BitmapData = canvasData;
+			var prevRect:Rectangle = new Rectangle(myBounds.x, myBounds.y, myBounds.width, myBounds.height);
+			
+			canvasData = new BitmapData(canvasData.width + deltaX, canvasData.height + deltaY);
+			myBounds.width += deltaX;
+			myBounds.height += deltaY;
+		
+			canvasData.fillRect(new Rectangle(prevRect.x, prevRect.y, prevRect.width + deltaX, prevRect.height + deltaY), 0x00000000);
+			canvasData.copyPixels(prevBitmapData, prevRect, new Point(0, 0));
+			canvas.bitmapData = canvasData;
 		}
 		
 		/**
@@ -313,6 +341,23 @@ package dreamwisp.world.tile
 			//const presets:Object = tilePresets;
 			//MonsterDebugger.trace(this, tileNum);
 			return new Tile(blueprint, tilePresets, this);
+		}
+		
+		/**
+		 * Returns a 2d array of containing the IDs of the tileGrid.
+		 */
+		public function makeTileMap():Array
+		{
+			var tileMap:Array = [];
+			for (var row:int = 0; row < tileGrid.length; row++) 
+			{
+				tileMap.push(new Array());
+				for (var col:int = 0; col < tileGrid[0].length; col++) 
+				{
+					tileMap[row][col] = tileAt(row, col).getID();
+				}
+			}
+			return tileMap;
 		}
 		
 		public function toString():String
