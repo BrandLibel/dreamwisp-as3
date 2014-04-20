@@ -371,7 +371,7 @@ package dreamwisp.world.tile
 				{
 					str += tileAt(row, col).getID();
 					if (col != tileGrid[0].length - 1)
-						str += comma + " ";
+						str += comma;
 				}
 				str += "]";
 				if (row != tileGrid.length -1)
