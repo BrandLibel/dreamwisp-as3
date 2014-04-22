@@ -266,6 +266,17 @@ package dreamwisp.entity.components.platformer
 			return (currentState == groundState);
 		}
 		
+		/**
+		 * Returns true if this is completely covered in solid tiles.
+		 */
+		public function isEncased():Boolean
+		{
+			return (topLeftTile().isCompleteSolid() 
+				&& topRightTile().isCompleteSolid()
+				&& bottomLeftTile().isCompleteSolid()
+				&& bottomRightTile().isCompleteSolid());
+		}
+		
 		// currentState.update() calls these internal methods in the order they decide
 		
 		/**
