@@ -180,7 +180,6 @@ package dreamwisp.world.tile
 			for (var i:uint = 0; i < tileGrid[0].length; i++){
 				tileGrid[tileGrid.length -1].push( Tile.NIL );
 			}
-			//myBounds.height += tileHeight;
 		}
 		
 		/**
@@ -193,7 +192,6 @@ package dreamwisp.world.tile
 			for (var i:uint = 0; i < tileGrid.length; i++){
 				tileGrid[i].push( Tile.NIL );
 			}
-			//myBounds.width += tileWidth;
 		}
 		
 		/**
@@ -204,7 +202,6 @@ package dreamwisp.world.tile
 		public function removeRow():Vector.<Tile>
 		{
 			updateBitmapSize(0, -tileHeight);
-			//myBounds.height -= tileHeight;
 			return tileGrid.pop();
 		}
 		
@@ -215,12 +212,10 @@ package dreamwisp.world.tile
 		 */
 		public function removeCol():Vector.<Tile>
 		{
-			//myBounds.width -= tileWidth;
 			updateBitmapSize(-tileWidth, 0);
 			var tilesRemoved:Vector.<Tile> = new Vector.<Tile>();
 			for (var i:int = 0; i < tileGrid.length; i++)
 			{
-				//var removedTile:Tile = tileGrid[i].pop();
 				var removedTile:Tile = tileGrid[i][ tileGrid[i].length -1 ];
 				if (!removedTile.isEmpty())
 					insertTile(removedTile.row(), removedTile.col(), Tile.NIL);
@@ -273,6 +268,21 @@ package dreamwisp.world.tile
 				}
 			}
 			return tiles;
+		}
+		
+		public function swapTiles(id1:uint, id2:uint):void 
+		{
+			for (var i:int = 0; i < tileGrid.length; i++) 
+			{
+				for (var j:int = 0; j < tileGrid[0].length; j++) 
+				{
+					var tile:Tile = tileGrid[i][j];
+					if (tile.getID() == id1)
+						alterTile(i, j, id2)
+					else if (tile.getID() == id2)
+						alterTile(i, j, id1);
+				}
+			}
 		}
 		
 		/**
@@ -337,14 +347,12 @@ package dreamwisp.world.tile
 		{
 			if (tileNum == 0)
 				return Tile.NIL;
-			const blueprint:Object = tileData[tileNum]; //tileList.tiles[tileNum];
-			//const presets:Object = tilePresets;
-			//MonsterDebugger.trace(this, tileNum);
+			const blueprint:Object = tileData[tileNum];
 			return new Tile(blueprint, tilePresets, this);
 		}
 		
 		/**
-		 * Returns a 2d array of containing the IDs of the tileGrid.
+		 * Returns a 2d array containing the IDs of the tileGrid.
 		 */
 		public function makeTileMap():Array
 		{
