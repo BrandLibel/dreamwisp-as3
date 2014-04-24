@@ -96,14 +96,42 @@ package dreamwisp.world.tile
 		
 		public function update():void
 		{
-			for each (var tile:Tile in activeTiles)
-				tile.update();
+			//for each (var tile:Tile in activeTiles)
+				//tile.update();
+			for (var row:int = 0; row < tileGrid.length; row++) 
+			{
+				for (var col:int = 0; col < tileGrid[0].length; col++) 
+				{
+					tileGrid[row][col].update();
+				}
+			}
 		}
 		
 		public function render():void
 		{
+			
 			//for each (var tile:Tile in activeTiles)
-				//drawTile(tile.
+				//tile.render(1);
+				
+			// proper bitmap drawing of tiles involves clearing entire field and redrawing every frame
+			canvas.bitmapData.fillRect(new Rectangle(0, 0, canvas.width, canvas.height), 0);
+			for (var row:int = 0; row < tileGrid.length; row++) 
+			{
+				for (var col:int = 0; col < tileGrid[0].length; col++) 
+				{
+					tileGrid[row][col].render(1);
+				}
+			}
+		}
+		
+		public function addActiveTile(tile:Tile):void 
+		{
+			activeTiles.push(tile);
+		}
+		
+		public function removeActiveTile(tile:Tile):void 
+		{
+			activeTiles.splice(activeTiles.indexOf(tile), 1);
 		}
 		
 		/**
@@ -126,12 +154,6 @@ package dreamwisp.world.tile
 			}
 		}
 		
-		public function drawTile(tile:Tile):void 
-		{
-			tile.drawTile();
-			canvasData.copyPixels(tile.bitmapData(), tileRect, tile.point);
-		}
-		
 		public function insertTile(row:uint, col:uint, tile:Tile):void 
 		{
 			var destPoint:Point = new Point();
@@ -148,14 +170,6 @@ package dreamwisp.world.tile
 			canvasData.copyPixels(tile.bitmapData(), tileRect, destPoint);
 			if (tile.isEmpty())
 				canvasData.fillRect(new Rectangle(tile.x, tile.y, tileWidth, tileHeight), 0x00000000);
-		}
-		
-		/// Visually renders the tile specified at the coordinates.
-		private function drawTileAt(row:uint, col:uint):void
-		{
-			const destPoint:Point = new Point(col * tileWidth, row * tileHeight);
-			var tile:Tile = tileGrid[row][col];
-			drawTile(tile);
 		}
 		
 		/**

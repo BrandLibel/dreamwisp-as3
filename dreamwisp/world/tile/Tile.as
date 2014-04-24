@@ -9,6 +9,7 @@ package dreamwisp.world.tile
 	import dreamwisp.visual.SpriteSheet;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -188,55 +189,46 @@ package dreamwisp.world.tile
 			ticks++;
 			if (ticks == rateOfAnimation)
 			{
-				//MonsterDebugger.trace(this, "updating tile" + currentFrame);
-				//MonsterDebugger.trace(this, "x: " + x/32 + " y: " + y/32);
 				ticks = 0;
 				currentFrame++;
 				
 				if (currentFrame > frames.length) currentFrame = 1;
 			}
 		}
-		
-		override public function render(interpolation:Number):void
+
+		protected var xOffset:int = 0;
+		protected var yOffset:int = 0;
+		protected var alpha:Number = 1;
+		override public function render(interpolation:Number):void 
 		{
-			drawTile();
-			//erase();
-		}
-		
-		public function drawSelfOnGrid():void 
-		{
-			// update tile appearance
-			//tileScape.drawTile(this);
-			var matrix:Matrix = new Matrix();
-			matrix.translate(x, y);
+			if (isEmpty())
+				return;
 			
-			// stop from drawing on a disposed bitmap 
+			// update tile frame appearance (the pixels)
+			if (bitmap.bitmapData != null)
+			{
+				bitmap.bitmapData.fillRect(tileRect, 0);
+			}
+			var frame:Object = spriteSheet.access("frames", id - 1).frame;  // minus 1 since air is 0 but ommitted from sprite sheet
+			var srcRect:Rectangle = new Rectangle(frame.x, frame.y, tileWidth, tileHeight);
+			bitmap.bitmapData.copyPixels(spriteSheet.getImage(), srcRect, ORIGIN);
+			
+			// update tile transformations 
+			var matrix:Matrix = new Matrix();
+			matrix.translate(x + xOffset, y + yOffset);
+			
+			var colorTransform:ColorTransform = view.displayObject.transform.colorTransform;
+			colorTransform.alphaMultiplier = alpha;
+			// try-catch is to stop from drawing on a disposed bitmap 
 			try {
-				tileScape.getCanvas().bitmapData.draw(view.displayObject, matrix, view.displayObject.transform.colorTransform);
+				tileScape.getCanvas().bitmapData.draw(view.displayObject, matrix, colorTransform);
 			}
 			catch (aError:ArgumentError) {
 				
 			}
 			
-		}
-		
-		/**
-		 * 
-		 * @param	erase Whether or not to erase the prev tile bitmap before drawing
-		 */
-		public function drawTile(erase:Boolean = false):void
-		{
-			if (isEmpty())
-				return;
-						
-			if (erase && bitmap.bitmapData)
-			{
-				bitmap.bitmapData.fillRect(tileRect, 0);
-			}
-			
-			var frame:Object = spriteSheet.access("frames", id - 1).frame;  // minus 1 since air is 0 but ommitted from sprite sheet
-			var srcRect:Rectangle = new Rectangle(frame.x, frame.y, tileWidth, tileHeight);
-			bitmap.bitmapData.copyPixels(spriteSheet.getImage(), srcRect, ORIGIN);
+			//alpha = (alpha + 0.05);
+			//yOffset = (yOffset + 1) % 32;
 		}
 		
 		private function erase():void
