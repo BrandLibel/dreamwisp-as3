@@ -1,6 +1,7 @@
 package dreamwisp.world.tile
 {
 	import com.demonsters.debugger.MonsterDebugger;
+	import dreamwisp.core.GameScreen;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.SpriteSheet;
 	import dreamwisp.world.base.Location;
@@ -34,6 +35,8 @@ package dreamwisp.world.tile
 		internal var spriteSheet:SpriteSheet;
 		protected var tileData:Array;
 		protected var tilePresets:Object;
+		
+		public var gameScreen:GameScreen;
 		
 		private var myBounds:SwiftRectangle;
 				

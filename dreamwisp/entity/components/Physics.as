@@ -39,32 +39,8 @@ package dreamwisp.entity.components
 		
 		public function update():void
 		{
-			/// This makes the entity slow down and stop 
-		/*if (host.state != "walking") {
-		   xVelocity *= friction;
-		   if (Math.abs(xVelocity) < 0.5) xVelocity = 0;
-		   }
-		
-		   ///
-		   //if (host.state != "onGround") {
-		   //if (xSpeed < maxSpeed * directionMultiplier) {
-		   xVelocity += accelerationX;
-		   //}
-		   if (xVelocity > maxSpeed) {
-		   xVelocity = maxSpeed;
-		   }
-		   if (xVelocity < -maxSpeed) {
-		   xVelocity = -maxSpeed;
-		   }
-		   //}
-		
-		   if (host.state == "falling") {
-		   //MonsterDebugger.trace(this, "falling by gravity", "", "", 0xECBD00);
-		   yVelocity += gravity;
-		 }*/
-		
-			//host.body.x += xVelocity;
-			//host.body.y += yVelocity;
+			travelX();
+			travelY();
 		}
 		
 		/**

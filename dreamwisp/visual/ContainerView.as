@@ -93,7 +93,7 @@ package dreamwisp.visual {
 				throw new Error("ContainerView: The entity you are trying to add has no view.");
 			}
 			
-			addDisplayObject(entity.view.movieClip, entity.view.layer, entity.body.x, entity.body.y);
+			addDisplayObject(entity.view.displayObject, entity.view.layer, entity.body.x, entity.body.y);
 			
 			//addGenericView(new GenericView(entity.view.movieClip, entity.view.layer));
 			
@@ -163,7 +163,7 @@ package dreamwisp.visual {
 		
 		public function removeEntity(entity:Entity):void {
 			// use this b/c container.contains(child) returns true even when child isnt in container
-			var child:DisplayObject = entity.view.movieClip;
+			var child:DisplayObject = entity.view.displayObject;
 			if (child.parent == container) {
 				//MonsterDebugger.trace(this, "TRUE", "", "", 0xFF28DF);
 				container.removeChild(child);
@@ -174,7 +174,7 @@ package dreamwisp.visual {
 				getViewByLabel(LABEL_OVERLAY).removeChild(entity.lightSource.colorMask);
 			}
 			
-			removeGenericView( getViewByContent(entity.view.movieClip) ); 
+			removeGenericView( getViewByContent(entity.view.displayObject) ); 
 		}
 		
 		public function get container():Sprite { return _container; }

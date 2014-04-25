@@ -127,8 +127,7 @@ package dreamwisp.entity.components.platformer
 		
 		override public function update():void 
 		{
-			travelX();
-			travelY();
+			super.update();
 			
 			currentState.update();
 			isWalking = false;

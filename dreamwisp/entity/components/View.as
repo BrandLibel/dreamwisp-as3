@@ -45,9 +45,11 @@ package dreamwisp.entity.components
 		
 		public function render(interpolation:Number):void
 		{
-			if (!movieClip) return;
+			if (movieClip)
+			{
+				if (host.animation) movieClip.gotoAndStop(host.animation.currentFrame());
+			}
 			
-			if (host.animation) movieClip.gotoAndStop(host.animation.currentFrame());
 			if (host.physics)
 			{
 				displayObject.x = host.body.x + (host.physics.velocityX * interpolation);
