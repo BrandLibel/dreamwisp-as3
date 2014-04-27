@@ -50,6 +50,7 @@ package dreamwisp.entity.components.platformer
 		private var prevRow:uint;
 		
 		public var jumped:Signal;
+		public var collidedTile:Signal;
 		public var steppedNewTile:Signal;
 		public var touchedKillerTile:Signal;
 
@@ -77,6 +78,7 @@ package dreamwisp.entity.components.platformer
 			movementSM.initialState =  "airState";
 			
 			jumped = new Signal();
+			collidedTile = new Signal(Tile);
 			steppedNewTile = new Signal(Tile);
 			touchedKillerTile = new Signal();
 		}
@@ -158,15 +160,26 @@ package dreamwisp.entity.components.platformer
 		override protected function travelX():void 
 		{
 			super.travelX();
+			var tileToCollide:Tile;
 			// check collision to the right
 			if (velocityX > 0)
 			{
+				// setting the tile to dispatch for collision
+				if (topRightTile().isSolidLeft() && bottomRightTile().isSolidLeft())
+					tileToCollide = midRightTile();
+				else if (topRightTile().isSolidLeft())
+					tileToCollide = topRightTile();
+				else if (bottomRightTile().isSolidLeft())
+					tileToCollide = bottomRightTile();
+				
 				if (topRightTile().isSolidLeft() || bottomRightTile().isSolidLeft())
 				{
 					// hit a wall to the right
 					body.x = rightEdge() * tileWidth - body.width;
 					velocityX = 0;
 					currentState.collideRight();
+					collidedTile.dispatch(tileToCollide);
+					MonsterDebugger.trace(this, "collide right");
 				}
 				if (topRightTile().killsLeft() || bottomRightTile().killsLeft())
 					touchedKillerTile.dispatch();
@@ -174,12 +187,22 @@ package dreamwisp.entity.components.platformer
 			// check collision to the left
 			else if (velocityX < 0)
 			{
+				// setting the tile to dispatch for collision
+				if (topLeftTile().isSolidRight() || bottomLeftTile().isSolidRight())
+					tileToCollide = midLeftTile();
+				else if (topLeftTile().isSolidRight())
+					tileToCollide = topLeftTile();
+				else if (bottomLeftTile().isSolidRight())
+					tileToCollide = bottomLeftTile();
+				
 				if (topLeftTile().isSolidRight() || bottomLeftTile().isSolidRight())
 				{
 					// hit a wall to the left
 					body.x = (leftEdge() + 1) * tileWidth;
 					velocityX = 0;
 					currentState.collideLeft();
+					collidedTile.dispatch(tileToCollide);
+					MonsterDebugger.trace(this, "collide left");
 				}
 				if (topLeftTile().killsRight() || bottomLeftTile().killsRight())
 					touchedKillerTile.dispatch();
@@ -193,11 +216,20 @@ package dreamwisp.entity.components.platformer
 		override protected function travelY():void
 		{
 			super.travelY();
-			if (velocityY > 0)
+			var tileToCollide:Tile;
 			// check collision below
+			if (velocityY > 0)
 			{
+				// setting the tile to dispatch for collision
+				if (bottomLeftTile().isSolidUp() && bottomRightTile().isSolidUp())
+					tileToCollide = bottomMidTile();
+				else if (bottomLeftTile().isSolidUp())
+					tileToCollide = bottomLeftTile();
+				else if (bottomRightTile().isSolidUp())
+					tileToCollide = bottomRightTile();
+					
 				if (bottomLeftTile().isSolidUp() || bottomRightTile().isSolidUp())
-				{
+				{		
 					if (bottomLeftTile().isPlatform() || bottomRightTile().isPlatform())
 					{
 						if (prevRow < bottomEdge())
@@ -206,6 +238,8 @@ package dreamwisp.entity.components.platformer
 							body.y = bottomEdge() * tileHeight-body.height;
 							velocityY = 0;
 							currentState.collideBottom();
+							collidedTile.dispatch(tileToCollide);
+							MonsterDebugger.trace(this, "collide bottom");
 						}
 					} 
 					else 
@@ -214,6 +248,8 @@ package dreamwisp.entity.components.platformer
 						body.y = bottomEdge() * tileHeight-body.height;
 						velocityY = 0;
 						currentState.collideBottom();
+						collidedTile.dispatch(tileToCollide);
+						MonsterDebugger.trace(this, "collide bottom");
 					}	
 				}
 				if (bottomLeftTile().killsUp() || bottomRightTile().killsUp())
@@ -222,12 +258,22 @@ package dreamwisp.entity.components.platformer
 			// check collision above
 			else if (velocityY < 0)
 			{
+				// setting the tile to dispatch for collision
+				if (topLeftTile().isSolidDown() && topRightTile().isSolidDown())
+					tileToCollide = topMidTile();
+				else if (topLeftTile().isSolidDown())
+					tileToCollide = topLeftTile();
+				else if (topRightTile().isSolidDown())
+					tileToCollide = topRightTile();
+					
 				if (topLeftTile().isSolidDown() || topRightTile().isSolidDown())
 				{
 					// hit the ceiling
 					body.y = bottomEdge() * tileHeight + 1;
 					velocityY = 0;
 					currentState.collideTop();
+					collidedTile.dispatch(tileToCollide);
+					MonsterDebugger.trace(this, "collide top");
 				}
 				if (topLeftTile().killsDown() || topRightTile().killsDown())
 					touchedKillerTile.dispatch();
@@ -364,6 +410,17 @@ package dreamwisp.entity.components.platformer
 		internal function centerTile():Tile
 		{
 			return tileScape.tileAt(midHorizontal(), midVertical());
+		}
+		
+		// Getting the tiles along MID edge
+		internal function midLeftTile():Tile
+		{
+			return tileScape.tileAt(midHorizontal(), leftEdge());
+		}
+		
+		internal function midRightTile():Tile
+		{
+			return tileScape.tileAt(midHorizontal(), rightEdge());
 		}
 		
 		// Getting the tiles along TOP edge

@@ -8,6 +8,7 @@ package dreamwisp.entity.hosts
 	import dreamwisp.entity.components.Physics;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.components.Weapon;
+	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.lighting.LightSource;
 	import dreamwisp.world.base.EntityManager;
 	import dreamwisp.world.base.Location;
@@ -40,6 +41,7 @@ package dreamwisp.entity.hosts
 		private var _disabledInput:Signal;
 		private var _enabledInput:Signal;
 		
+		public var bounds:SwiftRectangle;
 		private var _myLocation:Location;
 		private var _entityManager:EntityManager;
 		private var _myScreen:GameScreen;
@@ -147,20 +149,14 @@ package dreamwisp.entity.hosts
 		}*/
 		
 		protected function hasLeftBounds():Boolean {
-			if (myLocation) {
-				if ((body.globalX + body.width / 2) >= myLocation.rect.right) {
-					return true;
-				}
-				if ((body.globalX + body.width / 2) <= myLocation.rect.left) {
-					return true;
-				}
-				if ((body.globalY + body.height / 2) <= myLocation.rect.top) {
-					return true;
-				}
-				if ((body.globalY + body.height / 2) >= myLocation.rect.bottom) {
-					return true;
-				}
-			}
+			if (body.centerX >= bounds.right)
+				return true;
+			if (body.centerX <= bounds.left)
+				return true;
+			if (body.centerY <= bounds.top)
+				return true;
+			if (body.centerY >= bounds.bottom) 
+				return true;
 			return false;
 		}
 		
