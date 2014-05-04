@@ -33,11 +33,13 @@ package dreamwisp.entity.components.platformer
 		
 		public var jumpPower:Number;
 		public var gravity:Number = 1.3;
-		internal var maxJumpHeight:uint;
-		internal var maxJumpTime:uint;
 		
 		internal var jumpsMade:uint = 0;
 		internal var jumpsAllowed:uint = 1;
+		/**
+		 * No parameters, must return boolean
+		 */
+		public var canJump:Function;
 		
 		public var friction:Number = 0.6;
 		
@@ -62,11 +64,7 @@ package dreamwisp.entity.components.platformer
 			this.maxWalkSpeed = maxWalkSpeed;
 			this.entity = entity;
 			this.body = entity.body;
-			
-			// hold to jump higher mechanics
-			maxJumpHeight = 32;
-			maxJumpTime = 10;
-			
+						
 			groundState = new PlatformerGroundState(this, entity);
 			ladderState = new PlatformerLadderState(this, entity);
 			airState = new PlatformerAirState(this, entity);
@@ -76,6 +74,13 @@ package dreamwisp.entity.components.platformer
 			movementSM.addState( "ladderState", { enter: onStateChange }  );
 			movementSM.addState( "airState", { enter: onStateChange } );
 			movementSM.initialState =  "airState";
+			
+			canJump = function():Boolean
+			{
+				if (isBlockedAbove())
+					return false;
+				return hasJumpsRemaining(); 
+			};
 			
 			jumped = new Signal();
 			collidedTile = new Signal(Tile);
@@ -179,7 +184,6 @@ package dreamwisp.entity.components.platformer
 					velocityX = 0;
 					currentState.collideRight();
 					collidedTile.dispatch(tileToCollide);
-					MonsterDebugger.trace(this, "collide right");
 				}
 				if (topRightTile().killsLeft() || bottomRightTile().killsLeft())
 					touchedKillerTile.dispatch();
@@ -202,7 +206,6 @@ package dreamwisp.entity.components.platformer
 					velocityX = 0;
 					currentState.collideLeft();
 					collidedTile.dispatch(tileToCollide);
-					MonsterDebugger.trace(this, "collide left");
 				}
 				if (topLeftTile().killsRight() || bottomLeftTile().killsRight())
 					touchedKillerTile.dispatch();
@@ -239,7 +242,6 @@ package dreamwisp.entity.components.platformer
 							velocityY = 0;
 							currentState.collideBottom();
 							collidedTile.dispatch(tileToCollide);
-							MonsterDebugger.trace(this, "collide bottom");
 						}
 					} 
 					else 
@@ -249,7 +251,6 @@ package dreamwisp.entity.components.platformer
 						velocityY = 0;
 						currentState.collideBottom();
 						collidedTile.dispatch(tileToCollide);
-						MonsterDebugger.trace(this, "collide bottom");
 					}	
 				}
 				if (bottomLeftTile().killsUp() || bottomRightTile().killsUp())
@@ -273,7 +274,6 @@ package dreamwisp.entity.components.platformer
 					velocityY = 0;
 					currentState.collideTop();
 					collidedTile.dispatch(tileToCollide);
-					MonsterDebugger.trace(this, "collide top");
 				}
 				if (topLeftTile().killsDown() || topRightTile().killsDown())
 					touchedKillerTile.dispatch();
@@ -283,7 +283,7 @@ package dreamwisp.entity.components.platformer
 		
 		public function jump():void 
 		{
-			if (!canJump())
+			if (!canJump.call())
 				return;
 			currentState.jump();
 			velocityY = jumpPower;
@@ -322,6 +322,19 @@ package dreamwisp.entity.components.platformer
 				&& bottomRightTile().isCompleteSolid());
 		}
 		
+		public function isBlockedAbove():Boolean
+		{
+			var heightDiff:uint = Math.abs(tileHeight - body.height) + 1;
+			var aboveEdge:int =  (Math.floor((body.y - heightDiff) / tileHeight));
+			return (tileScape.tileAt(aboveEdge, leftEdge()).isSolidDown()
+				|| tileScape.tileAt(aboveEdge, rightEdge()).isSolidDown());
+		}
+		
+		public function hasJumpsRemaining():Boolean
+		{
+			return jumpsMade < jumpsAllowed;
+		}
+		
 		// currentState.update() calls these internal methods in the order they decide
 		
 		/**
@@ -333,16 +346,6 @@ package dreamwisp.entity.components.platformer
 			// never exceed max speed
 			if (Math.abs(velocityY) > maxSpeedY)
 				velocityY = Belt.getSignOf(velocityY) * maxSpeedY;
-		}
-		
-		internal function canJump():Boolean
-		{
-			var heightDiff:uint = Math.abs(tileHeight - body.height) + 1;
-			var aboveEdge:int =  (Math.floor((body.y - heightDiff) / tileHeight));
-			if (tileScape.tileAt(aboveEdge, leftEdge()).isSolidDown()
-				|| tileScape.tileAt(aboveEdge, rightEdge()).isSolidDown())
-				return false;
-			return jumpsMade < jumpsAllowed;
 		}
 		
 		// Getting the 4 edges

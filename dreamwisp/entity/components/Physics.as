@@ -39,8 +39,8 @@ package dreamwisp.entity.components
 		
 		public function update():void
 		{
-			travelX();
 			travelY();
+			travelX();
 		}
 		
 		/**
