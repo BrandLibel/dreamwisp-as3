@@ -55,6 +55,13 @@ package dreamwisp.entity.components {
 		
 		public function set y(value:Number):void { _y = value; }
 		
+		public function distanceTo(other:Body):Number 
+		{
+			return Math.sqrt( 
+				Math.pow(other.centerX - centerX, 2) +
+				Math.pow(other.centerY - centerY, 2) );
+		}
+		
 		/**
 		 * Determines when this body collides with another.
 		 * @param	body

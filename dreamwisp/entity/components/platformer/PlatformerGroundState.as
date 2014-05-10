@@ -25,14 +25,6 @@ package dreamwisp.entity.components.platformer
 		
 		public function update():void
 		{
-			// apply friction when stopped moving
-			if (!platformPhysics.isWalking)
-			{
-				platformPhysics.velocityX *= (platformPhysics.friction);
-				if (Math.abs(platformPhysics.velocityX) < platformPhysics.maxWalkSpeed * 0.1)
-					platformPhysics.velocityX = 0;
-			}
-			
 			var tileUnderFoot:Tile = platformPhysics.primaryFoot();
 			if (tileUnderFoot.isSolidUp())
 			{
@@ -51,9 +43,10 @@ package dreamwisp.entity.components.platformer
 		{
 			// walk left
 			platformPhysics.isWalking = true;
+			platformPhysics.accelerationX = -platformPhysics.walkAcceleration;
 			if (platformPhysics.velocityX > -platformPhysics.maxWalkSpeed)
 			{
-				platformPhysics.velocityX -= platformPhysics.walkAcceleration;
+				//platformPhysics.velocityX -= platformPhysics.walkAcceleration;
 			}
 			else
 			{
@@ -65,9 +58,10 @@ package dreamwisp.entity.components.platformer
 		{
 			// walk right
 			platformPhysics.isWalking = true;
+			platformPhysics.accelerationX = platformPhysics.walkAcceleration;
 			if (platformPhysics.velocityX < platformPhysics.maxWalkSpeed)
 			{
-				platformPhysics.velocityX += platformPhysics.walkAcceleration;
+				//platformPhysics.velocityX += platformPhysics.walkAcceleration;
 			}
 			else
 			{

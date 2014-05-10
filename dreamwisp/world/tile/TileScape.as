@@ -48,7 +48,7 @@ package dreamwisp.world.tile
 		 * @param	tiles info list in JSON, incl. properties and dimensions.
 		 * @param	tileMap a 2d array with layout of initial level to build; goes empty if null
 		 */
-		public function TileScape(width:Number, height:Number, spriteSheet:SpriteSheet, tiles:Object, tileMap:Array = null)
+		public function TileScape(width:Number, height:Number, spriteSheet:SpriteSheet, tiles:Object, tileMap:Array)
 		{
 			readTileData(tiles);
 			tileRect = new Rectangle(0, 0, tileWidth, tileHeight);

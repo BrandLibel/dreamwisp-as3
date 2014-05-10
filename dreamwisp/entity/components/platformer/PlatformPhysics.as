@@ -108,6 +108,11 @@ package dreamwisp.entity.components.platformer
 			this.tileScape = tileScape;
 		}
 		
+		public function getTileScape():TileScape
+		{
+			return tileScape;
+		}
+		
 		override public function moveLeft():void 
 		{
 			currentState.moveLeft();
@@ -136,6 +141,14 @@ package dreamwisp.entity.components.platformer
 		{
 			super.update();
 			
+			// apply friction when stopped moving
+			if (!isWalking)
+			{
+				accelerationX = 0;
+				velocityX *= (friction);
+				if (Math.abs(velocityX) < maxWalkSpeed * 0.1)
+					velocityX = 0;
+			}
 			currentState.update();
 			isWalking = false;
 		}
@@ -178,13 +191,8 @@ package dreamwisp.entity.components.platformer
 					tileToCollide = bottomRightTile();
 				
 				if (topRightTile().isSolidLeft() || bottomRightTile().isSolidLeft())
-				{
-					// hit a wall to the right
-					body.x = rightEdge() * tileWidth - body.width;
-					velocityX = 0;
-					currentState.collideRight();
-					collidedTile.dispatch(tileToCollide);
-				}
+					collideRight(tileToCollide);
+					
 				if (topRightTile().killsLeft() || bottomRightTile().killsLeft())
 					touchedKillerTile.dispatch();
 			}
@@ -200,16 +208,29 @@ package dreamwisp.entity.components.platformer
 					tileToCollide = bottomLeftTile();
 				
 				if (topLeftTile().isSolidRight() || bottomLeftTile().isSolidRight())
-				{
-					// hit a wall to the left
-					body.x = (leftEdge() + 1) * tileWidth;
-					velocityX = 0;
-					currentState.collideLeft();
-					collidedTile.dispatch(tileToCollide);
-				}
+					collideLeft(tileToCollide);
+					
 				if (topLeftTile().killsRight() || bottomLeftTile().killsRight())
 					touchedKillerTile.dispatch();
 			}
+		}
+		
+		private function collideLeft(tileToCollide:Tile):void
+		{
+			// hit a wall to the left
+			body.x = (leftEdge() + 1) * tileWidth;
+			velocityX = 0;
+			currentState.collideLeft();
+			collidedTile.dispatch(tileToCollide);
+		}
+		
+		private function collideRight(tileToCollide:Tile):void 
+		{
+			// hit a wall to the right
+			body.x = rightEdge() * tileWidth - body.width;
+			velocityX = 0;
+			currentState.collideRight();
+			collidedTile.dispatch(tileToCollide);
 		}
 		
 		/**
@@ -236,22 +257,10 @@ package dreamwisp.entity.components.platformer
 					if (bottomLeftTile().isPlatform() || bottomRightTile().isPlatform())
 					{
 						if (prevRow < bottomEdge())
-						{
-							// hit the floor
-							body.y = bottomEdge() * tileHeight-body.height;
-							velocityY = 0;
-							currentState.collideBottom();
-							collidedTile.dispatch(tileToCollide);
-						}
+							collideBottom(tileToCollide);
 					} 
 					else 
-					{
-						// hit the floor
-						body.y = bottomEdge() * tileHeight-body.height;
-						velocityY = 0;
-						currentState.collideBottom();
-						collidedTile.dispatch(tileToCollide);
-					}	
+						collideBottom(tileToCollide);
 				}
 				if (bottomLeftTile().killsUp() || bottomRightTile().killsUp())
 					touchedKillerTile.dispatch();
@@ -268,17 +277,29 @@ package dreamwisp.entity.components.platformer
 					tileToCollide = topRightTile();
 					
 				if (topLeftTile().isSolidDown() || topRightTile().isSolidDown())
-				{
-					// hit the ceiling
-					body.y = bottomEdge() * tileHeight + 1;
-					velocityY = 0;
-					currentState.collideTop();
-					collidedTile.dispatch(tileToCollide);
-				}
+					collideTop(tileToCollide);
 				if (topLeftTile().killsDown() || topRightTile().killsDown())
 					touchedKillerTile.dispatch();
 			}
 			prevRow = bottomEdge();
+		}
+		
+		private function collideTop(tileToCollide:Tile):void
+		{
+			// hit the ceiling
+			body.y = bottomEdge() * tileHeight + 1;
+			velocityY = 0;
+			currentState.collideTop();
+			collidedTile.dispatch(tileToCollide);
+		}
+		
+		private function collideBottom(tileToCollide:Tile):void 
+		{
+			// hit the floor
+			body.y = bottomEdge() * tileHeight-body.height;
+			velocityY = 0;
+			currentState.collideBottom();
+			collidedTile.dispatch(tileToCollide);
 		}
 		
 		public function jump():void 

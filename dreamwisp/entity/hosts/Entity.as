@@ -112,14 +112,6 @@ package dreamwisp.entity.hosts
 			if (lightSource) lightSource.render();
 		}
 		
-		/**
-		 * Action to take when the Entity reaches an edge of the Location;
-		 */ 
-		
-		/*public function onReachBounds():void {
-			//TODO: override for each individual entity. Does it stop? Change direction? Move to new location? Die? Teleport?
-		}*/
-		
 		public function immobilize():void {
 			isMobile = false;
 		}
@@ -127,26 +119,6 @@ package dreamwisp.entity.hosts
 		public function mobilize():void {
 			isMobile = true;
 		}
-		
-		// IEntity extends IRecptor, so all entitys get input listeners 
-		
-		/*public function enableInput():void {
-			//takesInput = true;
-			enabledInput.dispatch(this);
-		}
-		
-		public function disableInput():void {
-			//takesInput = false;
-			disabledInput.dispatch(this);
-		}*/
-		
-		/*public function hearMouseInput(type:String, mouseX:int, mouseY:int):void {
-			
-		}*/
-		
-		/*public function hearKeyInput(type:String, keyCode:uint):void {
-			
-		}*/
 		
 		protected function hasLeftBounds():Boolean {
 			if (body.centerX >= bounds.right)
@@ -223,18 +195,13 @@ package dreamwisp.entity.hosts
 		
 		public function set lightSource(value:LightSource):void { _lightSource = value; }
 		
-		public function get name():String {
-			return _name;
-		}
+		public function get name():String { return _name; }
 		
-		public function set name(value:String):void {
-			_name = value;
-		}
+		public function set name(value:String):void { _name = value; }
 		
 		public function get myScreen():GameScreen { return _myScreen; }
 		
 		public function set myScreen(value:GameScreen):void { _myScreen = value; }
-		
 		
 	}
 

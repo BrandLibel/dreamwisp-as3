@@ -11,6 +11,10 @@ package dreamwisp.entity.components
 		
 		public var velocityX:Number = 0;
 		public var velocityY:Number = 0;
+		public var accelerationX:Number = 0;
+		public var accelerationY:Number = 0;
+		public var externalAccelerationX:Number = 0;
+		public var externalAccelerationY:Number = 0;
 		public var maxSpeedX:Number;
 		public var maxSpeedY:Number;
 		
@@ -41,6 +45,9 @@ package dreamwisp.entity.components
 		{
 			travelY();
 			travelX();
+			// reset acceleration (external needs to keep applying force)
+			externalAccelerationX = 0;
+			externalAccelerationY = 0;
 		}
 		
 		/**
@@ -49,13 +56,14 @@ package dreamwisp.entity.components
 		 */
 		protected function travelX():void
 		{
+			velocityX += accelerationX;
 			// avoid exceeding max speed
 			if (Math.abs(velocityX) > maxSpeedX)
 			{
 				var sign:int = (velocityX >= 0) ? 1 : -1;
 				velocityX = maxSpeedX * sign;
 			}
-			
+			velocityX += externalAccelerationX;
 			host.body.x += velocityX;
 		}
 		
@@ -65,13 +73,14 @@ package dreamwisp.entity.components
 		 */
 		protected function travelY():void
 		{
+			velocityY += accelerationY;
 			// avoid exceeding max speed
 			if (Math.abs(velocityY) > maxSpeedY)
 			{
 				var sign:int = (velocityY >= 0) ? 1 : -1;
 				velocityY = maxSpeedY * sign;
 			}
-			
+			velocityY += externalAccelerationY;			
 			host.body.y += velocityY;
 		}
 		

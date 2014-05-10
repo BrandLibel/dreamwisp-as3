@@ -55,13 +55,6 @@ package dreamwisp.entity.components.platformer
 				MonsterDebugger.trace(this, "terminal fall velocity");
 				platformPhysics.velocityY = platformPhysics.maxSpeedY;
 			}
-			
-			if (!platformPhysics.isWalking)
-			{
-				platformPhysics.velocityX *= (platformPhysics.friction);
-				if (Math.abs(platformPhysics.velocityX) < platformPhysics.maxWalkSpeed * 0.1)
-					platformPhysics.velocityX = 0;
-			}
 			//if (platformPhysics.centerTile().type != "ladder") {
 			//platformPhysics.canGrabLadder = true;
 			//}
@@ -71,20 +64,14 @@ package dreamwisp.entity.components.platformer
 		{
 			// walk left
 			platformPhysics.isWalking = true;
-			if (platformPhysics.velocityX > -platformPhysics.maxWalkSpeed)
-			{
-				platformPhysics.velocityX -= platformPhysics.walkAcceleration;
-			}
+			platformPhysics.accelerationX = -platformPhysics.walkAcceleration;
 		}
 		
 		public function moveRight():void
 		{
 			// walk right
 			platformPhysics.isWalking = true;
-			if (platformPhysics.velocityX < platformPhysics.maxWalkSpeed)
-			{
-				platformPhysics.velocityX += platformPhysics.walkAcceleration;
-			}
+			platformPhysics.accelerationX = platformPhysics.walkAcceleration;;
 		}
 		
 		public function moveUp():void
