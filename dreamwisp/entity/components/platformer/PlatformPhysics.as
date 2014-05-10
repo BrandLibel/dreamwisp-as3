@@ -1,6 +1,5 @@
 package dreamwisp.entity.components.platformer 
 {
-	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.Physics;
 	import dreamwisp.entity.components.platformer.IPlatformMovementState;
@@ -151,6 +150,12 @@ package dreamwisp.entity.components.platformer
 			}
 			currentState.update();
 			isWalking = false;
+			
+			// project physical presence to tiles
+			topLeftTile().occupy(entity);
+			topRightTile().occupy(entity);
+			bottomLeftTile().occupy(entity);
+			bottomRightTile().occupy(entity);
 		}
 		
 		/**

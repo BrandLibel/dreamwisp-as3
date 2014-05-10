@@ -1,10 +1,8 @@
 package dreamwisp.world.tile
 {
-	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.core.GameScreen;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.SpriteSheet;
-	import dreamwisp.world.base.Location;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Point;
@@ -22,8 +20,6 @@ package dreamwisp.world.tile
 		private var _tileHeight:uint;
 		
 		private var tileGrid:Vector.<Vector.<Tile>> = new Vector.<Vector.<Tile>>;
-		/// The list of tiles which currently need to be updated.
-		private var activeTiles:Vector.<Tile> = new Vector.<Tile>;
 		
 		private var canvasData:BitmapData;
 		private var canvas:Bitmap;
@@ -99,42 +95,14 @@ package dreamwisp.world.tile
 		
 		public function update():void
 		{
-			//for each (var tile:Tile in activeTiles)
-				//tile.update();
-			for (var row:int = 0; row < tileGrid.length; row++) 
-			{
-				for (var col:int = 0; col < tileGrid[0].length; col++) 
-				{
-					tileGrid[row][col].update();
-				}
-			}
+			execute( function(tile:Tile):void { tile.update(); } );
 		}
 		
 		public function render():void
 		{
-			
-			//for each (var tile:Tile in activeTiles)
-				//tile.render(1);
-				
 			// proper bitmap drawing of tiles involves clearing entire field and redrawing every frame
 			canvas.bitmapData.fillRect(new Rectangle(0, 0, canvas.width, canvas.height), 0);
-			for (var row:int = 0; row < tileGrid.length; row++) 
-			{
-				for (var col:int = 0; col < tileGrid[0].length; col++) 
-				{
-					tileGrid[row][col].render(1);
-				}
-			}
-		}
-		
-		public function addActiveTile(tile:Tile):void 
-		{
-			activeTiles.push(tile);
-		}
-		
-		public function removeActiveTile(tile:Tile):void 
-		{
-			activeTiles.splice(activeTiles.indexOf(tile), 1);
+			execute( function(tile:Tile):void { tile.render(1); } );
 		}
 		
 		/**
@@ -165,10 +133,6 @@ package dreamwisp.world.tile
 			tile.y = row * tileHeight;
 			destPoint.x = tile.x;
 			destPoint.y = tile.y;
-			if (tile.hasAnimation)
-			{
-				activeTiles.push(tile);
-			}
 			tile.render(1);
 			canvasData.copyPixels(tile.bitmapData(), tileRect, destPoint);
 			if (tile.isEmpty())
@@ -272,6 +236,21 @@ package dreamwisp.world.tile
 			return tileGrid[row][col];
 		}
 		
+		/**
+		 * Exceutes a function on every tile in the grid.
+		 * @param	action
+		 */
+		public function execute(action:Function):void
+		{
+			for (var i:int = 0; i < tileGrid.length; i++) 
+			{
+				for (var j:int = 0; j < tileGrid[0].length; j++) 
+				{
+					action( tileAt(i, j) );
+				}
+			}
+		}
+		
 		public function getTilesWithID(id:uint):Vector.<Tile>
 		{
 			var tiles:Vector.<Tile> = new Vector.<Tile>();
@@ -289,31 +268,27 @@ package dreamwisp.world.tile
 		
 		public function swapTiles(id1:uint, id2:uint):void 
 		{
-			for (var i:int = 0; i < tileGrid.length; i++) 
-			{
-				for (var j:int = 0; j < tileGrid[0].length; j++) 
+			execute(
+				function(tile:Tile):void 
 				{
-					var tile:Tile = tileGrid[i][j];
+					var i:uint = tile.row();
+					var j:uint = tile.col();
 					if (tile.getID() == id1)
 						alterTile(i, j, id2)
 					else if (tile.getID() == id2)
 						alterTile(i, j, id1);
 				}
-			}
+			);
 		}
 		
 		/**
-		 * Turns all tiles into NIL
+		 * Turns all tiles into NIL (alter id = 0)
 		 */
 		public function empty():void 
 		{
-			for (var i:int = 0; i < tileGrid.length; i++) 
-			{
-				for (var j:int = 0; j < tileGrid[0].length; j++) 
-				{
-					alterTile(i, j, 0);
-				}
-			}
+			execute(
+				function(tile:Tile):void { alterTile(tile.row(), tile.col(), 0); }
+			);
 		}
 		
 		public function isEmpty(row:uint, col:uint):Boolean
@@ -323,14 +298,13 @@ package dreamwisp.world.tile
 		
 		public function purge():void 
 		{
-			for (var i:int = 0; i < tileGrid.length; i++) 
-			{
-				for (var j:int = 0; j < tileGrid[0].length; j++) 
+			execute(
+				function(tile:Tile):void 
 				{
-					if (!isEmpty(i, j))
-						tileAt(i, j).destroy();
+					if (!tile.isEmpty())
+						tile.destroy();
 				}
-			}
+			);
 			canvasData.dispose();
 		}
 		

@@ -1,11 +1,8 @@
 package dreamwisp.world.tile
 {
-	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.hosts.Entity;
-	import dreamwisp.input.InputState;
-	import dreamwisp.visual.Blitter;
 	import dreamwisp.visual.SpriteSheet;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -50,6 +47,7 @@ package dreamwisp.world.tile
 		public var bonusSpeed:Number;
 		
 		public var isOpaque:Boolean = false;
+		protected var isOccupied:Boolean = false;
 		
 		/// Bitmap, which is how the tile currently looks 
 		private var bitmap:Bitmap;
@@ -60,8 +58,10 @@ package dreamwisp.world.tile
 		private var currentFrame:uint = 1;
 		/// The amount of game ticks it takes to equal one currentFrame change
 		private var rateOfAnimation:uint;
-		
 		private var spriteSheet:SpriteSheet;
+		protected var xOffset:int = 0;
+		protected var yOffset:int = 0;
+		protected var alpha:Number = 1;
 		
 		public static const NIL:Tile = new Tile(null, null, null);
 		private var isNIL:Boolean = false;
@@ -194,11 +194,10 @@ package dreamwisp.world.tile
 				
 				if (currentFrame > frames.length) currentFrame = 1;
 			}
+			
+			isOccupied = false;
 		}
 
-		protected var xOffset:int = 0;
-		protected var yOffset:int = 0;
-		protected var alpha:Number = 1;
 		override public function render(interpolation:Number):void 
 		{
 			if (isEmpty())
@@ -226,9 +225,6 @@ package dreamwisp.world.tile
 			catch (aError:ArgumentError) {
 				
 			}
-			
-			//alpha = (alpha + 0.05);
-			//yOffset = (yOffset + 1) % 32;
 		}
 		
 		private function erase():void
@@ -245,6 +241,14 @@ package dreamwisp.world.tile
 		public function killsLeft():Boolean { return kills.left; }
 		public function killsRight():Boolean { return kills.right; }
 		public function killsDown():Boolean { return kills.down; }
+		
+		/**
+		 * Indicates that an Entity is currently touching 
+		 */
+		public function occupy(entity:Entity):void 
+		{
+			isOccupied = true;
+		}
 		
 		public final function hit(damage:int = 1):void
 		{
