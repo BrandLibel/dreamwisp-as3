@@ -287,7 +287,7 @@ package dreamwisp.world.tile
 		public function empty():void 
 		{
 			execute(
-				function(tile:Tile):void { alterTile(tile.row(), tile.col(), 0); }
+				function(tile:Tile):void { if (!tile.isEmpty()) alterTile(tile.row(), tile.col(), 0); }
 			);
 		}
 		

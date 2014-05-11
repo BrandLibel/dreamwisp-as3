@@ -1,5 +1,6 @@
 package dreamwisp.world.tile
 {
+	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.hosts.Entity;
@@ -11,11 +12,7 @@ package dreamwisp.world.tile
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import org.osflash.signals.Signal;
-	
-	/**
-	 * 
-	 */
-		
+
 	//TODO: Position-based list sorting in order to improve performance of ray-casting algorithm.
 	//		Differentiate between solid/opaque bodies which are able to collide with light, and only
 	//		populate this 'lighting' entity list with solid/opaque things.
