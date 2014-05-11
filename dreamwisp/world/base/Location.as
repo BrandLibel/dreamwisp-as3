@@ -1,6 +1,7 @@
 package dreamwisp.world.base {
 	
 	import com.demonsters.debugger.MonsterDebugger;
+	import dreamwisp.core.Game;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.hosts.IEntityFactory;
 	import dreamwisp.entity.hosts.IPlayerControllable;
@@ -32,8 +33,8 @@ package dreamwisp.world.base {
 		private var _player:IPlayerControllable;
 		private var _tileScape:TileScape;
 		
-		public function Location() {
-			
+		public function Location(game:Game = null) {
+			super(game);
 		}
 		
 		override public function update():void {

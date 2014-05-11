@@ -18,6 +18,8 @@ package dreamwisp.input {
 		/// List of keyBinds that currently being held down.
 		private var keysPressed:Vector.<KeyBind> = new Vector.<KeyBind>;
 		
+		private var keyLegend:Object = new Object();
+		
 		public static const KEY_PRESSED:Boolean = true;
 		public static const KEY_RELEASED:Boolean = false;
 		
@@ -27,23 +29,26 @@ package dreamwisp.input {
 		 * @param	releaseActions
 		 * @param	keyCodeData 
 		 */
-		public function bind(keyCodeData:Object, pressActions:Object = null, releaseActions:Object = null):void {
+		public function bind(keyCodeData:Object, pressActions:Object = null, releaseActions:Object = null, label:String = null):void {
 			// unbind the keyCode(s) if previously binded
 			if (bindings.length > 0) {
-				var keyBind:KeyBind = find(keyCode);
+				var kB:KeyBind = find(keyCode);
 				var keyCode:uint;
 				if (keyCodeData is Array) { // multiple keyCodes
 					for each (keyCode in keyCodeData) {
-						if (keyBind) keyBind.stripKey(keyCode);
+						if (kB) kB.stripKey(keyCode);
 					}
 				} else { // single keyCode
 					keyCode = uint(keyCodeData);
-					if (keyBind) keyBind.stripKey(keyCode);
+					if (kB) kB.stripKey(keyCode);
 				}
 			}
 			
 			// committing the keybind
-			bindings.push( new KeyBind(keyCodeData, pressActions, releaseActions) );
+			const keyBind:KeyBind = new KeyBind(keyCodeData, pressActions, releaseActions, label);
+			bindings.push( keyBind );
+			if (label != null)
+				keyLegend[label] = keyBind;
 		}
 		
 		public function stripKey(keyCode:uint):void {
@@ -73,8 +78,11 @@ package dreamwisp.input {
 		public function wipe(keyCode:uint = 0):void {
 			if (keyCode == 0) {
 				bindings = new Vector.<KeyBind>;
+				keyLegend = new Object();
 			} else {
-				bindings.splice( bindings.indexOf( find(keyCode) ), 1 );
+				const keyBind:KeyBind = find(keyCode);
+				bindings.splice( bindings.indexOf( keyBind ), 1 );
+				delete keyLegend[keyBind.label];
 			}
 		}
 		
@@ -92,9 +100,13 @@ package dreamwisp.input {
 			}
 		}
 		
-		public function isDown(keyCode:uint):Boolean {
-			var keyBind:KeyBind = find(keyCode);
-			if (!keyBind) return false;
+		public function isDown(identifier:*):Boolean {
+			var keyBind:KeyBind;
+			if (identifier is String)
+				keyBind = keyLegend[identifier];
+			else
+				keyBind = find(identifier);
+			if (keyBind == null) return false;
 			return keyBind.isDown;
 		}
 				

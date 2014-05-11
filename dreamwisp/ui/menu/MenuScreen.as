@@ -1,6 +1,7 @@
 package dreamwisp.ui.menu {
 	
 	import com.demonsters.debugger.MonsterDebugger;
+	import dreamwisp.core.Game;
 	import dreamwisp.input.InputState;
 	import dreamwisp.input.KeyMap;
 	import dreamwisp.ui.menu.MenuButton;
@@ -55,7 +56,8 @@ package dreamwisp.ui.menu {
 		
 		private var seekCounter:uint = 0;
 		
-		public function MenuScreen(layout:Object, graphicsFactory:IGraphicsFactory) {
+		public function MenuScreen(game:Game, layout:Object, graphicsFactory:IGraphicsFactory) {
+			super(game);
 			this.graphicsFactory = graphicsFactory;
 			
 			view = new ContainerView();

@@ -25,7 +25,7 @@ package dreamwisp.core {
 		public var isPopup:Boolean = false;
 		public var isConcurrent:Boolean = false;
 		
-		protected var game:Game;
+		public var game:Game;
 				
 		protected var paused:Boolean = false;
 	
@@ -56,9 +56,8 @@ package dreamwisp.core {
 		private var _entityManager:EntityManager;
 		private var _camera:Camera;
 		
-		
-		public function GameScreen() {
-			
+		public function GameScreen(game:Game) {
+			this.game = game;
 		}
 		
 		public function cleanup():void {
@@ -188,10 +187,6 @@ package dreamwisp.core {
 				render(1);
 				screenManager.removeScreen(this);
 			}
-		}
-		
-		public function setGame(game:Game):void {
-			this.game = game;
 		}
 		
 		public function positionCamera(user:ICamUser = null, boundary:SwiftRectangle = null, focus:Body = null):void {

@@ -44,7 +44,7 @@ package dreamwisp.entity.hosts
 		public var bounds:SwiftRectangle;
 		private var _myLocation:Location;
 		private var _entityManager:EntityManager;
-		private var _myScreen:GameScreen;
+		private var _gameScreen:GameScreen;
 		
 		protected var isMobile:Boolean = true;		
 				
@@ -199,9 +199,9 @@ package dreamwisp.entity.hosts
 		
 		public function set name(value:String):void { _name = value; }
 		
-		public function get myScreen():GameScreen { return _myScreen; }
+		public function get gameScreen():GameScreen { return _gameScreen; }
 		
-		public function set myScreen(value:GameScreen):void { _myScreen = value; }
+		public function set gameScreen(value:GameScreen):void { _gameScreen = value; }
 		
 	}
 

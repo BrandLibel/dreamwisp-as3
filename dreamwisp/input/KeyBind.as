@@ -15,10 +15,12 @@ package dreamwisp.input {
 		private var keyReleased:Signal;
 		
 		private var keyCodes:Object;
+		private var _label:String;
 		internal var isDown:Boolean = false;
 		
-		public function KeyBind( keyCodes:Object, pressActions:Object, releaseActions:Object ) {
+		public function KeyBind( keyCodes:Object, pressActions:Object, releaseActions:Object, label:String = null ) {
 			this.keyCodes = keyCodes;
+			_label = label;
 			
 			keyPressed = new Signal();
 			keyReleased = new Signal();
@@ -116,6 +118,6 @@ package dreamwisp.input {
 			return keyCodeList;
 		}
 		
+		public function get label():String { return _label; }
 	}
-
 }
