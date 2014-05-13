@@ -1,6 +1,7 @@
 ﻿package dreamwisp.core {
 	
 	import com.demonsters.debugger.MonsterDebugger;
+	import dreamwisp.data.SaveSystem;
 	import dreamwisp.input.InputState;
 	import dreamwisp.ui.menu.MenuScreen;
 	import dreamwisp.visual.IGraphicsFactory;
@@ -17,7 +18,8 @@
 		public var world:Location;
 		
 		protected var inputState:InputState;
-				
+		protected var saveSystem:SaveSystem;
+		
 		protected var screenManager:ScreenManager;
 		protected var graphicsFactory:IGraphicsFactory;
 		

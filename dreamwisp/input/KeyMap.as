@@ -15,33 +15,32 @@ package dreamwisp.input {
 		private var bindings:Vector.<KeyBind> = new Vector.<KeyBind>;
 		private var keySequences:Vector.<KeySequence> = new Vector.<KeySequence>;
 		private var keyCombos:Vector.<KeyCombo> = new Vector.<KeyCombo>;
-		/// List of keyBinds that currently being held down.
 		private var keysPressed:Vector.<KeyBind> = new Vector.<KeyBind>;
-		
+		/// The String-KeyBind map for label-based access to keyBinds
 		private var keyLegend:Object = new Object();
 		
 		public static const KEY_PRESSED:Boolean = true;
 		public static const KEY_RELEASED:Boolean = false;
 		
-		/**
-		 * Binds the specified key(s) to the selected function(s). Remaps if necessary.
-		 * @param	pressActions 
-		 * @param	releaseActions
-		 * @param	keyCodeData 
-		 */
 		public function bind(keyCodeData:Object, pressActions:Object = null, releaseActions:Object = null, label:String = null):void {
 			// unbind the keyCode(s) if previously binded
 			if (bindings.length > 0) {
-				var kB:KeyBind = find(keyCode);
+				var kB:KeyBind;
 				var keyCode:uint;
 				if (keyCodeData is Array) { // multiple keyCodes
-					for each (keyCode in keyCodeData) {
+					for each (keyCode in keyCodeData){
+						kB = find(keyCode);
 						if (kB) kB.stripKey(keyCode);
 					}
 				} else { // single keyCode
 					keyCode = uint(keyCodeData);
+					kB = find(keyCode);
 					if (kB) kB.stripKey(keyCode);
 				}
+				
+				// remove the keyBind if it has no keys remaining
+				if (kB != null && kB.getKeyCodes().length == 0)
+					bindings.splice( bindings.indexOf(kB), 1);
 			}
 			
 			// committing the keybind
@@ -108,6 +107,12 @@ package dreamwisp.input {
 				keyBind = find(identifier);
 			if (keyBind == null) return false;
 			return keyBind.isDown;
+		}
+		
+		public function codeOf(label:String):uint
+		{
+			const keyBind:KeyBind = keyLegend[label];
+			return keyBind.getKeyCodes()[0];
 		}
 				
 		/**
