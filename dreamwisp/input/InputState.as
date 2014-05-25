@@ -1,10 +1,8 @@
 package dreamwisp.input {
 	
-	import com.demonsters.debugger.MonsterDebugger;
 	import flash.display.Stage;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
-	import flash.ui.Keyboard;
 	
 	/**
 	 * InputState tracks input events from the stage, storing
@@ -29,11 +27,9 @@ package dreamwisp.input {
 		private var _mouseX:int;
 		private var _mouseY:int;
 		
-		
 		private var canReadInput:Boolean = true;
 		private var wasClicked:Boolean;
-		
-		
+				
 		public function InputState(stage:Stage) {
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, registerMouse);
 			stage.addEventListener(MouseEvent.MOUSE_UP, registerMouse);
@@ -124,12 +120,13 @@ package dreamwisp.input {
 			// casting x and y to ints because only whole-pixel values are needed/expected
 			mouseX = int(e.stageX);
 			mouseY = int(e.stageY);
+			wasClicked = false;
 			// indicates mouse is being held...
 			if (e.type == MouseEvent.MOUSE_DOWN) {
 				isMousePressed = true;
 			}
 			// ...which remains true until mouse is released
-			if (e.type == MouseEvent.MOUSE_UP) {
+			else if (e.type == MouseEvent.MOUSE_UP) {
 				isMousePressed = false;
 				wasClicked = true;
 			}

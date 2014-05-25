@@ -20,7 +20,7 @@
 		protected var inputState:InputState;
 		protected var saveSystem:SaveSystem;
 		
-		protected var screenManager:ScreenManager;
+		public var screenManager:ScreenManager;
 		protected var graphicsFactory:IGraphicsFactory;
 		
 		public var menus:Vector.<MenuScreen> = new <MenuScreen>[null];
