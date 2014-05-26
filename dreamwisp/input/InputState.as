@@ -43,6 +43,15 @@ package dreamwisp.input {
 			return this;
 		}
 		
+		/**
+		 * Reverts all input states to be as if player is not interacting at all.
+		 */
+		public function reset():void 
+		{
+			keysReleased.length = 0;
+			wasClicked = false;
+		}
+		
 		public function isKeyDown(keyCode:uint):Boolean {
 			// return false if impossible key code was entered
 			if (keyCode > TOTAL_KEYCODES) return false;
@@ -53,11 +62,7 @@ package dreamwisp.input {
 		 * Returns true if the mouse was clicked this cycle, false otherwise.
 		 */
 		public function wasMouseClicked():Boolean {
-			// the mouse click is only counted once
-			var wasClickedTemp:Boolean = wasClicked;
-			if (wasClickedTemp)
-				wasClicked = false;
-			return wasClickedTemp;
+			return wasClicked;
 		}
 		
 		/**
@@ -68,7 +73,6 @@ package dreamwisp.input {
 			for each (var keyCode:uint in keysReleased) {
 				tempKeyList.push(keyCode);
 			}
-			keysReleased.length = 0;
 			return tempKeyList;
 		}
 		
@@ -120,7 +124,6 @@ package dreamwisp.input {
 			// casting x and y to ints because only whole-pixel values are needed/expected
 			mouseX = int(e.stageX);
 			mouseY = int(e.stageY);
-			wasClicked = false;
 			// indicates mouse is being held...
 			if (e.type == MouseEvent.MOUSE_DOWN) {
 				isMousePressed = true;

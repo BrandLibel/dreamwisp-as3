@@ -67,6 +67,7 @@
 			loops = 0;
 			while ( getTimer() > nextGameTick && loops < MAX_FRAMESKIP) {
 				screenManager.update(inputState.update());
+				inputState.reset();
 				nextGameTick += SKIP_TICKS;
 				loops++;
 			}
