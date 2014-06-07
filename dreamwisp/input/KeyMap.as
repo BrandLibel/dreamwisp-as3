@@ -50,6 +50,14 @@ package dreamwisp.input {
 				keyLegend[label] = keyBind;
 		}
 		
+		public function rebind(label:String, newCode:uint):void 
+		{
+			const keyBind:KeyBind = keyLegend[label];
+			if (keyBind.getKeyCodes().length > 1)
+				throw new Error("You can't rebind if the KeyBind has more than 1 key");
+			keyBind.getKeyCodes()[0] = newCode;
+		}
+		
 		public function stripKey(keyCode:uint):void {
 			var keyBind:KeyBind = find(keyCode);
 			if (!keyBind) return;
