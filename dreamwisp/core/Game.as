@@ -3,8 +3,6 @@
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.data.SaveSystem;
 	import dreamwisp.input.InputState;
-	import dreamwisp.ui.menu.MenuScreen;
-	import dreamwisp.visual.IGraphicsFactory;
 	import flash.display.Stage;
 	import flash.utils.getTimer;
 	import dreamwisp.world.base.Location;
@@ -21,10 +19,7 @@
 		protected var saveSystem:SaveSystem;
 		
 		public var screenManager:ScreenManager;
-		protected var graphicsFactory:IGraphicsFactory;
-		
-		public var menus:Vector.<MenuScreen> = new <MenuScreen>[null];
-						
+								
 		public function Game(stage:Stage = null) {
 			//MonsterDebugger.trace(this, Data.worldData);
 			Data.prepare();

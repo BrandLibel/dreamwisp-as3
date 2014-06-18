@@ -105,7 +105,7 @@ package dreamwisp.visual {
 			}
 		}
 		
-		public function addGraphicsObject(graphicsObject:GraphicsObject, layer:uint = 0, label:String = ""):void {
+		/*public function addGraphicsObject(graphicsObject:GraphicsObject, layer:uint = 0, label:String = ""):void {
 			
 			addGenericView( new GenericView(graphicsObject.getGraphicsData(), layer, label ) );
 			graphicsObject.parentWidth = width;
@@ -116,7 +116,7 @@ package dreamwisp.visual {
 				graphicsObject.x = graphicsObject.getGraphicsData().x = calculateRelativePosition( graphicsObject.relativeX, graphicsObject.getGraphicsData() );
 			if (graphicsObject.relativeY != null && graphicsObject.relativeY != "")
 				graphicsObject.y = graphicsObject.getGraphicsData().y = calculateRelativePosition( graphicsObject.relativeY, graphicsObject.getGraphicsData() );
-		}
+		}*/
 		
 		/**
 		 * Adds a depth-sortable DisplayObject to the container as a GenericView.
@@ -126,14 +126,15 @@ package dreamwisp.visual {
 		public function addDisplayObject(displayObject:DisplayObject, layer:uint = 0, x:Number = 0, y:Number = 0, label:String = ""):void {
 			displayObject.x = x;
 			displayObject.y = y;
-			addGenericView( new GenericView(displayObject, layer, label) );
+			container.addChild(displayObject);
+			//addGenericView( new GenericView(displayObject, layer, label) );
 		}
 		
 		public function addLightSource(lightSource:LightSource):void {
-			getViewByLabel(LABEL_OVERLAY).addChild(lightSource.lightMask);
+			//getViewByLabel(LABEL_OVERLAY).addChild(lightSource.lightMask);
 			lightSource.lightMask.x = lightSource.x;
 			lightSource.lightMask.y = lightSource.y;
-			getViewByLabel(LABEL_OVERLAY).addChild(lightSource.colorMask);
+			//getViewByLabel(LABEL_OVERLAY).addChild(lightSource.colorMask);
 			lightSource.colorMask.x = lightSource.x;
 			lightSource.colorMask.y = lightSource.y;
 			
@@ -141,7 +142,7 @@ package dreamwisp.visual {
 			//addGraphic(lightSource.colorMask, lightSource.x, lightSource.y, 1);
 		}
 		
-		public function getViewByLabel(label:String):GenericView {
+		/*public function getViewByLabel(label:String):GenericView {
 			for each (var genericView:GenericView in genericViews) {
 				//if (genericView.label != "") {
 					if (genericView.label == label) {
@@ -150,16 +151,16 @@ package dreamwisp.visual {
 				//}
 			}
 			throw new Error("Could not find a GenericView by that label in this container.");
-		}
+		}*/
 		
-		public function getViewByContent(displayObject:DisplayObject):GenericView {
+		/*public function getViewByContent(displayObject:DisplayObject):GenericView {
 			for each (var genericView:GenericView in genericViews) {
 				if (genericView.displayObject === displayObject) {
 					return genericView;
 				}
 			}
 			throw new Error("Could not find a GenericView with that DisplayObject.");
-		}
+		}*/
 		
 		public function removeEntity(entity:Entity):void {
 			// use this b/c container.contains(child) returns true even when child isnt in container
@@ -169,12 +170,12 @@ package dreamwisp.visual {
 				container.removeChild(child);
 			}
 			
-			if (entity.lightSource) {
-				getViewByLabel(LABEL_OVERLAY).removeChild(entity.lightSource.lightMask);
-				getViewByLabel(LABEL_OVERLAY).removeChild(entity.lightSource.colorMask);
-			}
+			//if (entity.lightSource) {
+				//getViewByLabel(LABEL_OVERLAY).removeChild(entity.lightSource.lightMask);
+				//getViewByLabel(LABEL_OVERLAY).removeChild(entity.lightSource.colorMask);
+			//}
 			
-			removeGenericView( getViewByContent(entity.view.displayObject) ); 
+			//removeGenericView( getViewByContent(entity.view.displayObject) ); 
 		}
 		
 		public function get container():Sprite { return _container; }
@@ -228,12 +229,12 @@ package dreamwisp.visual {
 			return result;
 		}
 		
-		private function addGenericView(genericView:GenericView):void {
+		/*private function addGenericView(genericView:GenericView):void {
 			genericViews.push(genericView);
 			var displayData:* = genericView.displayObject;
 			container.addChild(genericView.displayObject);
 			sortDisplayList();
-		}
+		}*/
 		
 		/**
 		 * Sorts the genericViews array, and then copies the indexes
@@ -253,10 +254,10 @@ package dreamwisp.visual {
 			}
 		}
 		
-		private function removeGenericView(genericView:GenericView):void {
+		/*private function removeGenericView(genericView:GenericView):void {
 			genericViews.splice( genericViews.indexOf(genericView), 1 );
 			sortDisplayList();
-		}
+		}*/
 		
 	}
 

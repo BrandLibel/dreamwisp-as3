@@ -309,7 +309,7 @@ package dreamwisp.entity.components.platformer
 		
 		public function jump():void 
 		{
-			if (!canJump.call())
+			if (!canJump())
 				return;
 			currentState.jump();
 			velocityY = jumpPower;
