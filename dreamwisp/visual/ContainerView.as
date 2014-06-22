@@ -5,6 +5,7 @@ package dreamwisp.visual {
 	import dreamwisp.visual.camera.ICamUser;
 	import dreamwisp.visual.lighting.LightSource;
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
@@ -28,10 +29,8 @@ package dreamwisp.visual {
 		private const TOP:String = "top";
 		private const BOTTOM:String = "bottom";
 		
-		//private var _layers:Array;
+		private var layers:Vector.<DisplayObjectContainer>
 		private var _container:Sprite;
-		/// Array of generic views. // do not make a vector, unable to sort
-		private var genericViews:Array = [];
 		
 		private const NONE:uint = uint.MAX_VALUE;
 		private const TOGGLE:uint = 2;
@@ -48,20 +47,25 @@ package dreamwisp.visual {
 		private var width:Number;
 		private var height:Number;
 		
-		public function ContainerView(width:Number = 768, height:Number = 480) {
+		public function ContainerView(width:Number = 768, height:Number = 480, numLayers:uint = 1) {
 			container = new Sprite();
+			layers = new Vector.<DisplayObjectContainer>();
+			while (layers.length < numLayers)
+				createLayer();
 			this.width = width;
 			this.height = height;
 		}
 		
-		/*
-		 * TODO: ContainerView might need to be made into a component of either GameState or Location.
-		 * Instead of having its own x and y properties, it should retrieve x and y values from its host.
-		 * And it may be necessary to continue to generalize the Location and GameState, or change some of their
-		 * responsibilities. 
-		 * The problem that this solves is preventing discrepencies between the view and the Location/GameStates given
-		 * x and y positions. 
-		 */
+		private function createLayer():void 
+		{
+			layers.push( new Sprite() );
+			container.addChild(layers[layers.length -1]);
+		}
+		
+		public function getLayer(layerNum:uint):DisplayObjectContainer
+		{
+			return layers[layerNum];
+		}
 		
 		public function render(interpolation:Number):void {
 			container.x = x;
@@ -95,28 +99,10 @@ package dreamwisp.visual {
 			
 			addDisplayObject(entity.view.displayObject, entity.view.layer, entity.body.x, entity.body.y);
 			
-			//addGenericView(new GenericView(entity.view.movieClip, entity.view.layer));
-			
 			if (entity.lightSource) {
 				addLightSource(entity.lightSource);
-				//addGraphic(entity.lightSource.lightMask, entity.lightSource.x, entity.lightSource.y, 9);
-				// to allow light even outside of darkness, add the color mask to another layer
-				//addGraphic(entity.lightSource.colorMask, entity.lightSource.x, entity.lightSource.y, 7);
 			}
 		}
-		
-		/*public function addGraphicsObject(graphicsObject:GraphicsObject, layer:uint = 0, label:String = ""):void {
-			
-			addGenericView( new GenericView(graphicsObject.getGraphicsData(), layer, label ) );
-			graphicsObject.parentWidth = width;
-			graphicsObject.parentHeight = height;
-			graphicsObject.initialize();
-			if (graphicsObject.relativeX != null && graphicsObject.relativeX != "")
-				
-				graphicsObject.x = graphicsObject.getGraphicsData().x = calculateRelativePosition( graphicsObject.relativeX, graphicsObject.getGraphicsData() );
-			if (graphicsObject.relativeY != null && graphicsObject.relativeY != "")
-				graphicsObject.y = graphicsObject.getGraphicsData().y = calculateRelativePosition( graphicsObject.relativeY, graphicsObject.getGraphicsData() );
-		}*/
 		
 		/**
 		 * Adds a depth-sortable DisplayObject to the container as a GenericView.
@@ -125,9 +111,8 @@ package dreamwisp.visual {
 		 */
 		public function addDisplayObject(displayObject:DisplayObject, layer:uint = 0, x:Number = 0, y:Number = 0, label:String = ""):void {
 			displayObject.x = x;
-			displayObject.y = y;
-			container.addChild(displayObject);
-			//addGenericView( new GenericView(displayObject, layer, label) );
+			displayObject.y = y;				
+			layers[layer].addChild(displayObject);
 		}
 		
 		public function addLightSource(lightSource:LightSource):void {
@@ -142,32 +127,22 @@ package dreamwisp.visual {
 			//addGraphic(lightSource.colorMask, lightSource.x, lightSource.y, 1);
 		}
 		
-		/*public function getViewByLabel(label:String):GenericView {
-			for each (var genericView:GenericView in genericViews) {
-				//if (genericView.label != "") {
-					if (genericView.label == label) {
-						return genericView;
-					}
-				//}
-			}
-			throw new Error("Could not find a GenericView by that label in this container.");
-		}*/
-		
-		/*public function getViewByContent(displayObject:DisplayObject):GenericView {
-			for each (var genericView:GenericView in genericViews) {
-				if (genericView.displayObject === displayObject) {
-					return genericView;
-				}
-			}
-			throw new Error("Could not find a GenericView with that DisplayObject.");
-		}*/
-		
 		public function removeEntity(entity:Entity):void {
 			// use this b/c container.contains(child) returns true even when child isnt in container
 			var child:DisplayObject = entity.view.displayObject;
 			if (child.parent == container) {
-				//MonsterDebugger.trace(this, "TRUE", "", "", 0xFF28DF);
 				container.removeChild(child);
+			}
+			else 
+			{
+				for each (var layer:DisplayObjectContainer in layers) 
+				{
+					if (child.parent == layer)
+					{
+						layer.removeChild(child);
+						break;
+					}
+				}
 			}
 			
 			//if (entity.lightSource) {
@@ -228,37 +203,6 @@ package dreamwisp.visual {
 			
 			return result;
 		}
-		
-		/*private function addGenericView(genericView:GenericView):void {
-			genericViews.push(genericView);
-			var displayData:* = genericView.displayObject;
-			container.addChild(genericView.displayObject);
-			sortDisplayList();
-		}*/
-		
-		/**
-		 * Sorts the genericViews array, and then copies the indexes
-		 * of each corresponding DisplayObject in the container.
-		 */
-		private function sortDisplayList():void {
-			var i:int = container.numChildren;
-			genericViews.sortOn("layer", Array.NUMERIC);
-			// avoid scenarios where my construct GenericViews
-			// becomes out of sync with Flash's display object children
-			if (container.numChildren > genericViews.length)
-				return;
-			while(i--){
-				if (genericViews[i].displayObject != container.getChildAt(i)) {
-					container.setChildIndex(genericViews[i].displayObject, i);
-				}
-			}
-		}
-		
-		/*private function removeGenericView(genericView:GenericView):void {
-			genericViews.splice( genericViews.indexOf(genericView), 1 );
-			sortDisplayList();
-		}*/
-		
 	}
 
 }

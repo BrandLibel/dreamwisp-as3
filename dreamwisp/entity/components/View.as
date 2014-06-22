@@ -26,15 +26,16 @@ package dreamwisp.entity.components
 		private var host:Entity;
 		
 		private var _displayObject:DisplayObject;
-		private var _alpha:Number = 1;
 		protected const rotAngle:Number = (180 / Math.PI);
+		public var offsetX:Number = 0;
+		public var offsetY:Number = 0;
 		
 		// color transformation tools
 		private var currentTint:Array = [1, 1, 1];
 		private var colorTransform:ColorTransform;
 		
 		/// Layer for if this View gets added into a ContainerView
-		private var _layer:uint = uint.MAX_VALUE;
+		private var _layer:uint;
 		
 		public function View(entity:Entity, displayObject:DisplayObject)
 		{
@@ -52,18 +53,15 @@ package dreamwisp.entity.components
 			
 			if (host.physics)
 			{
-				displayObject.x = host.body.x + (host.physics.velocityX * interpolation);
-				displayObject.y = host.body.y + (host.physics.velocityY * interpolation);
+				displayObject.x = host.body.x + (host.physics.velocityX * interpolation) + offsetX;
+				displayObject.y = host.body.y + (host.physics.velocityY * interpolation) + offsetY;
 			} 
 			else
 			{
-				displayObject.x = host.body.x;
-				displayObject.y = host.body.y;
+				displayObject.x = host.body.x + offsetX;
+				displayObject.y = host.body.y + offsetY;
 			}
             displayObject.rotation = host.body.angle * rotAngle;
-            displayObject.alpha = alpha;
-            displayObject.scaleX = 1;//scale;
-            displayObject.scaleY = 1;//scale;
 		}
 		
 		/**
@@ -73,9 +71,11 @@ package dreamwisp.entity.components
 		public function applyTint(colors:Array):void 
 		{
 			currentTint = colors;
+
 			colorTransform.redMultiplier = colors[0];
 			colorTransform.greenMultiplier = colors[1];
 			colorTransform.blueMultiplier = colors[2];
+			
 			displayObject.transform.colorTransform = colorTransform;
 		}
 		
@@ -89,9 +89,9 @@ package dreamwisp.entity.components
 			return (currentTint[0] != 1 && currentTint[1] != 1 && currentTint[2] != 1);
 		}
 		
-		public function get alpha():Number { return _alpha; }
+		public function get alpha():Number { return displayObject.alpha; }
 		
-		public function set alpha(value:Number):void { _alpha = value; }
+		public function set alpha(value:Number):void { displayObject.alpha = value; }
 		
 		public function get layer():uint { return _layer; }
 		
