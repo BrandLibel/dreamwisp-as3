@@ -23,6 +23,7 @@ package dreamwisp.world.tile
 		
 		private var canvasData:BitmapData;
 		private var canvas:Bitmap;
+		private var rect:Rectangle;
 		
 		/// JSON object containing all tile blueprints
 		private var tileList:Object;
@@ -54,6 +55,7 @@ package dreamwisp.world.tile
 			this.spriteSheet = spriteSheet;
 			
 			myBounds = new SwiftRectangle(0, 0, width, height);
+			rect = new Rectangle(0, 0, width, height);
 			
 			var rows:uint = 0;
 			var cols:uint = 0;
@@ -101,7 +103,7 @@ package dreamwisp.world.tile
 		public function render():void
 		{
 			// proper bitmap drawing of tiles involves clearing entire field and redrawing every frame
-			canvas.bitmapData.fillRect(new Rectangle(0, 0, canvas.width, canvas.height), 0);
+			canvas.bitmapData.fillRect(rect, 0);
 			execute( function(tile:Tile):void { tile.render(1); } );
 		}
 		
