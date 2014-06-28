@@ -147,6 +147,43 @@ package dreamwisp.world.tile
 				frames = new Array()
 				frames = blueprint.frames.concat();
 			}
+			setStartPixels();
+		}
+		
+		protected function setStartPixels():void 
+		{
+			const bitmapData:BitmapData = bitmap.bitmapData;
+			// update tile frame appearance (the pixels)
+			if (bitmapData != null)
+				bitmapData.fillRect(tileRect, 0);
+			var frame:Object = spriteSheet.access("frames", id - 1).frame;  // minus 1 since air is 0 but ommitted from sprite sheet
+			var srcRect:Rectangle = new Rectangle(frame.x, frame.y, tileWidth, tileHeight);
+			bitmap.bitmapData.copyPixels(spriteSheet.getImage(), srcRect, ORIGIN);
+		}
+		
+		protected function transformPixels():void 
+		{
+			const bitmapData:BitmapData = bitmap.bitmapData;
+			// do some pixel manipulation if there are any alpha or color differences
+			bitmapData.lock();
+			const length:uint = tileRect.width * tileRect.height;
+			for (var i:int = 0; i < length; i++)
+			{
+				const x:int = i % tileRect.width;
+				const y:int = i / tileRect.height;
+				
+				const ct:ColorTransform = view.displayObject.transform.colorTransform;
+				
+				const ARGB:uint = bitmapData.getPixel32(x, y);
+				const alpha:uint = 255 * this.alpha;
+				const red:uint = ((ARGB >> 16) & 0xFF) * ct.redMultiplier;
+				const green:uint = ((ARGB >> 8) & 0xFF) * ct.greenMultiplier;
+				const blue:uint = (ARGB & 0xFF) * ct.blueMultiplier;
+				const newARGB:uint = ( (alpha << 24) | (red << 16) | (green << 8) | blue );
+				
+				bitmapData.setPixel32(x, y, newARGB);
+			}
+			bitmapData.unlock();
 		}
 
 		/**
@@ -180,9 +217,6 @@ package dreamwisp.world.tile
 		
 		override public function update():void
 		{
-			//MonsterDebugger.trace(this, this/*"incrementing frames!"*/);
-			//TODO: this is a never-ending animation, need to control 
-			//		start and stop
 			ticks++;
 			if (ticks == rateOfAnimation)
 			{
@@ -200,28 +234,18 @@ package dreamwisp.world.tile
 			if (isEmpty())
 				return;
 			
-			// update tile frame appearance (the pixels)
-			if (bitmap.bitmapData != null)
-			{
-				bitmap.bitmapData.fillRect(tileRect, 0);
-			}
-			var frame:Object = spriteSheet.access("frames", id - 1).frame;  // minus 1 since air is 0 but ommitted from sprite sheet
-			var srcRect:Rectangle = new Rectangle(frame.x, frame.y, tileWidth, tileHeight);
-			bitmap.bitmapData.copyPixels(spriteSheet.getImage(), srcRect, ORIGIN);
+			const bitmapData:BitmapData = bitmap.bitmapData;
 			
-			// update tile transformations 
-			var matrix:Matrix = new Matrix();
-			matrix.translate(x + xOffset, y + yOffset);
 			
-			var colorTransform:ColorTransform = view.displayObject.transform.colorTransform;
-			colorTransform.alphaMultiplier = alpha;
 			// try-catch is to stop from drawing on a disposed bitmap 
 			try {
-				tileScape.getCanvas().bitmapData.draw(view.displayObject, matrix, colorTransform);
+				tileScape.getCanvas().bitmapData.copyPixels(bitmapData, tileRect, new Point(point.x + xOffset, point.y + yOffset));
 			}
 			catch (aError:ArgumentError) {
 				
 			}
+			
+			
 		}
 		
 		private function erase():void
