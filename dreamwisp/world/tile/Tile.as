@@ -164,15 +164,14 @@ package dreamwisp.world.tile
 		protected function transformPixels():void 
 		{
 			const bitmapData:BitmapData = bitmap.bitmapData;
-			// do some pixel manipulation if there are any alpha or color differences
 			bitmapData.lock();
 			const length:uint = tileRect.width * tileRect.height;
+			const ct:ColorTransform = view.displayObject.transform.colorTransform;
+			
 			for (var i:int = 0; i < length; i++)
 			{
 				const x:int = i % tileRect.width;
 				const y:int = i / tileRect.height;
-				
-				const ct:ColorTransform = view.displayObject.transform.colorTransform;
 				
 				const ARGB:uint = bitmapData.getPixel32(x, y);
 				const alpha:uint = 255 * this.alpha;
@@ -183,6 +182,7 @@ package dreamwisp.world.tile
 				
 				bitmapData.setPixel32(x, y, newARGB);
 			}
+			
 			bitmapData.unlock();
 		}
 
