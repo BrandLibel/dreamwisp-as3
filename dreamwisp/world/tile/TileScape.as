@@ -15,9 +15,14 @@ package dreamwisp.world.tile
 	 
 	public class TileScape
 	{
+		/// Rectangle used to copy pixels from tile
 		private var tileRect:Rectangle;
 		private var _tileWidth:uint;
 		private var _tileHeight:uint;
+		/// Reusable Point to draw tile onto canvas
+		private const destPoint:Point = new Point();
+		/// Reusable Rectangle
+		private const drawRect:Rectangle = new Rectangle();
 		
 		private var tileGrid:Vector.<Vector.<Tile>> = new Vector.<Vector.<Tile>>;
 		
@@ -119,9 +124,9 @@ package dreamwisp.world.tile
 				tileGrid.push(new <Tile>[]);
 				for (var b:uint = 0; b < cols; b++)
 				{
-					var tileNum:uint = (tileMap == null) ? 0 : tileMap[a][b];
+					const tileNum:uint = (tileMap == null) ? 0 : tileMap[a][b];
 					
-					var tile:Tile = compose(tileNum);
+					const tile:Tile = compose(tileNum);
 					insertTile(a, b, tile);
 				}
 			}
@@ -129,16 +134,18 @@ package dreamwisp.world.tile
 		
 		public function insertTile(row:uint, col:uint, tile:Tile):void 
 		{
-			var destPoint:Point = new Point();
 			tileGrid[row][col] = tile;
-			tile.x = col * tileWidth;
-			tile.y = row * tileHeight;
-			destPoint.x = tile.x;
-			destPoint.y = tile.y;
+			destPoint.x = tile.point.x = tile.body.x = col * tileWidth;
+			destPoint.y = tile.point.y = tile.body.y = row * tileHeight;
 			tile.render(1);
-			canvasData.copyPixels(tile.bitmapData(), tileRect, destPoint);
 			if (tile.isEmpty())
-				canvasData.fillRect(new Rectangle(tile.x, tile.y, tileWidth, tileHeight), 0x00000000);
+			{
+				drawRect.x = tile.point.x;
+				drawRect.y = tile.point.y;
+				drawRect.width = tileWidth;
+				drawRect.height = tileHeight;
+				canvasData.fillRect(drawRect, 0x00000000);
+			}
 		}
 		
 		/**

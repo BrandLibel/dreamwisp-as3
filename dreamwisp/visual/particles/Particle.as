@@ -30,24 +30,18 @@ package dreamwisp.visual.particles
 		public var rotationSpeed:Number;
 		
 		public var bitmap:Bitmap;
-		private var rect:Rectangle;
+		public var srcImage:BitmapData;
+		public var rect:Rectangle;
 		private var point:Point;
 		
 		private static const ORIGIN:Point = new Point(0, 0);
 		
 		public function Particle() 
 		{
-			var bitmapData:BitmapData = new BitmapData(8, 8);
-			bitmap = new Bitmap(bitmapData);
+			bitmap = new Bitmap(new BitmapData(8, 8));
 			
-			rect = new Rectangle(0, 0, 8, 8);
-			point = new Point(0, 0);
-			bitmapData.copyPixels(Data.tileSheet, rect, point);
-		}
-		
-		public function init():void 
-		{
-			bitmap.visible = true;
+			rect = new Rectangle();
+			point = new Point();
 		}
 		
 		public final function update(canvas:BitmapData):void 
@@ -68,10 +62,7 @@ package dreamwisp.visual.particles
 			percentLife -= 1.0 / duration;
 			
 			if (percentLife <= 0)
-			{
 				percentLife = 0;
-				bitmap.visible = false;
-			}
 			
 			/*var matrix:Matrix = new Matrix(1, 0, 0, 1, x, y);
 			var colorTransform:ColorTransform = bitmap.transform.colorTransform;
@@ -79,7 +70,7 @@ package dreamwisp.visual.particles
 			canvas.draw(bitmap, matrix, colorTransform);*/
 			
 			const bitmapData:BitmapData = bitmap.bitmapData;
-			bitmapData.copyPixels(Data.tileSheet, rect, ORIGIN);
+			bitmapData.copyPixels(srcImage, rect, ORIGIN);
 			bitmapData.lock();
 			
 			/*const vector:Vector.<uint> = bitmapData.getVector(rect);
@@ -114,7 +105,13 @@ package dreamwisp.visual.particles
 			}
 			
 			bitmapData.unlock();
+			const prevX:Number = rect.x;
+			const prevY:Number = rect.y;
+			rect.x = 0;
+			rect.y = 0;
 			canvas.copyPixels(bitmapData, rect, point);
+			rect.x = prevX;
+			rect.y = prevY;
 		}
 		
 	}

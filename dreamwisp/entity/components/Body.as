@@ -15,27 +15,18 @@ package dreamwisp.entity.components {
 		
 		private var host:Entity;
 		
-		private var _x:Number = 0;
-		private var _y:Number = 0;
-		private var _width:uint;
-		private var _height:uint;
-		private var _angle:Number;
+		public var x:Number = 0;
+		public var y:Number = 0;
+		public var width:uint;
+		public var height:uint;
+		public var angle:Number;
 		
-		private var _facingDirection:int;
+		public var facingDirection:int;
 		
 		public function Body(entity:Entity, width:uint, height:uint) {
 			host = entity;
 			this.width = width;
 			this.height = height;
-		}
-		
-		public function get facingDirection():int {
-			return _facingDirection;
-		}
-		
-		public function set facingDirection(value:int):void {
-			// can only be -1 for left or 1 right
-			_facingDirection = value;
 		}
 		
 		public final function teleport(x:Number, y:Number):void {
@@ -46,14 +37,6 @@ package dreamwisp.entity.components {
 		public function getAsRectangle():SwiftRectangle {
 			return new SwiftRectangle(x, y, width, height);
 		}
-		
-		public function get x():Number { return _x; }
-		
-		public function set x(value:Number):void { _x = value; }
-		
-		public function get y():Number { return _y; }
-		
-		public function set y(value:Number):void { _y = value; }
 		
 		public function distanceTo(other:Body):Number 
 		{
@@ -83,11 +66,11 @@ package dreamwisp.entity.components {
 		}
 		
 		public function get centerX():Number {
-			return _x + (_width / 2);
+			return x + (width / 2);
 		}
 		
 		public function get centerY():Number {
-			return _y + (_height / 2);
+			return y + (height / 2);
 		}
 		
 		/**
@@ -96,7 +79,7 @@ package dreamwisp.entity.components {
 		 * x position in relation to the stage origin.
 		 */
 		public function get globalX():Number {
-			return _x + host.myLocation.rect.left;
+			return x + host.myLocation.rect.left;
 		}
 		
 		/**
@@ -105,7 +88,7 @@ package dreamwisp.entity.components {
 		 * y position in relation to the stage origin.
 		 */
 		public function get globalY():Number {
-			return _y + host.myLocation.rect.top;
+			return y + host.myLocation.rect.top;
 		}
 		
 		/**
@@ -117,17 +100,17 @@ package dreamwisp.entity.components {
 			return new SwiftPoint( (globalX + width / 2) , (globalY + height / 2) );
 		}
 		
-		public function get width():uint { return _width; }
-		
-		public function set width(value:uint):void { _width = value; }
-		
-		public function get height():uint { return _height; }
-		
-		public function set height(value:uint):void { _height = value; }
-		
-		public function get angle():Number { return _angle; }
-		
-		public function set angle(value:Number):void { _angle = value; }
+		//public function get width():uint { return _width; }
+		//
+		//public function set width(value:uint):void { _width = value; }
+		//
+		//public function get height():uint { return _height; }
+		//
+		//public function set height(value:uint):void { _height = value; }
+		//
+		//public function get angle():Number { return _angle; }
+		//
+		//public function set angle(value:Number):void { _angle = value; }
 		
 	}
 
