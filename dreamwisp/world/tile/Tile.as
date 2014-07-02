@@ -88,7 +88,7 @@ package dreamwisp.world.tile
 			this.tileScape = tileScape;
 			
 			bitmap = new Bitmap();
-			bitmap.bitmapData = new BitmapData(tileWidth, tileHeight);
+			bitmap.bitmapData = new BitmapData(tileWidth, tileHeight, true, 0);
 			view = new View(this, bitmap);
 			
 			body = new Body(this, tileWidth, tileHeight);
@@ -174,7 +174,7 @@ package dreamwisp.world.tile
 				const y:int = i / tileRect.height;
 				
 				const ARGB:uint = bitmapData.getPixel32(x, y);
-				const alpha:uint = 255 * this.alpha;
+				const alpha:uint = ((ARGB >> 24) & 0xFF) * this.alpha;
 				const red:uint = ((ARGB >> 16) & 0xFF) * ct.redMultiplier;
 				const green:uint = ((ARGB >> 8) & 0xFF) * ct.greenMultiplier;
 				const blue:uint = (ARGB & 0xFF) * ct.blueMultiplier;
@@ -239,7 +239,7 @@ package dreamwisp.world.tile
 			
 			// try-catch is to stop from drawing on a disposed bitmap 
 			try {
-				tileScape.getCanvas().bitmapData.copyPixels(bitmapData, tileRect, new Point(point.x + xOffset, point.y + yOffset));
+				tileScape.getCanvas().bitmapData.copyPixels(bitmapData, tileRect, new Point(point.x + xOffset, point.y + yOffset), null, null, true);
 			}
 			catch (aError:ArgumentError) {
 				
