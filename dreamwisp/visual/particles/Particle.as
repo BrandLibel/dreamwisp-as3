@@ -20,7 +20,8 @@ package dreamwisp.visual.particles
 		public var rotation:int;
 		public var scale:Number = 1;
 
-		public var color:int;
+		/// RGB color
+		public var color:uint;
 		public var duration:Number;
 		public var percentLife:Number = 1;
 
@@ -54,8 +55,8 @@ package dreamwisp.visual.particles
 			point.y = y;
 			
 			scale = percentLife * percentLife;
-			bitmap.scaleX = scale;
-			bitmap.scaleY = scale;
+			bitmap.scaleX *= scale;
+			bitmap.scaleY *= scale;
 			
 			bitmap.alpha = percentLife;
 			
@@ -94,11 +95,11 @@ package dreamwisp.visual.particles
 				const x:int = i % rect.width;
 				const y:int = i / rect.height;
 				
-				const ARGB:uint = bitmapData.getPixel32(x, y);
+				//const ARGB:uint = bitmapData.getPixel32(x, y);
 				const alpha:uint = 255 * percentLife;
-				const red:uint = (ARGB >> 16) & 0xFF;
-				const green:uint = (ARGB >> 8) & 0xFF;
-				const blue:uint = ARGB & 0xFF;
+				const red:uint = (color >> 16) & 0xFF;
+				const green:uint = (color >> 8) & 0xFF;
+				const blue:uint = color & 0xFF;
 				const newARGB:uint = ( (alpha << 24) | (red << 16) | (green << 8) | blue );
 				
 				bitmapData.setPixel32(x, y, newARGB);
@@ -109,7 +110,7 @@ package dreamwisp.visual.particles
 			const prevY:Number = rect.y;
 			rect.x = 0;
 			rect.y = 0;
-			canvas.copyPixels(bitmapData, rect, point);
+			canvas.copyPixels(bitmapData, rect, point, null, null, true);
 			rect.x = prevX;
 			rect.y = prevY;
 		}

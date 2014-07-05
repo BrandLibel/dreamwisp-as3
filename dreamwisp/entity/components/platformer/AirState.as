@@ -1,5 +1,5 @@
-package dreamwisp.entity.components.platformer {
-	
+package dreamwisp.entity.components.platformer
+{
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.hosts.Entity;
 	
@@ -8,104 +8,126 @@ package dreamwisp.entity.components.platformer {
 	 * @author Brandon
 	 */
 	
-	public class AirState implements IPlatformMovementState {
-		
-		private var platformController:PlatformController;
+	public class AirState implements IPlatformMovementState
+	{
+		private var platformPhysics:PlatformPhysics;
 		private var host:Entity;
 		
 		private var maxJumps:uint = 0;
 		private var jumps:uint;
 		
+		private var timeInAir:uint = 0;
+		private var holdingJump:Boolean = false;
 		
-		public function AirState(platformController:PlatformController) {
-			this.platformController = platformController;
-			this.host = platformController.host;
+		public function AirState(platformController:PlatformPhysics, host:Entity)
+		{
+			this.platformPhysics = platformController;
+			this.host = host;
 			jumps = maxJumps;
 		}
 		
 		/* INTERFACE dreamwisp.state.platform.IPlatformMovementState */
 		
-		public function update():void {
+		public function update():void
+		{
 			/*if (platformController.onSlope == false) {
-				MonsterDebugger.trace(this, "falling from gravity");
+			   MonsterDebugger.trace(this, "falling from gravity");
+			 }*/
+			timeInAir++;
+			platformPhysics.fall();
+			/*if (holdingJump && timeInAir < 3)
+				platformPhysics.velocityY = platformPhysics.velocityY;
+			else if (holdingJump && timeInAir < platformPhysics.maxJumpTime)
+				platformPhysics.velocityY = platformPhysics.jumpPower;//platformPhysics.velocityY += platformPhysics.jumpPower / platformPhysics.maxJumpTime;
+			else
+			{
+				if (platformPhysics.velocityY < 11)
+				{					
+					platformPhysics.velocityY += 4;
+					if (platformPhysics.velocityY > 11)
+						platformPhysics.velocityY = 11;
+				}
 			}*/
-			host.physics.velocityY += platformController.environment.gravity;
+			holdingJump = false;
 			
-			if (host.physics.velocityY > platformController.terminalVelocityY) {
+			if (platformPhysics.velocityY > platformPhysics.maxSpeedY)
+			{
 				MonsterDebugger.trace(this, "terminal fall velocity");
-				host.physics.velocityY = platformController.terminalVelocityY;
+				platformPhysics.velocityY = platformPhysics.maxSpeedY;
 			}
-			
-			if (!platformController.walking) {
-				host.physics.velocityX *= (platformController.friction);
-				if (Math.abs(host.physics.velocityX) < platformController.maxWalkSpeed*0.1) host.physics.velocityX = 0;
-			}
-			if (platformController.center.type != "ladder") {
-				platformController.canGrabLadder = true;
-			}
+			//if (platformPhysics.centerTile().type != "ladder") {
+			//platformPhysics.canGrabLadder = true;
+			//}
 		}
 		
-		public function moveLeft():void {
+		public function moveLeft():void
+		{
 			// walk left
-			platformController.walking = true;
-			if (host.physics.velocityX > -platformController.maxWalkSpeed) {
-				host.physics.velocityX -= platformController.acceleration;
-			}
+			platformPhysics.isWalking = true;
+			platformPhysics.accelerationX = -platformPhysics.walkAcceleration;
 		}
 		
-		public function moveRight():void {
+		public function moveRight():void
+		{
 			// walk right
-			platformController.walking = true;
-			if (host.physics.velocityX < platformController.maxWalkSpeed) {
-				host.physics.velocityX += platformController.acceleration;
-			}
+			platformPhysics.isWalking = true;
+			platformPhysics.accelerationX = platformPhysics.walkAcceleration;
 		}
 		
-		public function moveUp():void {
-			if (platformController.above.type == "ladder" && platformController.center.type == "ladder") {
-				platformController.grabLadder();
-				//MonsterDebugger.trace(this, "grab ladder");
-			}
+		public function moveUp():void
+		{
+			//if (platformPhysics.above.type == "ladder" && platformPhysics.center.type == "ladder") {
+			//platformPhysics.grabLadder();
+			//MonsterDebugger.trace(this, "grab ladder");
+			//}
 		}
 		
-		public function moveDown():void {
-			
+		public function moveDown():void
+		{
+		
 		}
 		
-		public function jump():void {
+		public function jump():void
+		{
+			holdingJump = true;
 			// do nothing, unless double jump
-			if (jumps > 0) {
-				
-				host.physics.velocityY = -9;
+			if (jumps > 0)
+			{
+				platformPhysics.velocityY = -9;
 				jumps--;
 			}
 		}
-			
-		public function enter():void {
-			
+		
+		public function enter():void
+		{
+			timeInAir = 0;
 		}
-				
-		public function collideLeft():void {
+		
+		public function collideLeft():void
+		{
 			//platformController.x = (platformController.left + 1) * platformController.tile_size /*+ xSize*/ +platformController.xDif;
 			//platformController.xspeed = 0;
 			//react();
 		}
 		
-		public function collideRight():void {
-			
+		public function collideRight():void
+		{
+		
 			//react();
 		}
 		
-		public function collideTop():void {
-			
+		public function collideTop():void
+		{
+		
 		}
 		
-		public function collideBottom():void {
+		public function collideBottom():void
+		{
 			//MonsterDebugger.trace(this, "hit the bottom from air");
-			platformController.movementSM.changeState( "groundState" );
+			platformPhysics.changeState("groundState");
 			jumps = maxJumps;
 		}
-		
+	
 	}
 
 }

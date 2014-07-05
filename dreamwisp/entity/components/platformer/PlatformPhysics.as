@@ -1,5 +1,6 @@
 package dreamwisp.entity.components.platformer 
 {
+	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.Physics;
 	import dreamwisp.entity.components.platformer.IPlatformMovementState;
@@ -22,17 +23,19 @@ package dreamwisp.entity.components.platformer
 		
 		private var tileWidth:uint = DEFAULT_TILE_WIDTH;
 		private var tileHeight:uint = DEFAULT_TILE_HEIGHT;
+		private var tileScape:TileScape;
+		private var prevRow:uint;
 		
 		private var entity:Entity;
 		private var body:Body;
 		
-		internal var isWalking:Boolean;
+		public var isWalking:Boolean;
 		public var maxWalkSpeed:uint;
 		public var walkAcceleration:Number;
+		public var friction:Number = 0.6;
 		
 		public var jumpPower:Number;
 		public var gravity:Number = 1.3;
-		
 		internal var jumpsMade:uint = 0;
 		internal var jumpsAllowed:uint = 1;
 		/**
@@ -40,15 +43,12 @@ package dreamwisp.entity.components.platformer
 		 */
 		public var canJump:Function;
 		
-		public var friction:Number = 0.6;
-		
 		private var movementSM:StateMachine;
-		private var currentState:IPlatformMovementState;
-		private var groundState:IPlatformMovementState;
-		private var ladderState:IPlatformMovementState;
-		private var airState:IPlatformMovementState;
-		private var tileScape:TileScape;
-		private var prevRow:uint;
+		internal var currentState:IPlatformMovementState;
+		internal var groundState:IPlatformMovementState;
+		internal var ladderState:IPlatformMovementState;
+		internal var fallState:IPlatformMovementState;
+		internal var riseState:IPlatformMovementState;
 		
 		public var jumped:Signal;
 		public var collidedTile:Signal;
@@ -63,16 +63,6 @@ package dreamwisp.entity.components.platformer
 			this.maxWalkSpeed = maxWalkSpeed;
 			this.entity = entity;
 			this.body = entity.body;
-						
-			groundState = new PlatformerGroundState(this, entity);
-			ladderState = new PlatformerLadderState(this, entity);
-			airState = new PlatformerAirState(this, entity);
-			
-			movementSM = new StateMachine();
-			movementSM.addState( "groundState", { enter: onStateChange }  );
-			movementSM.addState( "ladderState", { enter: onStateChange }  );
-			movementSM.addState( "airState", { enter: onStateChange } );
-			movementSM.initialState =  "airState";
 			
 			canJump = function():Boolean
 			{
@@ -85,18 +75,33 @@ package dreamwisp.entity.components.platformer
 			collidedTile = new Signal(Tile);
 			steppedNewTile = new Signal(Tile);
 			touchedKillerTile = new Signal();
+			
+			movementSM = new StateMachine();
+			groundState = new GroundState(this, entity);
+			ladderState = new LadderState(this, entity);
+			fallState = new FallState(this, entity);
+			riseState = new RiseState(this, entity);
+			movementSM.addState( "groundState" );
+			movementSM.addState( "ladderState" );
+			movementSM.addState( "fallState" );
+			movementSM.addState( "riseState" );
+			changeState( "fallState" );
 		}
 		
 		// State machine
 		
+		public function setStateCallbacks(eGround:Function = null, eLadder:Function = null, eFall:Function = null, eRise:Function = null):void 
+		{
+			movementSM.getStateByName("groundState").enter = eGround;
+			movementSM.getStateByName("ladderState").enter = eLadder;
+			movementSM.getStateByName("fallState").enter = eFall;
+			movementSM.getStateByName("riseState").enter = eRise;
+		}
+		
 		internal function changeState(state:String):void 
 		{
 			movementSM.changeState(state);
-		}
-		
-		private function onStateChange(e:StateMachineEvent):void 
-		{
-			currentState = this[e.currentState];
+			currentState = this[state];
 			currentState.enter();
 		}
 		
@@ -161,20 +166,20 @@ package dreamwisp.entity.components.platformer
 		/**
 		 * Aligns view with body to prevent visual clipping collisions.
 		 */
-		public function render(interpolation:Number):void
-		{
-			var prevX:Number = body.x;
-			var prevY:Number = body.y;
-			body.x = entity.view.movieClip.x;
-			body.y = entity.view.movieClip.y;
-			if (bodyCollides())
-			{
-				body.x = entity.view.movieClip.x = prevX;
-				body.y = entity.view.movieClip.y = prevY;
-			}
-			body.x = prevX;
-			body.y = prevY;
-		}
+		//private function render(interpolation:Number):void
+		//{
+			//var prevX:Number = body.x;
+			//var prevY:Number = body.y;
+			//body.x = entity.view.movieClip.x;
+			//body.y = entity.view.movieClip.y;
+			//if (bodyCollides())
+			//{
+				//body.x = entity.view.movieClip.x = prevX;
+				//body.y = entity.view.movieClip.y = prevY;
+			//}
+			//body.x = prevX;
+			//body.y = prevY;
+		//}
 		
 		/**
 		 * Applies net velocity to x-position while checking for collisions.
@@ -313,7 +318,7 @@ package dreamwisp.entity.components.platformer
 				return;
 			currentState.jump();
 			velocityY = jumpPower;
-			changeState("airState");
+			changeState("riseState");
 			jumpsMade++;
 			jumped.dispatch();
 		}
@@ -322,7 +327,7 @@ package dreamwisp.entity.components.platformer
 		{
 			currentState.jump();
 			velocityY = specialJumpPower;
-			changeState("airState");
+			changeState("riseState");
 			jumpsMade++;
 			jumped.dispatch();
 		}
