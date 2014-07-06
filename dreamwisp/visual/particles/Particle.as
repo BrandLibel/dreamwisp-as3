@@ -16,49 +16,48 @@ package dreamwisp.visual.particles
 	{
 		public var x:int;
 		public var y:int;
-		public var radius:int;
-		public var rotation:int;
-		public var scale:Number = 1;
+		internal var radius:int;
+		internal var rotation:int;
+		internal var scale:Number = 1;
 
 		/// RGB color
-		public var color:uint;
-		public var duration:Number;
-		public var percentLife:Number = 1;
+		internal var color:uint;
+		internal var alpha:Number = 1;
+		internal var duration:Number;
+		internal var percentLife:Number = 1;
 
-		public var velocityX:Number;
-		public var velocityY:Number;
-		public var friction:Number = 0.97;
-		public var rotationSpeed:Number;
+		internal var velocityX:Number;
+		internal var velocityY:Number;
+		internal var friction:Number = 0.97;
+		internal var rotationSpeed:Number;
 		
-		public var bitmap:Bitmap;
-		public var srcImage:BitmapData;
-		public var rect:Rectangle;
-		private var point:Point;
+		internal var bitmap:Bitmap;
+		internal var srcImage:BitmapData;
+		internal var rect:Rectangle;
+		internal var point:Point;
+		
+		/// Takes Particle as argument, operates on position and velocity
+		internal var moveBehavior:Function;
+		/// Takes Particle as argument, operates on rect scaleX and scaleY
+		internal var sizeBehavior:Function;
+		/// Takes Particle as argument, operates on color and alpha
+		internal var colorBehavior:Function;
+		
 		
 		private static const ORIGIN:Point = new Point(0, 0);
 		
 		public function Particle() 
 		{
 			bitmap = new Bitmap(new BitmapData(8, 8));
-			
 			rect = new Rectangle();
 			point = new Point();
 		}
 		
 		public final function update(canvas:BitmapData):void 
 		{
-			x += velocityX;
-			y += velocityY;
-			velocityX *= friction;
-			velocityY *= friction;
-			point.x = x;
-			point.y = y;
-			
-			scale = percentLife * percentLife;
-			bitmap.scaleX *= scale;
-			bitmap.scaleY *= scale;
-			
-			bitmap.alpha = percentLife;
+			moveBehavior.call(null, this);
+			sizeBehavior.call(null, this);
+			colorBehavior.call(null, this);
 			
 			percentLife -= 1.0 / duration;
 			
@@ -95,8 +94,8 @@ package dreamwisp.visual.particles
 				const x:int = i % rect.width;
 				const y:int = i / rect.height;
 				
-				//const ARGB:uint = bitmapData.getPixel32(x, y);
-				const alpha:uint = 255 * percentLife;
+				const ARGB:uint = bitmapData.getPixel32(x, y);
+				const alpha:uint = ((ARGB >> 24) & 0xFF) * this.alpha;
 				const red:uint = (color >> 16) & 0xFF;
 				const green:uint = (color >> 8) & 0xFF;
 				const blue:uint = color & 0xFF;
