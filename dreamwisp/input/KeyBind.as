@@ -32,29 +32,28 @@ package dreamwisp.input
 			keyPressed = new Signal();
 			keyReleased = new Signal();
 			
-			var listener:Function;
 			if (pressActions != null)
-			{
-				// specified a single function
-				if (pressActions is Function)
-					keyPressed.add(pressActions as Function);
-				// specified multiple functions
-				for each (listener in pressActions)
-				{
-					keyPressed.add(listener);
-				}
-			}
+				addPressAction(pressActions);
 			if (releaseActions != null)
-			{
-				// specified a single function
-				if (releaseActions is Function)
-					keyReleased.add(releaseActions as Function);
-				// specified multiple functions
-				for each (listener in releaseActions)
-				{
+				addReleaseAction(releaseActions);
+		}
+		
+		internal function addPressAction(pressActions:Object):void 
+		{
+			if (pressActions is Function)
+				keyPressed.add(pressActions as Function);
+			else
+				for each (var listener:Function in pressActions)
+					keyPressed.add(listener);
+		}
+		
+		internal function addReleaseAction(releaseActions:Object):void 
+		{
+			if (releaseActions is Function)
+				keyReleased.add(releaseActions as Function);
+			else
+				for each (var listener:Function in releaseActions)
 					keyReleased.add(listener);
-				}
-			}
 		}
 		
 		/**

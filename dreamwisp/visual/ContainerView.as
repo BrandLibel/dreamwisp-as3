@@ -1,6 +1,5 @@
 package dreamwisp.visual {
 	
-	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.visual.camera.ICamUser;
 	import dreamwisp.visual.lighting.LightSource;
@@ -30,7 +29,9 @@ package dreamwisp.visual {
 		private const BOTTOM:String = "bottom";
 		
 		private var layers:Vector.<DisplayObjectContainer>
-		private var _container:Sprite;
+		public var container:Sprite;
+		/// Always appears over the layers in container
+		public var overlay:Sprite;
 		
 		private const NONE:uint = uint.MAX_VALUE;
 		private const TOGGLE:uint = 2;
@@ -49,6 +50,7 @@ package dreamwisp.visual {
 		
 		public function ContainerView(width:Number = 768, height:Number = 480, numLayers:uint = 1) {
 			container = new Sprite();
+			overlay = new Sprite();
 			layers = new Vector.<DisplayObjectContainer>();
 			while (layers.length < numLayers)
 				createLayer();
@@ -56,6 +58,10 @@ package dreamwisp.visual {
 			this.height = height;
 		}
 		
+		/**
+		 * Attaches a component (usually UI) that ignores Camera scrolling
+		 * and sits atop all other layers in the Container.
+		 */
 		private function createLayer():void 
 		{
 			layers.push( new Sprite() );
@@ -65,6 +71,11 @@ package dreamwisp.visual {
 		public function getLayer(layerNum:uint):DisplayObjectContainer
 		{
 			return layers[layerNum];
+		}
+		
+		public function addOverlay(displayObject:DisplayObject):void 
+		{
+			overlay.addChild(displayObject);
 		}
 		
 		public function render(interpolation:Number):void {
@@ -151,11 +162,7 @@ package dreamwisp.visual {
 			//}
 			
 			//removeGenericView( getViewByContent(entity.view.displayObject) ); 
-		}
-		
-		public function get container():Sprite { return _container; }
-		
-		public function set container(value:Sprite):void { _container = value; }
+		}		
 		
 		/**
 		 * Toggles the visibility of the entire container or 

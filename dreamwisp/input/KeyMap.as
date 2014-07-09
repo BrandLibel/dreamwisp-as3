@@ -58,6 +58,18 @@ package dreamwisp.input {
 			keyBind.getKeyCodes()[0] = newCode;
 		}
 		
+		public function addPressAction(label:String, pressActions:Object):void 
+		{
+			const keyBind:KeyBind = keyLegend[label];
+			keyBind.addPressAction(pressActions);
+		}
+		
+		public function addReleaseAction(label:String, releaseActions:Object):void
+		{
+			const keyBind:KeyBind = keyLegend[label];
+			keyBind.addReleaseAction(releaseActions);
+		}
+		
 		public function stripKey(keyCode:uint):void {
 			var keyBind:KeyBind = find(keyCode);
 			if (!keyBind) return;

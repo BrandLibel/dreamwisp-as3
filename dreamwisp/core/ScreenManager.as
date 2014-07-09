@@ -1,9 +1,6 @@
 package dreamwisp.core {
 	
-	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.input.InputState;
-	import flash.display.Sprite;
-	import flash.ui.Keyboard;
 	
 	/**
 	 * The ScreenManager is a core class that allows multiple GameScreens
@@ -34,38 +31,19 @@ package dreamwisp.core {
 		//		remain in place. 
 		
 		public function update(inputState:InputState):void {
-			//if (inputState.isKeyDown(Keyboard.RIGHT) && inputState.isKeyDown(Keyboard.LEFT))
-				//MonsterDebugger.trace(this, "BOTH LEFT AND RIGHT ARE DOWN");
-			//if (inputState.isKeyDown(Keyboard.RIGHT) && inputState.isKeyDown(Keyboard.LEFT) 
-				//&& inputState.isKeyDown(Keyboard.SPACE)) {
-				//MonsterDebugger.trace(this, "Holding left and right and SPACE");	
-			//}
-			//if (inputState.isKeyDown(Keyboard.SPACE))
-				//MonsterDebugger.trace(this, inputState.keysPressed);
-			//if (inputState.isKeyDown(Keyboard.RIGHT))
-				//MonsterDebugger.trace(this, "right is down!");
-			//if (inputState.isKeyDown(Keyboard.LEFT))
-				//MonsterDebugger.trace(this, "left is down!");
-			//if (inputState.isMousePressed)
-				//MonsterDebugger.trace(this, "mouse is down");
-			//if (inputState.wasMouseClicked())
-				//MonsterDebugger.trace(this, "click!");
-			
-			//game.input.receptor = top;
-			
 			// item on the wait list already exists in master list and is holding up the line
 			// process it immediately so it is removed
 			if (waitList.length > 0 && top == waitList[0])
-				processPendingScreens();
+				activateScreen();
 			// no screens, try taking one from the waiting list
 			// if a screen is concurrent, force the waitList and let both screens
 			// run their transitions together.
 			if (screens.length == 0 || (waitList.length != 0 && waitList[0].isConcurrent) ||
 				screens[screens.length-1].isConcurrent)
-				processPendingScreens();
+				activateScreen();
 			// a popup needs to enter despite the existence of an unexited screen
 			if (waitList.length > 0 && waitList[0].isPopup)
-				processPendingScreens();
+				activateScreen();
 			// For this update tick, make a copy of the screen list to avoid confusion
 			// if updating one screen adds/removes others and alters the list.
 			tempScreensList.length = 0;
@@ -98,7 +76,7 @@ package dreamwisp.core {
 						// the screen will still appear at a very low alpha
 						screen.render(1);
 						// let a waiting screen come in when screen finishes transitioning out
-						processPendingScreens();
+						activateScreen();
 					}
 				}
 				
@@ -142,9 +120,9 @@ package dreamwisp.core {
 		}
 		
 		/**
-		 * Moves a screen from the waiting list to the active list.
+		 * Moves the first screen in the waiting list to the active list.
 		 */
-		public function processPendingScreens():void {
+		private function activateScreen():void {
 			if (waitList.length == 0) return;
 			var screen:GameScreen = waitList.shift();
 			
@@ -153,20 +131,8 @@ package dreamwisp.core {
 				screen.enter();
 				screens.push(screen);
 				// only add displayObject to screen if needed
-				if (!game.view.contains(screen.view.container))
-					game.view.addChild( screen.view.container );
+				game.addContainerView(screen.view);
 			}
-			
-			//MonsterDebugger.trace(this, screens, "", "Master List");
-		}
-		
-		/**
-		 * Removes the top item in the stack.
-		 * @param	gameState
-		 * @return	The item that was removed.
-		 */
-		public function removeState():GameScreen {
-			return screens.pop();
 		}
 		
 		public function get top():GameScreen {

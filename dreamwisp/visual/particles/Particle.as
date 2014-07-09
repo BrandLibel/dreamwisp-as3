@@ -14,8 +14,8 @@ package dreamwisp.visual.particles
 	
 	public class Particle 
 	{
-		public var x:int;
-		public var y:int;
+		internal var x:int;
+		internal var y:int;
 		internal var radius:int;
 		internal var rotation:int;
 		internal var scale:Number = 1;

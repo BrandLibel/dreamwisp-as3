@@ -1,18 +1,16 @@
 ﻿package dreamwisp.core {
 	
-	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.data.SaveSystem;
 	import dreamwisp.input.InputState;
-	import flash.display.Stage;
-	import flash.utils.getTimer;
+	import dreamwisp.visual.ContainerView;
 	import dreamwisp.world.base.Location;
 	import flash.display.Sprite;
-	import flash.events.Event;
-	import tools.Belt;
+	import flash.display.Stage;
+	import flash.utils.getTimer;
 	
 	public dynamic class Game {
 				
-		public var view:Sprite;
+		public var sprite:Sprite;
 		public var world:Location;
 		
 		protected var inputState:InputState;
@@ -21,13 +19,10 @@
 		public var screenManager:ScreenManager;
 								
 		public function Game(stage:Stage = null) {
-			//MonsterDebugger.trace(this, Data.worldData);
 			Data.prepare();
-			view = new Sprite();
+			sprite = new Sprite();
 			if (stage) inputState = new InputState(stage);
 			screenManager = new ScreenManager(this);
-			
-			//newGame();
 		}
 		
 		public function newGame():void {
@@ -70,6 +65,15 @@
 			interpolation = Number( getTimer() + SKIP_TICKS - nextGameTick ) / Number ( SKIP_TICKS );
 			
 			screenManager.render(interpolation);
+		}
+		
+		public function addContainerView(view:ContainerView):void 
+		{
+			if (!sprite.contains(view.container))
+			{
+				sprite.addChild(view.container);
+				sprite.addChild(view.overlay);
+			}
 		}
 		
 	}
