@@ -137,15 +137,15 @@ package dreamwisp.world.tile
 			tileGrid[row][col] = tile;
 			destPoint.x = tile.point.x = tile.body.x = col * tileWidth;
 			destPoint.y = tile.point.y = tile.body.y = row * tileHeight;
+			
+			// draw emptiness
+			drawRect.x = destPoint.x;
+			drawRect.y = destPoint.y;
+			drawRect.width = tileWidth;
+			drawRect.height = tileHeight;
+			canvasData.fillRect(drawRect, 0x00000000);
+			
 			tile.render(1);
-			if (tile.isEmpty())
-			{
-				drawRect.x = tile.point.x;
-				drawRect.y = tile.point.y;
-				drawRect.width = tileWidth;
-				drawRect.height = tileHeight;
-				canvasData.fillRect(drawRect, 0x00000000);
-			}
 		}
 		
 		/**
