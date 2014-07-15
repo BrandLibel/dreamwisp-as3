@@ -144,6 +144,7 @@ package dreamwisp.entity.components.platformer
 		override public function update():void 
 		{
 			super.update();
+			collideSlope();
 			
 			// apply friction when stopped moving
 			if (!isWalking)
@@ -227,6 +228,8 @@ package dreamwisp.entity.components.platformer
 		
 		private function collideLeft(tileToCollide:Tile):void
 		{
+			if (isOnSlope)
+				return;
 			// hit a wall to the left
 			body.x = (leftEdge() + 1) * tileWidth;
 			velocityX = 0;
@@ -236,11 +239,67 @@ package dreamwisp.entity.components.platformer
 		
 		private function collideRight(tileToCollide:Tile):void 
 		{
+			if (isOnSlope)
+				return;
 			// hit a wall to the right
 			body.x = rightEdge() * tileWidth - body.width;
 			velocityX = 0;
 			currentState.collideRight();
 			collidedTile.dispatch(tileToCollide);
+		}
+		
+		internal var isOnSlope:Boolean = false;
+		private function collideSlope():void 
+		{
+			var tile:Tile = bottomMidTile();
+			
+			isOnSlope = false;
+			
+			if (currentState == fallState || currentState == riseState)
+			{
+				tile = centerTile();
+				setYOnSlope(tile);
+			}
+			else if (currentState == groundState)
+			{
+				tile = bottomMidTile();
+				setYOnSlope(tile);
+				tile = primaryFoot();				
+				setYOnSlope(tile);
+			}
+			
+			// Simulate regular collideBottom(). On the last frame of climbing up a slope /[]\ 
+			// the entity ends up horizontally clipped inside the solid tile []. 
+			// This happens because at this point it is reading the [] and no longer sees a tile,
+			// causing it to skip any kind of body.y adjustment until it proceeds to collision code.
+			// This solves the problem by doing a regular collision to the [] non slope tile.
+			if (!isOnSlope && currentState == groundState && tile.isSolidUp())
+				body.y = tile.y / tileHeight * tileHeight-body.height;
+		}
+		
+		private function setYOnSlope(tile:Tile):void 
+		{
+			if (!tile.isSlope())
+				return;
+			// Equation: y = mx + b
+			// m is slope direction (up or down)
+			// with (0, 0) in top left, up is negative
+			// x is entity distance from the tile's origin
+			// b is y intercept
+			var x:Number = body.centerX - tile.x;
+			var m:Number = (tile.type == "slope_up") ? -1 : 1;
+			var b:Number = (tile.type == "slope_up") ? tileHeight: 0;
+			b += tile.y - body.height;
+			body.y = (m * x) + b;
+			
+			// escape when stuck in ground
+			while (bottomMidTile().isSolidUp())
+				body.y--;
+			
+			isOnSlope = true;
+			
+			if (currentState != groundState)
+				changeState("groundState");
 		}
 		
 		/**
@@ -517,14 +576,29 @@ package dreamwisp.entity.components.platformer
 			return Math.floor((body.y + body.height + 1) / tileHeight);
 		}
 		
+		private function leftFoot():Tile 
+		{
+			return tileScape.tileAt(footLine(), leftEdge());
+		}
+		
+		private function midFoot():Tile 
+		{
+			return tileScape.tileAt(footLine(), midVertical());
+		}
+		
+		private function rightFoot():Tile 
+		{
+			return tileScape.tileAt(footLine(), rightEdge())
+		}
+		
 		public function primaryFoot():Tile 
 		{
-			var leftFoot:Tile = tileScape.tileAt(footLine(), leftEdge());
-			var midFoot:Tile = tileScape.tileAt(footLine(), midVertical());
-			var rightFoot:Tile = tileScape.tileAt(footLine(), rightEdge());
-			if (midFoot.isSolidUp())
+			var leftFoot:Tile = this.leftFoot();
+			var midFoot:Tile = this.midFoot();
+			var rightFoot:Tile = this.rightFoot();
+			if (midFoot.isSolidUp() || midFoot.isSlope())
 				return midFoot;
-			else if (leftFoot.isSolidUp())
+			else if (leftFoot.isSolidUp() || leftFoot.isSlope())
 				return leftFoot;
 			else
 				return rightFoot;

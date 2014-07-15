@@ -32,7 +32,7 @@ package dreamwisp.entity.components.platformer
 					platformPhysics.steppedNewTile.dispatch(tileUnderFoot);
 				lastTile = tileUnderFoot;
 			}
-			else
+			else if (!platformPhysics.isOnSlope)
 			{
 				platformPhysics.changeState("fallState");
 				lastTile = Tile.NIL;

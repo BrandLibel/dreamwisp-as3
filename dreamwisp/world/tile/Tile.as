@@ -263,6 +263,11 @@ package dreamwisp.world.tile
 		public function killsRight():Boolean { return kills.right; }
 		public function killsDown():Boolean { return kills.down; }
 		
+		public function isSlope():Boolean
+		{
+			return (type == "slope_up" || type == "slope_down");
+		}
+		
 		/**
 		 * Indicates that an Entity is currently touching 
 		 */
