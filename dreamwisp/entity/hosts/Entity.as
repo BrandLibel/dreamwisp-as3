@@ -46,8 +46,6 @@ package dreamwisp.entity.hosts
 		private var _entityManager:EntityManager;
 		private var _gameScreen:GameScreen;
 		
-		protected var isMobile:Boolean = true;		
-				
 		public function Entity(prototypeData:Object = null, prototypeID:uint = 0) 
 		{
 			entityCreated = new Signal(Entity);
@@ -110,14 +108,6 @@ package dreamwisp.entity.hosts
 		public function render(interpolation:Number):void {
 			if (view) view.render(interpolation);
 			if (lightSource) lightSource.render();
-		}
-		
-		public function immobilize():void {
-			isMobile = false;
-		}
-		
-		public function mobilize():void {
-			isMobile = true;
 		}
 		
 		protected function hasLeftBounds():Boolean {

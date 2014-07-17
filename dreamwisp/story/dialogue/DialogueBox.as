@@ -132,7 +132,7 @@ package dreamwisp.story.dialogue {
 			disabledInput.dispatch(this);
 			closedDialogue.dispatch();
 			isOpen = false;
-			initiator.mobilize();
+			//initiator.mobilize();
 		}
 		
 		//override public function hearKeyInput(type:String, keyCode:uint):void {
