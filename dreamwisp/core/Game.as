@@ -76,6 +76,15 @@
 			}
 		}
 		
+		public function removeContainerView(view:ContainerView):void 
+		{
+			if (sprite.contains(view.container))
+			{
+				sprite.removeChild(view.container);
+				sprite.removeChild(view.overlay);
+			}
+		}
+		
 	}
 	
 }
