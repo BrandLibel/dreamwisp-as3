@@ -100,14 +100,15 @@ package dreamwisp.visual {
 		
 		/**
 		 * Visually attaches an Entity to the container.
+		 * Tracks the View of the Entity for any changes in the DisplayObject.
 		 * @param	entity
 		 * @param	targetLayer
 		 */
 		public function addEntity(entity:Entity, targetLayer:uint = NONE):void {
-			if (!entity.view) {
+			if (!entity.view)
 				throw new Error("ContainerView: The entity you are trying to add has no view.");
-			}
-			
+				
+			entity.view.setContainerView(this);
 			addDisplayObject(entity.view.displayObject, entity.view.layer, entity.body.x, entity.body.y);
 			
 			if (entity.lightSource) {
@@ -138,9 +139,7 @@ package dreamwisp.visual {
 			//addGraphic(lightSource.colorMask, lightSource.x, lightSource.y, 1);
 		}
 		
-		public function removeEntity(entity:Entity):void {
-			// use this b/c container.contains(child) returns true even when child isnt in container
-			var child:DisplayObject = entity.view.displayObject;
+		public function removeDisplayObject(child:DisplayObject):void {
 			if (child.parent == container) {
 				container.removeChild(child);
 			}
@@ -155,6 +154,12 @@ package dreamwisp.visual {
 					}
 				}
 			}
+		}
+		
+		public function removeEntity(entity:Entity):void {
+			// use this b/c container.contains(child) returns true even when child isnt in container
+			var child:DisplayObject = entity.view.displayObject;
+			removeDisplayObject(child);
 			
 			//if (entity.lightSource) {
 				//getViewByLabel(LABEL_OVERLAY).removeChild(entity.lightSource.lightMask);
@@ -162,7 +167,7 @@ package dreamwisp.visual {
 			//}
 			
 			//removeGenericView( getViewByContent(entity.view.displayObject) ); 
-		}		
+		}
 		
 		/**
 		 * Toggles the visibility of the entire container or 

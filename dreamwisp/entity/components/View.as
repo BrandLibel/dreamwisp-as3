@@ -3,6 +3,7 @@ package dreamwisp.entity.components
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.entity.hosts.Entity;
+	import dreamwisp.visual.ContainerView;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
@@ -36,6 +37,7 @@ package dreamwisp.entity.components
 		
 		/// Layer for if this View gets added into a ContainerView
 		private var _layer:uint;
+		private var containerView:ContainerView;
 		
 		public function View(entity:Entity, displayObject:DisplayObject)
 		{
@@ -112,12 +114,25 @@ package dreamwisp.entity.components
 		
 		public function set displayObject(value:DisplayObject):void 
 		{
+			if (containerView && _displayObject != null)
+			{
+				// new displayObject? update its existence in ContainerView
+				containerView.removeDisplayObject(displayObject);
+				containerView.addDisplayObject(value, layer, host.body.x, host.body.y);
+			}
 			_displayObject = value;
+			
 		}
 		
 		public function get displayObjectContainer():DisplayObjectContainer
 		{
 			return _displayObject as DisplayObjectContainer;
+		}
+		
+		public function setContainerView(containerView:ContainerView):void 
+		{
+			this.containerView = containerView;
+			
 		}
 		
 	}
