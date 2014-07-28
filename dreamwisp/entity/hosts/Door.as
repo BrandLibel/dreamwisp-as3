@@ -32,7 +32,7 @@ package dreamwisp.entity.hosts {
 			MonsterDebugger.trace(this, "interacted with door");
 		}
 		
-		public function touch():void 
+		public function touch(entity:Entity):void 
 		{
 			
 		}

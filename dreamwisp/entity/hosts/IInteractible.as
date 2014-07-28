@@ -12,6 +12,7 @@ package dreamwisp.entity.hosts {
 		 */
 		function interact(entity:Entity = null):void;
 		
+		function touch(entity:Entity):void;
 	}
 	
 }
