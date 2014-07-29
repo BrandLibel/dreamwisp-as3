@@ -188,7 +188,7 @@ package dreamwisp.input {
 		public function readInput(inputState:InputState):void {
 			//TODO: seek only the keys needed from the list of keyPresStates
 			
-			var i:uint = 0;
+			/*var i:uint = 0;
 			
 			// compare the current list to the prev list; any differences cause a key event
 			for (i = 0; i < inputState.keyPressStates.length; i++) {
@@ -210,6 +210,18 @@ package dreamwisp.input {
 			// store a list of the key states to be compared with in the future cycle
 			for (i = 0; i < inputState.keyPressStates.length; i++) {
 				prevKeyList[i] = inputState.keyPressStates[i];
+			}*/
+			
+			// post refactoring
+			for each (var keyBind:KeyBind in bindings) 
+			{
+				for each (var keyCode:uint in keyBind.getKeyCodes()) 
+				{
+					if (inputState.wasKeyPressed(keyCode))
+						pressKey(keyCode);
+					else if (inputState.wasKeyReleased(keyCode))
+						releaseKey(keyCode);
+				}
 			}
 		}
 		

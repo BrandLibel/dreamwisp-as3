@@ -14,7 +14,13 @@ package dreamwisp.input {
 	public class InputState {
 		
 		public static const TOTAL_KEYCODES:uint = 222;
+		private static const STATE_INACTIVE:uint = 0;
+		private static const STATE_PRESSED:uint = 1;
+		private static const STATE_RELEASED:uint = 2;
+		
 		private var _keyPressStates:Vector.<Boolean> = new Vector.<Boolean>(TOTAL_KEYCODES + 1, true);
+		/// List of keys with a uint representing its state this cycle. 0 - inactive; 1 - pressed; 2 - released.
+		private var keyStates:Vector.<uint> = new Vector.<uint>(TOTAL_KEYCODES + 1, true)
 		/// List of keys that are being held down.
 		private var _keysPressed:Vector.<uint> = new Vector.<uint>;
 		/// List of keys that have just been released this cycle
@@ -50,6 +56,8 @@ package dreamwisp.input {
 		{
 			keysReleased.length = 0;
 			wasClicked = false;
+			for (var i:int = 0; i < TOTAL_KEYCODES; i++) 
+				keyStates[i] = STATE_INACTIVE;
 		}
 		
 		public function isKeyDown(keyCode:uint):Boolean {
@@ -63,6 +71,18 @@ package dreamwisp.input {
 		 */
 		public function wasMouseClicked():Boolean {
 			return wasClicked;
+		}
+		
+		/// Check if the supplied key was pressed this tick
+		public function wasKeyPressed(keyCode:uint):Boolean 
+		{
+			return keyStates[keyCode] == STATE_PRESSED;
+		}
+		
+		/// Check if the supplied key was releasaed this tick
+		public function wasKeyReleased(keyCode:uint):Boolean 
+		{
+			return keyStates[keyCode] == STATE_RELEASED;
 		}
 		
 		/**
@@ -108,7 +128,7 @@ package dreamwisp.input {
 		}
 		
 		private function registerKeyboard(e:KeyboardEvent):void {
-			// Ensures that only one input change is allowed per update
+			/*// Ensures that only one input change is allowed per update
 			if (canReadInput || lastKeySet != e.keyCode)
 				setKeyState(e.keyCode, (e.type == KeyboardEvent.KEY_DOWN) );
 			// releasing a key is always registered; without this, there are
@@ -117,7 +137,13 @@ package dreamwisp.input {
 			// at extremely low framerates, the press event does not register, something
 			// which is preferable to the original scenario.
 			if (e.type == KeyboardEvent.KEY_UP) setKeyState(e.keyCode, false);
-			canReadInput = false;
+			canReadInput = false;*/
+			
+			// post refactoring - use keyStates
+			if (e.type == KeyboardEvent.KEY_DOWN)
+				keyStates[e.keyCode] = STATE_PRESSED;
+			else
+				keyStates[e.keyCode] = STATE_RELEASED;
 		}
 		
 		private function registerMouse(e:MouseEvent):void {

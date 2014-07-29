@@ -68,14 +68,6 @@ package dreamwisp.core {
 				// The latter part of the OR makes sure it can properly register as hidden.
 				if (!coveredByOtherScreen || screen.inTransition()) {
 					// screens between transition in and active state are considered in Active half
-					
-					// TODO: Prevent input spillover to next screen when input causes a Popup screen to close.
-					// This is NOT caused because the two screens in same while loop as the Popup inputs itself out
-					// These problems are probably caused by the user holding down a key longer than a frame 1/30th of a second. 
-					// The screen changes in one frame, the game updates and the input resets. In the next frame, InputState
-					// reads the over 1/30th key hold and registers the key as pressed. When InputState is then passed in to 
-					// the KeyMap of a Screen/Entity, the keymap also registers it as a press and launches any of the relevant
-					// PressAction functions. THIS IS BAD.
 					if (screen.inActiveHalf())
 						screen.handleInput(inputState);
 						
