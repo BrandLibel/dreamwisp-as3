@@ -1,5 +1,6 @@
 package dreamwisp.input {
 	
+	import com.demonsters.debugger.MonsterDebugger;
 	import flash.display.Stage;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
@@ -13,29 +14,21 @@ package dreamwisp.input {
 	
 	public class InputState {
 		
-		public static const TOTAL_KEYCODES:uint = 222;
-		private static const STATE_INACTIVE:uint = 0;
-		private static const STATE_PRESSED:uint = 1;
-		private static const STATE_RELEASED:uint = 2;
+		private static const TOTAL_KEYCODES:uint = 222;
 		
-		private var _keyPressStates:Vector.<Boolean> = new Vector.<Boolean>(TOTAL_KEYCODES + 1, true);
-		/// List of keys with a uint representing its state this cycle. 0 - inactive; 1 - pressed; 2 - released.
-		private var keyStates:Vector.<uint> = new Vector.<uint>(TOTAL_KEYCODES + 1, true)
-		/// List of keys that are being held down.
-		private var _keysPressed:Vector.<uint> = new Vector.<uint>;
-		/// List of keys that have just been released this cycle
-		private var keysReleased:Vector.<uint> = new Vector.<uint>;
-		
-		private const MAX_KEYS_PRESSED:uint = 10;
-		private var lastKeySet:uint;
-		
-		private var _isMousePressed:Boolean;
-		private var _mouseX:int;
-		private var _mouseY:int;
-		
-		private var canReadInput:Boolean = true;
-		private var wasClicked:Boolean;
+		private static const STATE_UNLOCKED:uint = 0;
+		private static const STATE_LOCKED:uint = 1;
+		private static const STATE_PRESSED:uint = 2;
+		private static const STATE_RELEASED:uint = 3;
 				
+		/// Key states this cycle. 0 - pressable; 1 - unpressable;  2 - pressed; 3 - released.
+		private var keyStates:Vector.<uint> = new Vector.<uint>(TOTAL_KEYCODES + 1, true)
+		
+		public var isMousePressed:Boolean;
+		public var mouseX:int;
+		public var mouseY:int;
+		private var wasClicked:Boolean;
+		
 		public function InputState(stage:Stage) {
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, registerMouse);
 			stage.addEventListener(MouseEvent.MOUSE_UP, registerMouse);
@@ -45,7 +38,6 @@ package dreamwisp.input {
 		}
 		
 		public function update():InputState {
-			canReadInput = true;
 			return this;
 		}
 		
@@ -54,16 +46,18 @@ package dreamwisp.input {
 		 */
 		public function reset():void 
 		{
-			keysReleased.length = 0;
 			wasClicked = false;
-			for (var i:int = 0; i < TOTAL_KEYCODES; i++) 
-				keyStates[i] = STATE_INACTIVE;
+			for (var i:int = 0; i < TOTAL_KEYCODES; i++)
+			{
+				if (keyStates[i] == STATE_PRESSED) keyStates[i] = STATE_LOCKED;
+				else if (keyStates[i] == STATE_RELEASED) keyStates[i] = STATE_UNLOCKED;
+			}
 		}
 		
 		public function isKeyDown(keyCode:uint):Boolean {
-			// return false if impossible key code was entered
+			// return false if an invalid key code was entered
 			if (keyCode > TOTAL_KEYCODES) return false;
-			return (keyPressStates[keyCode]);
+			return keyStates[keyCode] != STATE_UNLOCKED;;
 		}
 		
 		/**
@@ -86,63 +80,24 @@ package dreamwisp.input {
 		}
 		
 		/**
-		 * Returns a list of keys that were released this cycle.
+		 * Returns a keyCode released in this cycle; in multi-release situations no precedence assured.
+		 * Returns a -1 if there were no keys released.
 		 */
-		public function getKeysReleased():Vector.<uint> {
-			var tempKeyList:Vector.<uint> = new Vector.<uint>;
-			for each (var keyCode:uint in keysReleased) {
-				tempKeyList.push(keyCode);
+		public function lastKeyReleased():int
+		{
+			for (var i:int = 0; i < TOTAL_KEYCODES; i++)
+			{
+				const keyState:uint = keyStates[i];
+				if (keyState == STATE_RELEASED)
+					return i;
 			}
-			return tempKeyList;
-		}
-		
-		public function get isMousePressed():Boolean { return _isMousePressed; }
-		
-		public function set isMousePressed(value:Boolean):void { _isMousePressed = value; }
-		
-		public function get mouseX():int { return _mouseX; }
-		
-		public function set mouseX(value:int):void { _mouseX = value; }
-		
-		public function get mouseY():int { return _mouseY; }
-		
-		public function set mouseY(value:int):void { _mouseY = value; }
-		
-		public function get keyPressStates():Vector.<Boolean> {
-			return _keyPressStates;
-		}
-		
-		public function set keyPressStates(value:Vector.<Boolean>):void {
-			_keyPressStates = value;
-		}
-		
-		private function setKeyState(keyCode:uint, state:Boolean):void {
-			lastKeySet = keyCode;
-			keyPressStates[keyCode] = state;
-			if (state == true)
-				_keysPressed.push(keyCode);
-			else {
-				_keysPressed.splice( _keysPressed.indexOf(keyCode), 1 );
-				keysReleased.push( keyCode );
-			}
+			return -1;
 		}
 		
 		private function registerKeyboard(e:KeyboardEvent):void {
-			/*// Ensures that only one input change is allowed per update
-			if (canReadInput || lastKeySet != e.keyCode)
-				setKeyState(e.keyCode, (e.type == KeyboardEvent.KEY_DOWN) );
-			// releasing a key is always registered; without this, there are
-			// rare cases where the release event happens just after a press event
-			// in the same cycle, making canReadInput false. Now, the result is that
-			// at extremely low framerates, the press event does not register, something
-			// which is preferable to the original scenario.
-			if (e.type == KeyboardEvent.KEY_UP) setKeyState(e.keyCode, false);
-			canReadInput = false;*/
-			
-			// post refactoring - use keyStates
-			if (e.type == KeyboardEvent.KEY_DOWN)
+			if (e.type == KeyboardEvent.KEY_DOWN && keyStates[e.keyCode] == STATE_UNLOCKED)
 				keyStates[e.keyCode] = STATE_PRESSED;
-			else
+			else if (e.type == KeyboardEvent.KEY_UP)
 				keyStates[e.keyCode] = STATE_RELEASED;
 		}
 		

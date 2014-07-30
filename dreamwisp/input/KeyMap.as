@@ -19,8 +19,8 @@ package dreamwisp.input {
 		/// The String-KeyBind map for label-based access to keyBinds
 		private var keyLegend:Object = new Object();
 		
-		public static const KEY_PRESSED:Boolean = true;
-		public static const KEY_RELEASED:Boolean = false;
+		private static const KEY_PRESSED:Boolean = true;
+		private static const KEY_RELEASED:Boolean = false;
 		
 		public function bind(keyCodeData:Object, pressActions:Object = null, releaseActions:Object = null, label:String = null):void {
 			// unbind the keyCode(s) if previously binded
@@ -179,48 +179,21 @@ package dreamwisp.input {
 			keySequences.push( new KeySequence(keys, action, delay) );
 		}
 		
-		private var prevKeyList:Vector.<Boolean> = new Vector.<Boolean>(InputState.TOTAL_KEYCODES + 1, true);
-		
 		/**
 		 * Mimics key event behavior by reading the key states from an inputState.
 		 * @param	inputState
 		 */
 		public function readInput(inputState:InputState):void {
-			//TODO: seek only the keys needed from the list of keyPresStates
-			
-			/*var i:uint = 0;
-			
-			// compare the current list to the prev list; any differences cause a key event
-			for (i = 0; i < inputState.keyPressStates.length; i++) {
-				// key is same as before? no change
-				if (prevKeyList[i] == inputState.keyPressStates[i])
-					continue;
-				// current key is now pressed down (TRUE)
-				if (prevKeyList[i] == false) {
-					
-					pressKey(i);
-				}
-				// current key is now released (FALSE) 
-				else {
-					//MonsterDebugger.trace(this, i + " " + prevKeyList);
-					releaseKey(i);
-				}
-			}
-			
-			// store a list of the key states to be compared with in the future cycle
-			for (i = 0; i < inputState.keyPressStates.length; i++) {
-				prevKeyList[i] = inputState.keyPressStates[i];
-			}*/
-			
-			// post refactoring
 			for each (var keyBind:KeyBind in bindings) 
 			{
 				for each (var keyCode:uint in keyBind.getKeyCodes()) 
-				{
+				{	
 					if (inputState.wasKeyPressed(keyCode))
 						pressKey(keyCode);
 					else if (inputState.wasKeyReleased(keyCode))
 						releaseKey(keyCode);
+					else
+						keyBind.isDown = inputState.isKeyDown(keyCode);
 				}
 			}
 		}
