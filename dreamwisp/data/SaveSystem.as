@@ -16,20 +16,38 @@ package dreamwisp.data
 		
 		public function SaveSystem(uniqueLabel:String)
 		{
-			saveFileName = uniqueLabel + "_s";
+			saveFileName = uniqueLabel;
+			sharedObj = SharedObject.getLocal(saveFileName);
 		}
 		
-		public function save(saveData:*, slotNum:uint = 0):void
+		public function saveData(dataName:String, data:*, slotNum:uint = 0):void 
 		{
-			sharedObj = SharedObject.getLocal(saveFileName + slotNum);
-			sharedObj.data.saveData = saveData;
+			sharedObj = SharedObject.getLocal(saveFileName);
+			if (sharedObj.data["s" + slotNum] == null)
+				sharedObj.data["s" + slotNum] = new Object();
+			sharedObj.data["s" + slotNum][dataName] = data;
 			sharedObj.close();
 		}
 		
-		public function retrieve(slotNum:uint = 0):Object
+		public function saveOptions(dataName:String, data:*):void 
 		{
-			sharedObj = SharedObject.getLocal(saveFileName + slotNum);
-			return sharedObj.data.saveData;
+			sharedObj = SharedObject.getLocal(saveFileName);
+			if (sharedObj.data.options == null)
+				sharedObj.data.options = new Object();
+			sharedObj.data.options[dataName] = data;
+			sharedObj.close();
+		}
+		
+		public function retrieveData(dataName:String, slotNum:uint = 0):*
+		{
+			sharedObj = SharedObject.getLocal(saveFileName);
+			return sharedObj.data["s" + slotNum][dataName];
+		}
+		
+		public function retrieveOptions():Object
+		{
+			sharedObj = SharedObject.getLocal(saveFileName);
+			return sharedObj.data.options;
 		}
 		
 		public function erase(slotNum:uint = 0):void

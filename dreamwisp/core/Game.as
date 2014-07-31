@@ -12,11 +12,10 @@
 				
 		public var sprite:Sprite;
 		public var world:Location;
+		public var screenManager:ScreenManager;
+		public var saveSystem:SaveSystem;
 		
 		protected var inputState:InputState;
-		protected var saveSystem:SaveSystem;
-		
-		public var screenManager:ScreenManager;
 								
 		public function Game(stage:Stage = null) {
 			Data.prepare();
