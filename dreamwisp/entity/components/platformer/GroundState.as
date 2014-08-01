@@ -9,21 +9,16 @@ package dreamwisp.entity.components.platformer
 	 * @author Brandon
 	 */
 	
-	public class GroundState implements IPlatformMovementState
+	public class GroundState extends PlatformState
 	{
-		private var platformPhysics:PlatformPhysics;
-		private var host:Entity;
 		private var lastTile:Tile;
 		
-		public function GroundState(platformController:PlatformPhysics, host:Entity)
+		public function GroundState(platformPhysics:PlatformPhysics, host:Entity)
 		{
-			this.platformPhysics = platformController;
-			this.host = host;
+			super(platformPhysics, host);
 		}
-		
-		/* INTERFACE dreamwisp.state.platform.IPlatformMovementState */
-		
-		public function update():void
+				
+		override public function update():void
 		{
 			var tileUnderFoot:Tile = platformPhysics.primaryFoot();
 			if (tileUnderFoot.isSolidUp())
@@ -39,7 +34,7 @@ package dreamwisp.entity.components.platformer
 			}
 		}
 		
-		public function moveLeft():void
+		override public function moveLeft():void
 		{
 			// walk left
 			platformPhysics.isWalking = true;
@@ -54,7 +49,7 @@ package dreamwisp.entity.components.platformer
 			}
 		}
 		
-		public function moveRight():void
+		override public function moveRight():void
 		{
 			// walk right
 			platformPhysics.isWalking = true;
@@ -70,7 +65,7 @@ package dreamwisp.entity.components.platformer
 		
 		}
 		
-		public function moveUp():void
+		override public function moveUp():void
 		{
 			// check for ladder
 			//if (platformPhysics.above.type == "ladder" && platformPhysics.centerTile().type == "ladder") {
@@ -79,7 +74,7 @@ package dreamwisp.entity.components.platformer
 			//}
 		}
 		
-		public function moveDown():void
+		override public function moveDown():void
 		{
 			// check for ladder
 			//if (platformPhysics.below.type == "ladder" && platformPhysics.centerTile().type == "ladder") {
@@ -88,35 +83,15 @@ package dreamwisp.entity.components.platformer
 			//}
 		}
 		
-		public function jump():void
+		override public function jump():void
 		{
 			lastTile = Tile.NIL;
 		}
 		
-		public function enter():void
+		override public function enter():void
 		{
 			// reset jumps
 			platformPhysics.jumpsMade = 0;
-		}
-		
-		public function collideLeft():void
-		{
-		
-		}
-		
-		public function collideRight():void
-		{
-		
-		}
-		
-		public function collideTop():void
-		{
-		
-		}
-		
-		public function collideBottom():void
-		{
-		
 		}
 	
 	}

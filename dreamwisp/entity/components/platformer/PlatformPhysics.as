@@ -1,15 +1,12 @@
 package dreamwisp.entity.components.platformer 
 {
-	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.Physics;
-	import dreamwisp.entity.components.platformer.IPlatformMovementState;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.world.tile.Tile;
 	import dreamwisp.world.tile.TileScape;
 	import org.osflash.signals.Signal;
 	import statemachine.StateMachine;
-	import statemachine.StateMachineEvent;
 	import tools.Belt;
 	/**
 	 * ...
@@ -39,16 +36,16 @@ package dreamwisp.entity.components.platformer
 		internal var jumpsMade:uint = 0;
 		internal var jumpsAllowed:uint = 1;
 		/**
-		 * No parameters, must return boolean
+		 * No params, must return boolean
 		 */
 		public var canJump:Function;
 		
 		private var movementSM:StateMachine;
-		internal var currentState:IPlatformMovementState;
-		internal var groundState:IPlatformMovementState;
-		internal var ladderState:IPlatformMovementState;
-		internal var fallState:IPlatformMovementState;
-		internal var riseState:IPlatformMovementState;
+		internal var currentState:PlatformState;
+		internal var groundState:PlatformState;
+		internal var ladderState:PlatformState;
+		internal var fallState:PlatformState;
+		internal var riseState:PlatformState;
 		
 		public var jumped:Signal;
 		public var collidedTile:Signal;

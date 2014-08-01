@@ -8,36 +8,21 @@ package dreamwisp.entity.components.platformer
 	 * @author Brandon
 	 */
 	
-	public class LadderState implements IPlatformMovementState
+	public class LadderState extends PlatformState
 	{
-		private var platformPhysics:PlatformPhysics;
-		private var host:Entity;
 		private var climbSpeed:uint = 4;
 		
-		public function LadderState(platformController:PlatformPhysics, host:Entity)
+		public function LadderState(platformPhysics:PlatformPhysics, host:Entity)
 		{
-			this.platformPhysics = platformController;
-			this.host = host;
+			super(platformPhysics, host);
 		}
-		
-		/* INTERFACE dreamwisp.state.platform.IPlatformMovementState */
-		
-		public function update():void
+				
+		override public function update():void
 		{
 			host.physics.velocityY = 0;
 		}
 		
-		public function moveLeft():void
-		{
-			// do nothing
-		}
-		
-		public function moveRight():void
-		{
-			// do nothing
-		}
-		
-		public function moveUp():void
+		override public function moveUp():void
 		{
 			if (platformPhysics.topMidTile().type != "ladder")
 			{
@@ -55,41 +40,20 @@ package dreamwisp.entity.components.platformer
 			host.physics.velocityY = -climbSpeed;
 		}
 		
-		public function moveDown():void
+		override public function moveDown():void
 		{
 			if (platformPhysics.centerTile().type != "ladder")
 				return;
 			host.physics.velocityY = climbSpeed;
 		}
 		
-		public function jump():void
+		override public function jump():void
 		{
 			host.physics.velocityY = platformPhysics.jumpPower;
 			platformPhysics.changeState("riseState");
-			//MonsterDebugger.trace(this, "JUMP!");
 		}
 		
-		public function enter():void
-		{
-		
-		}
-		
-		public function collideLeft():void
-		{
-		
-		}
-		
-		public function collideRight():void
-		{
-		
-		}
-		
-		public function collideTop():void
-		{
-		
-		}
-		
-		public function collideBottom():void
+		override public function collideBottom():void
 		{
 			// reaching bottom of the ladder, transition to ground state
 			MonsterDebugger.trace(this, "hit ground from ladder");
