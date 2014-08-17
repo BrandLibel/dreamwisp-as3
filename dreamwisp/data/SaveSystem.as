@@ -18,6 +18,8 @@ package dreamwisp.data
 		{
 			saveFileName = uniqueLabel;
 			sharedObj = SharedObject.getLocal(saveFileName);
+			if (sharedObj.data["s0"] == null)
+				sharedObj.data["s0"] = new Object();
 		}
 		
 		public function saveData(dataName:String, data:*, slotNum:uint = 0):void 
@@ -41,7 +43,7 @@ package dreamwisp.data
 		public function retrieveData(dataName:String, slotNum:uint = 0):*
 		{
 			sharedObj = SharedObject.getLocal(saveFileName);
-			return sharedObj.data["s" + slotNum][dataName];
+			return sharedObj.data["s" + slotNum][dataName] || null;
 		}
 		
 		public function retrieveOptions():Object
