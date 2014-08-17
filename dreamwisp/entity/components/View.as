@@ -91,6 +91,23 @@ package dreamwisp.entity.components
 			return (currentTint[0] != 1 && currentTint[1] != 1 && currentTint[2] != 1);
 		}
 		
+		/**
+		 * Count number of frames in a certain label
+		 */
+		public function countFrames(frameLabel:String):uint
+		{
+			var numFrames:uint = 0;
+			const originalFrame:uint = movieClip.currentFrame;
+			movieClip.gotoAndStop(frameLabel);
+			while (movieClip.currentLabel == frameLabel)
+			{
+				numFrames++;
+				movieClip.nextFrame();
+			}
+			movieClip.gotoAndStop(originalFrame);
+			return numFrames;
+		}
+		
 		public function get alpha():Number { return displayObject.alpha; }
 		
 		public function set alpha(value:Number):void { displayObject.alpha = value; }
