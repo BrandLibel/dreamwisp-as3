@@ -3,7 +3,6 @@
 	import dreamwisp.data.SaveSystem;
 	import dreamwisp.input.InputState;
 	import dreamwisp.visual.ContainerView;
-	import dreamwisp.world.base.Location;
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.utils.getTimer;
@@ -11,7 +10,6 @@
 	public dynamic class Game {
 				
 		public var sprite:Sprite;
-		public var world:Location;
 		public var screenManager:ScreenManager;
 		public var saveSystem:SaveSystem;
 		

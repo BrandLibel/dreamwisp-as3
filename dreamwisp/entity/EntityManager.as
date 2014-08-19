@@ -1,4 +1,4 @@
-package dreamwisp.world.base {
+package dreamwisp.entity {
 	
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.hosts.Door;

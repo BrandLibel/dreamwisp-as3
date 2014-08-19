@@ -1,7 +1,6 @@
 package dreamwisp.entity.hosts
 {
 	import dreamwisp.core.GameScreen;
-	import dreamwisp.entity.components.Actor;
 	import dreamwisp.entity.components.Animation;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.Health;
@@ -10,8 +9,7 @@ package dreamwisp.entity.hosts
 	import dreamwisp.entity.components.Weapon;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.lighting.LightSource;
-	import dreamwisp.world.base.EntityManager;
-	import dreamwisp.world.base.Location;
+	import dreamwisp.entity.EntityManager;
 	import flash.utils.getDefinitionByName;
 	import org.osflash.signals.Signal;
 	import tools.Belt;
@@ -26,7 +24,6 @@ package dreamwisp.entity.hosts
 		private var _name:String;
 		public var actorID:uint;
 		
-		private var _actor:Actor;
 		private var _body:Body;
 		private var _health:Health;
 		private var _weapon:Weapon;
@@ -42,7 +39,6 @@ package dreamwisp.entity.hosts
 		private var _enabledInput:Signal;
 		
 		public var bounds:SwiftRectangle;
-		private var _myLocation:Location;
 		private var _entityManager:EntityManager;
 		private var _gameScreen:GameScreen;
 		
@@ -122,10 +118,6 @@ package dreamwisp.entity.hosts
 			return false;
 		}
 		
-		public function get actor():Actor { return _actor; }
-		
-		public function set actor(value:Actor):void { _actor = value; }
-						
 		public function get physics():Physics { return _physics; }
 		
 		public function set physics(value:Physics):void { _physics = value; }
@@ -161,13 +153,6 @@ package dreamwisp.entity.hosts
 		public function get entityManager():EntityManager { return _entityManager; }
 		
 		public function set entityManager(value:EntityManager):void { _entityManager = value; }
-		
-		public function get myLocation():Location { return _myLocation; }
-		
-		public function set myLocation(value:Location):void {
-			// entity has switched locations...
-			_myLocation = value;
-		}
 		
 		public function get leftBounds():Signal { return _leftBounds; }
 		

@@ -79,7 +79,7 @@ package dreamwisp.entity.components {
 		 * x position in relation to the stage origin.
 		 */
 		public function get globalX():Number {
-			return x + host.myLocation.rect.left;
+			return x /*+ host.myLocation.rect.left*/;
 		}
 		
 		/**
@@ -88,7 +88,7 @@ package dreamwisp.entity.components {
 		 * y position in relation to the stage origin.
 		 */
 		public function get globalY():Number {
-			return y + host.myLocation.rect.top;
+			return y /*+ host.myLocation.rect.top*/;
 		}
 		
 		/**

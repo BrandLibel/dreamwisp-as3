@@ -1,6 +1,5 @@
 package dreamwisp.entity.hosts {
 	
-	import dreamwisp.entity.components.Actor;
 	import dreamwisp.entity.components.Animation;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.Health;
@@ -8,8 +7,7 @@ package dreamwisp.entity.hosts {
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.components.Weapon;
 	import dreamwisp.visual.lighting.LightSource;
-	import dreamwisp.world.base.EntityManager;
-	import dreamwisp.world.base.Location;
+	import dreamwisp.entity.EntityManager;
 	import org.osflash.signals.Signal;
 	
 	
@@ -21,8 +19,6 @@ package dreamwisp.entity.hosts {
 		function render(interpolation:Number):void;
 		
 		// Components
-		function get actor():Actor;
-        function set actor(value:Actor):void;
         function get physics():Physics;
         function set physics(value:Physics):void;
 		function get body():Body;
@@ -49,9 +45,6 @@ package dreamwisp.entity.hosts {
 		// Dependencies
 		function get entityManager():EntityManager;
 		function set entityManager(value:EntityManager):void;
-		function get myLocation():Location;
-		function set myLocation(value:Location):void;
-		
 		
 	}
 	

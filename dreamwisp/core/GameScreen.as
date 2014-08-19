@@ -10,7 +10,7 @@ package dreamwisp.core {
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.visual.camera.ICamUser;
 	import dreamwisp.visual.ContainerView;
-	import dreamwisp.world.base.EntityManager;
+	import dreamwisp.entity.EntityManager;
 	
 	/**
 	 * ...
