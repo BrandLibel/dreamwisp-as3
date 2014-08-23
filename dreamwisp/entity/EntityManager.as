@@ -1,7 +1,7 @@
 package dreamwisp.entity {
 	
 	import com.demonsters.debugger.MonsterDebugger;
-	import dreamwisp.entity.hosts.Door;
+	import project.entity.hosts.Door;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.entity.hosts.IEntityFactory;
 	import dreamwisp.entity.hosts.IPlayerControllable;

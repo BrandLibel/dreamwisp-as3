@@ -43,7 +43,7 @@ package dreamwisp.entity.components
 		{
 			host = entity;
 			this.displayObject = displayObject;
-			colorTransform = displayObject.transform.colorTransform;
+			//colorTransform = displayObject.transform.colorTransform;
 		}
 		
 		public function render(interpolation:Number):void
@@ -74,6 +74,7 @@ package dreamwisp.entity.components
 		{
 			currentTint = colors;
 
+			colorTransform = displayObject.transform.colorTransform;
 			colorTransform.redMultiplier = colors[0];
 			colorTransform.greenMultiplier = colors[1];
 			colorTransform.blueMultiplier = colors[2];
@@ -124,8 +125,8 @@ package dreamwisp.entity.components
 		
 		public function get displayObject():DisplayObject 
 		{
-			if (colorTransform)
-				_displayObject.transform.colorTransform = colorTransform;
+			//if (colorTransform != null)
+				//_displayObject.transform.colorTransform = colorTransform;
 			return _displayObject;
 		}
 		
