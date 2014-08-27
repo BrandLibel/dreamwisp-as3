@@ -317,7 +317,6 @@ package dreamwisp.world.tile
 				}
 			);
 			canvasData.dispose();
-			//MonsterDebugger.trace(canvasData, "mem: " + System.freeMemory);
 		}
 		
 		public function width():uint

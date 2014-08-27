@@ -88,7 +88,6 @@ package dreamwisp.world.tile
 			
 			bitmap = new Bitmap();
 			bitmap.bitmapData = new BitmapData(tileWidth, tileHeight, true, 0);
-			//MonsterDebugger.trace(this, "allocated bitmapData", "", "", 0xD55EBF);
 			view = new View(this, bitmap);
 			
 			body = new Body(this, tileWidth, tileHeight);
