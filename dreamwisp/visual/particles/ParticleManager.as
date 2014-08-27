@@ -172,6 +172,11 @@ package dreamwisp.visual.particles
 			return ((r << 16) | (g << 8) | b);
 		}
 		
+		public static function purge():void 
+		{
+			bitmapData.dispose();
+		}
+		
 	}
 
 }

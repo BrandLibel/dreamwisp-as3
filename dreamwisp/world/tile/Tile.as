@@ -80,7 +80,6 @@ package dreamwisp.world.tile
 				this.spriteSheet = tileScape.spriteSheet;
 				this.tileWidth = tileScape.tileWidth;
 				this.tileHeight = tileScape.tileHeight;
-				destroyed = new Signal(Tile);
 			}
 			
 			this.tileRect = new Rectangle(0, 0, tileWidth, tileHeight);
@@ -89,6 +88,7 @@ package dreamwisp.world.tile
 			
 			bitmap = new Bitmap();
 			bitmap.bitmapData = new BitmapData(tileWidth, tileHeight, true, 0);
+			//MonsterDebugger.trace(this, "allocated bitmapData", "", "", 0xD55EBF);
 			view = new View(this, bitmap);
 			
 			body = new Body(this, tileWidth, tileHeight);
@@ -276,18 +276,6 @@ package dreamwisp.world.tile
 			isOccupied = true;
 		}
 		
-		public final function hit(damage:int = 1):void
-		{
-			if (!this.hasOwnProperty("hits")) return;
-			this["hits"] -= damage;// hits--;
-			//TODO change visual appearance of damaged tile
-			if (this["hits"] <= 0)
-			{
-				//TODO remove tile.
-				destroyed.dispatch(this);
-			}
-		}
-		
 		public function bitmapData():BitmapData { return bitmap.bitmapData; }
 		
 		/**
@@ -352,6 +340,12 @@ package dreamwisp.world.tile
 		public function isEmpty():Boolean
 		{
 			return isNIL;
+		}
+		
+		override public function destroy():void 
+		{
+			// destroyed.dispatch() doesn't apply to Tiles; it needs only this:
+			bitmap.bitmapData.dispose();
 		}
 		
 	}

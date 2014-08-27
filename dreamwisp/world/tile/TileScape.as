@@ -1,5 +1,6 @@
 package dreamwisp.world.tile
 {
+	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.core.GameScreen;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.SpriteSheet;
@@ -7,6 +8,7 @@ package dreamwisp.world.tile
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.system.System;
 	
 	/**
 	 * ...
@@ -315,6 +317,7 @@ package dreamwisp.world.tile
 				}
 			);
 			canvasData.dispose();
+			//MonsterDebugger.trace(canvasData, "mem: " + System.freeMemory);
 		}
 		
 		public function width():uint
