@@ -129,10 +129,10 @@ package dreamwisp.core {
 			
 			// preventing duplicates from entering the list
 			if (screens.indexOf(screen) == -1) {
+				// add view before enter is to allow view.stage access
+				game.addContainerView(screen.view);
 				screen.enter();
 				screens.push(screen);
-				// only add displayObject to screen if needed
-				game.addContainerView(screen.view);
 			}
 		}
 		
