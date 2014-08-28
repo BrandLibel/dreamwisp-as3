@@ -234,17 +234,12 @@ package dreamwisp.world.tile
 				return;
 			
 			const bitmapData:BitmapData = bitmap.bitmapData;
-			
-			
-			// try-catch is to stop from drawing on a disposed bitmap 
-			try {
-				tileScape.getCanvas().bitmapData.copyPixels(bitmapData, tileRect, new Point(point.x + xOffset, point.y + yOffset), null, null, true);
-			}
-			catch (aError:ArgumentError) {
-				
-			}
-			
-			
+			// using the same point to avoid object construction & allocation
+			point.x += xOffset;
+			point.y += yOffset;
+			tileScape.getCanvas().bitmapData.copyPixels(bitmapData, tileRect, point, null, null, true);			
+			point.x -= xOffset;
+			point.y -= yOffset;
 		}
 		
 		private function erase():void
