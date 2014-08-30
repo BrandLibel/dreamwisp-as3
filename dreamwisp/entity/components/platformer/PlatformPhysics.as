@@ -224,26 +224,26 @@ package dreamwisp.entity.components.platformer
 			}
 		}
 		
-		private function collideLeft(tileToCollide:Tile):void
+		/// Hit a wall to the left
+		protected function collideLeft(tile:Tile):void
 		{
 			if (isOnSlope)
 				return;
-			// hit a wall to the left
 			body.x = (leftEdge() + 1) * tileWidth;
 			velocityX = 0;
 			currentState.collideLeft();
-			collidedTile.dispatch(tileToCollide);
+			collidedTile.dispatch(tile);
 		}
 		
-		private function collideRight(tileToCollide:Tile):void 
+		/// Hit a wall to the right
+		protected function collideRight(tile:Tile):void 
 		{
 			if (isOnSlope)
 				return;
-			// hit a wall to the right
 			body.x = rightEdge() * tileWidth - body.width;
 			velocityX = 0;
 			currentState.collideRight();
-			collidedTile.dispatch(tileToCollide);
+			collidedTile.dispatch(tile);
 		}
 		
 		internal var isOnSlope:Boolean = false;
@@ -351,22 +351,22 @@ package dreamwisp.entity.components.platformer
 			prevRow = bottomEdge();
 		}
 		
-		private function collideTop(tileToCollide:Tile):void
+		/// Hit the ceiling
+		protected function collideTop(tile:Tile):void
 		{
-			// hit the ceiling
 			body.y = bottomEdge() * tileHeight + 1;
 			velocityY = 0;
 			currentState.collideTop();
-			collidedTile.dispatch(tileToCollide);
+			collidedTile.dispatch(tile);
 		}
 		
-		private function collideBottom(tileToCollide:Tile):void 
+		/// Hit the floor
+		protected function collideBottom(tile:Tile):void 
 		{
-			// hit the floor
 			body.y = bottomEdge() * tileHeight-body.height;
 			velocityY = 0;
 			currentState.collideBottom();
-			collidedTile.dispatch(tileToCollide);
+			collidedTile.dispatch(tile);
 		}
 		
 		public function jump():void 
