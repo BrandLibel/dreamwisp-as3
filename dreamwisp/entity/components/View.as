@@ -70,9 +70,11 @@ package dreamwisp.entity.components
 		 * Alters the tinting of this view
 		 * @param	colors red, green, and blue multiplier (0 - 1) values
 		 */
-		public function applyTint(colors:Array):void 
+		public function applyTint(colors:Array, displayObject:DisplayObject = null):void 
 		{
 			currentTint = colors;
+			
+			if (displayObject == null) displayObject = this.displayObject;
 
 			colorTransform = displayObject.transform.colorTransform;
 			colorTransform.redMultiplier = colors[0];
