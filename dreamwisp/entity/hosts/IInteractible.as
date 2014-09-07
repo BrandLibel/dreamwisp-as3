@@ -4,7 +4,7 @@ package dreamwisp.entity.hosts {
 	 * ...
 	 * @author Brandon
 	 */
-	public interface IInteractible {
+	public interface IInteractible extends IEntity {
 		
 		/**
 		 * 
