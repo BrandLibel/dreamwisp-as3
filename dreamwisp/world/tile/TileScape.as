@@ -33,11 +33,11 @@ package dreamwisp.world.tile
 		private var rect:Rectangle;
 		
 		/// JSON object containing all tile blueprints
-		private var tileList:Object;
+		protected var tileList:Array;
 		/// PNG spritesheet of all tiles
 		private var tileSheet:BitmapData;
 		internal var spriteSheet:SpriteSheet;
-		protected var tileData:Array;
+		
 		
 		public var gameScreen:GameScreen;
 		
@@ -92,7 +92,7 @@ package dreamwisp.world.tile
 			
 			// store the list of tile data
 			if (tiles.hasOwnProperty("tiles"))
-				tileData = tiles.tiles;
+				tileList = tiles.tiles;
 			else
 				throw new Error("The Tiles.json data file is missing the 'tiles' section!");
 		}
@@ -344,7 +344,7 @@ package dreamwisp.world.tile
 		{
 			if (tileNum == 0)
 				return Tile.NIL;
-			const blueprint:Object = tileData[tileNum];
+			const blueprint:Object = tileList[tileNum];
 			return new Tile(blueprint, this);
 		}
 		
