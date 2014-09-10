@@ -19,12 +19,10 @@ package dreamwisp.world.tile
 	
 	public class Tile extends Entity
 	{
-		private var tilePresets:Object;
-		
 		private static const ORIGIN:Point = new Point();
 		private var tileRect:Rectangle;
-		
-		private static const TYPE_AIR:String = "air";
+		public static const NIL:Tile = new Tile(null, null);
+		private var isNIL:Boolean = false;
 		
 		protected var tileScape:TileScape;
 		
@@ -39,9 +37,6 @@ package dreamwisp.world.tile
 		protected var solid:Object;
 		/// Object similar to solid but determines kill directions
 		private var kills:Object;
-		public var acceleration:Number;
-		public var friction:Number;
-		public var bonusSpeed:Number;
 		
 		public var isOpaque:Boolean = false;
 		protected var isOccupied:Boolean = false;
@@ -50,30 +45,20 @@ package dreamwisp.world.tile
 		private var bitmap:Bitmap;
 		/// Array of objects containing x, y, w, and h of bitmap in the spritesheet
 		private var frames:Array;
-	
-		private var ticks:uint = 0;
-		private var currentFrame:uint = 1;
-		/// The amount of game ticks it takes to equal one currentFrame change
-		private var rateOfAnimation:uint;
 		private var spriteSheet:SpriteSheet;
+		
 		protected var xOffset:int = 0;
 		protected var yOffset:int = 0;
 		protected var alpha:Number = 1;
 		
-		public static const NIL:Tile = new Tile(null, null, null);
-		private var isNIL:Boolean = false;
-		
 		/**
 		 * 
 		 * @param	blueprint The properties to create this tile with.
-		 * @param	tilePresets A list of common tile properties that can be combined.
 		 * @param	tileSheet The PNG image containing all tile graphics.
 		 */
-		public function Tile(blueprint:Object, tilePresets:Object, tileScape:TileScape)
+		public function Tile(blueprint:Object, tileScape:TileScape)
 		{
-			isNIL = (blueprint == null && tilePresets == null && tileScape == null);
-			
-			this.tilePresets = tilePresets;
+			isNIL = (blueprint == null && tileScape == null);
 			
 			if (tileScape != null)
 			{
@@ -83,7 +68,6 @@ package dreamwisp.world.tile
 			}
 			
 			this.tileRect = new Rectangle(0, 0, tileWidth, tileHeight);
-			
 			this.tileScape = tileScape;
 			
 			bitmap = new Bitmap();
@@ -93,58 +77,38 @@ package dreamwisp.world.tile
 			body = new Body(this, tileWidth, tileHeight);
 			point = new Point();
 			
-			// TODO: create tile maps, a 1d array containing list of all surrounding tiles NW, N, NE, W, E, SW, S, SE
+			solid = new Object();
+			solid.up = false;
+			solid.left = false;
+			solid.down = false;
+			solid.right = false;
+			kills = new Object();
+			kills.up = false;
+			kills.left = false;
+			kills.down = false;
+			kills.right = false;
 			if (blueprint)
 				init(blueprint);
-			else
-			{
-				solid = new Object();
-				solid.up = false;
-				solid.left = false;
-				solid.down = false;
-				solid.right = false;
-				kills = new Object();
-				kills.up = false;
-				kills.left = false;
-				kills.down = false;
-				kills.right = false;
-			}
 		}
 		
 		private function init(blueprint:Object):void
 		{
-			if (blueprint.presets) unpack(blueprint.presets);
+			if (blueprint.guid) id = blueprint.guid;
+			if (blueprint.name) name = type = blueprint.name;
 			
-			// unique tile properties, if specified in the blueprint, which override the presets
-			id = blueprint.guid;
 			if (blueprint.solid)
 			{
-				solid = new Object();
 				solid.up = blueprint.solid.up;
 				solid.left = blueprint.solid.left;
 				solid.down = blueprint.solid.down;
 				solid.right = blueprint.solid.right;
 			}
 			if (blueprint.kills)
-				kills = blueprint.kills;
-			else
 			{
-				kills = new Object();
-				kills.up = false;
-				kills.left = false;
-				kills.down = false;
-				kills.right = false;
-			}
-			if (blueprint.tileType)  type = blueprint.tileType;
-			
-			if (blueprint.hits) this["hits"] = blueprint.hits;
-			if (blueprint.frame) { // only a single frame
-				//frame = blueprint.frame
-			} else if (blueprint.frames){  // tile with multiple frames for animation
-				rateOfAnimation = blueprint.rateOfAnimation;
-				//currentFrame = (blueprint.startOnFrame == 0) : blueprint.startOnFrame;
-				frames = new Array()
-				frames = blueprint.frames.concat();
+				kills.up = blueprint.kills.up;
+				kills.left = blueprint.kills.left;
+				kills.down = blueprint.kills.down;
+				kills.right = blueprint.kills.right;
 			}
 			setStartPixels();
 		}
@@ -184,47 +148,9 @@ package dreamwisp.world.tile
 			
 			bitmapData.unlock();
 		}
-
-		/**
-		 * 
-		 * @param	presets The preset names listed in this tile's blueprint.
-		 */
-		private function unpack(presets:Array):void
-		{
-			if (presets.length == 1)
-			{
-				// dealing with a single preset
-				const presetName:String = presets[0];
-				type = presetName;
-				const presetObject:Object = tilePresets[presetName];
-				// copying all properties from the preset
-				for (var name:String in presetObject)
-				{
-					if (this.hasOwnProperty(name))
-						this[name] = presetObject[name];
-				}
-			}
-			else
-			{
-				// for more than one tile preset, manage priorities and overwrites
-				
-				/*for (var name:String in ) {
-					
-				}*/
-			}
-		}
 		
 		override public function update():void
-		{
-			ticks++;
-			if (ticks == rateOfAnimation)
-			{
-				ticks = 0;
-				currentFrame++;
-				
-				if (currentFrame > frames.length) currentFrame = 1;
-			}
-			
+		{	
 			isOccupied = false;
 		}
 
@@ -338,7 +264,7 @@ package dreamwisp.world.tile
 		
 		override public function destroy():void 
 		{
-			// destroyed.dispatch() doesn't apply to Tiles; it needs only this:
+			// destroyed.dispatch() doesn't apply to Tiles; we need only this:
 			bitmap.bitmapData.dispose();
 		}
 		
