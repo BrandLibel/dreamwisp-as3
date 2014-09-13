@@ -43,7 +43,10 @@ package dreamwisp.data
 		public function retrieveData(dataName:String, slotNum:uint = 0):*
 		{
 			sharedObj = SharedObject.getLocal(saveFileName);
-			return sharedObj.data["s" + slotNum][dataName] || null;
+			if (sharedObj.data.hasOwnProperty("s" + slotNum))
+				return sharedObj.data["s" + slotNum][dataName]
+			else
+				return null;
 		}
 		
 		public function retrieveOptions():Object
@@ -54,7 +57,7 @@ package dreamwisp.data
 		
 		public function erase(slotNum:uint = 0):void
 		{
-			sharedObj = SharedObject.getLocal(saveFileName + slotNum);
+			sharedObj = SharedObject.getLocal(saveFileName);
 			sharedObj.clear();
 			sharedObj.close();
 		}
