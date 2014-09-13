@@ -96,7 +96,7 @@ package dreamwisp.entity.components.platformer
 			movementSM.getStateByName("riseState").enter = eRise;
 		}
 		
-		internal function changeState(state:String):void 
+		public function changeState(state:String):void 
 		{
 			movementSM.changeState(state);
 			currentState = this[state];
@@ -180,6 +180,12 @@ package dreamwisp.entity.components.platformer
 			//body.y = prevY;
 		//}
 		
+		public var ignoresGhosts:Boolean = true;
+		protected function ignoresCollision(tile:Tile):Boolean
+		{
+			return (isOnSlope || (tile.isGhost() && ignoresGhosts) );
+		}
+		
 		/**
 		 * Applies net velocity to x-position while checking for collisions.
 		 * This should be used instead of directly setting body.x
@@ -188,6 +194,7 @@ package dreamwisp.entity.components.platformer
 		{
 			super.travelX();
 			var tileToCollide:Tile;
+			var tileThatKills:Tile;
 			// check collision to the right
 			if (velocityX > 0)
 			{
@@ -201,9 +208,17 @@ package dreamwisp.entity.components.platformer
 				
 				if (topRightTile().isSolidLeft() || bottomRightTile().isSolidLeft())
 					collideRight(tileToCollide);
-					
+				
+				// setting the tile to dispatch for killing the entity
+				if (topRightTile().killsLeft() && bottomRightTile().killsLeft())
+					tileThatKills = midRightTile();
+				else if (topRightTile().killsLeft())
+					tileThatKills = topRightTile();
+				else if (bottomRightTile().killsLeft())
+					tileThatKills = bottomRightTile();
+				
 				if (topRightTile().killsLeft() || bottomRightTile().killsLeft())
-					touchedKillerTile.dispatch();
+					touchKillerTile(tileThatKills);
 			}
 			// check collision to the left
 			else if (velocityX < 0)
@@ -218,16 +233,31 @@ package dreamwisp.entity.components.platformer
 				
 				if (topLeftTile().isSolidRight() || bottomLeftTile().isSolidRight())
 					collideLeft(tileToCollide);
+				
+				// setting the tile to dispatch for killing the entity
+				if (topLeftTile().killsRight() || bottomLeftTile().killsRight())
+					tileThatKills = midLeftTile();
+				else if (topLeftTile().killsRight())
+					tileThatKills = topLeftTile();
+				else if (bottomLeftTile().killsRight())
+					tileThatKills = bottomLeftTile();
 					
 				if (topLeftTile().killsRight() || bottomLeftTile().killsRight())
-					touchedKillerTile.dispatch();
+					touchKillerTile(tileThatKills);
 			}
+		}
+		
+		private function touchKillerTile(tile:Tile):void 
+		{
+			if (ignoresCollision(tile))
+				return;
+			touchedKillerTile.dispatch();
 		}
 		
 		/// Hit a wall to the left
 		protected function collideLeft(tile:Tile):void
 		{
-			if (isOnSlope)
+			if (isOnSlope || ignoresCollision(tile))
 				return;
 			body.x = (leftEdge() + 1) * tileWidth;
 			velocityX = 0;
@@ -238,66 +268,12 @@ package dreamwisp.entity.components.platformer
 		/// Hit a wall to the right
 		protected function collideRight(tile:Tile):void 
 		{
-			if (isOnSlope)
+			if (isOnSlope || ignoresCollision(tile))
 				return;
 			body.x = rightEdge() * tileWidth - body.width;
 			velocityX = 0;
 			currentState.collideRight();
 			collidedTile.dispatch(tile);
-		}
-		
-		internal var isOnSlope:Boolean = false;
-		private function collideSlope():void 
-		{
-			var tile:Tile = bottomMidTile();
-			
-			isOnSlope = false;
-			
-			if (currentState == fallState)
-			{
-				tile = centerTile();
-				setYOnSlope(tile);
-			}
-			else if (currentState == groundState)
-			{
-				tile = bottomMidTile();
-				setYOnSlope(tile);
-				tile = primaryFoot();				
-				setYOnSlope(tile);
-			}
-			
-			// Simulate regular collideBottom(). On the last frame of climbing up a slope /[]\ 
-			// the entity ends up horizontally clipped inside the solid tile []. 
-			// This happens because at this point it is reading the [] and no longer sees a tile,
-			// causing it to skip any kind of body.y adjustment until it proceeds to collision code.
-			// This solves the problem by doing a regular collision to the [] non slope tile.
-			if (!isOnSlope && currentState == groundState && tile.isSolidUp())
-				body.y = tile.y / tileHeight * tileHeight-body.height;
-		}
-		
-		private function setYOnSlope(tile:Tile):void 
-		{
-			if (!tile.isSlope())
-				return;
-			// Equation: y = mx + b
-			// m is slope direction (up or down)
-			// with (0, 0) in top left, up is negative
-			// x is entity distance from the tile's origin
-			// b is y intercept
-			var x:Number = body.centerX - tile.x;
-			var m:Number = (tile.type == "slope_up") ? -1 : 1;
-			var b:Number = (tile.type == "slope_up") ? tileHeight: 0;
-			b += tile.y - body.height;
-			body.y = (m * x) + b;
-			
-			// escape when stuck in ground
-			while (bottomMidTile().isSolidUp())
-				body.y--;
-			
-			isOnSlope = true;
-			
-			if (currentState != groundState)
-				changeState("groundState");
 		}
 		
 		/**
@@ -354,6 +330,8 @@ package dreamwisp.entity.components.platformer
 		/// Hit the ceiling
 		protected function collideTop(tile:Tile):void
 		{
+			if (ignoresCollision(tile))
+				return;
 			body.y = bottomEdge() * tileHeight + 1;
 			velocityY = 0;
 			currentState.collideTop();
@@ -363,10 +341,66 @@ package dreamwisp.entity.components.platformer
 		/// Hit the floor
 		protected function collideBottom(tile:Tile):void 
 		{
+			if (ignoresCollision(tile))
+				return;
 			body.y = bottomEdge() * tileHeight-body.height;
 			velocityY = 0;
 			currentState.collideBottom();
 			collidedTile.dispatch(tile);
+		}
+		
+		public var isOnSlope:Boolean = false;
+		private function collideSlope():void 
+		{
+			var tile:Tile = bottomMidTile();
+			
+			isOnSlope = false;
+			
+			if (currentState == fallState)
+			{
+				tile = centerTile();
+				setYOnSlope(tile);
+			}
+			else if (currentState == groundState)
+			{
+				tile = bottomMidTile();
+				setYOnSlope(tile);
+				tile = primaryFoot();				
+				setYOnSlope(tile);
+			}
+			
+			// Simulate regular collideBottom(). On the last frame of climbing up a slope /[]\ 
+			// the entity ends up horizontally clipped inside the solid tile []. 
+			// This happens because at this point it is reading the [] and no longer sees a tile,
+			// causing it to skip any kind of body.y adjustment until it proceeds to collision code.
+			// This solves the problem by doing a regular collision to the [] non slope tile.
+			if (!isOnSlope && currentState == groundState && tile.isSolidUp())
+				body.y = tile.y / tileHeight * tileHeight-body.height;
+		}
+		
+		private function setYOnSlope(tile:Tile):void 
+		{
+			if (!tile.isSlope())
+				return;
+			// Equation: y = mx + b
+			// m is slope direction (up or down)
+			// with (0, 0) in top left, up is negative
+			// x is entity distance from the tile's origin
+			// b is y intercept
+			var x:Number = body.centerX - tile.x;
+			var m:Number = (tile.type == "slope_up") ? -1 : 1;
+			var b:Number = (tile.type == "slope_up") ? tileHeight: 0;
+			b += tile.y - body.height;
+			body.y = (m * x) + b;
+			
+			// escape when stuck in ground
+			while (bottomMidTile().isSolidUp())
+				body.y--;
+			
+			isOnSlope = true;
+			
+			if (currentState != groundState)
+				changeState("groundState");
 		}
 		
 		public function jump():void 
@@ -400,14 +434,16 @@ package dreamwisp.entity.components.platformer
 		}
 		
 		/**
-		 * Returns true if this is completely covered in solid tiles.
+		 * Returns true if this is completely covered in solid, non-ghost tiles.
 		 */
 		public function isEncased():Boolean
 		{
-			return (topLeftTile().isCompleteSolid() 
-				&& topRightTile().isCompleteSolid()
-				&& bottomLeftTile().isCompleteSolid()
-				&& bottomRightTile().isCompleteSolid());
+			return (
+				topLeftTile().isCompleteSolid() && !ignoresCollision(topLeftTile()) &&
+				topRightTile().isCompleteSolid() && !ignoresCollision(topRightTile()) &&
+				bottomLeftTile().isCompleteSolid() && !ignoresCollision(bottomLeftTile()) &&
+				bottomRightTile().isCompleteSolid() && !ignoresCollision(bottomRightTile())
+			);
 		}
 		
 		public function isBlockedAbove():Boolean

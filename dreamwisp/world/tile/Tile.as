@@ -38,6 +38,7 @@ package dreamwisp.world.tile
 		/// Object similar to solid but determines kill directions
 		private var kills:Object;
 		
+		private var _isGhost:Boolean;
 		public var isOpaque:Boolean = false;
 		protected var isOccupied:Boolean = false;
 		
@@ -110,6 +111,7 @@ package dreamwisp.world.tile
 				kills.down = blueprint.kills.down;
 				kills.right = blueprint.kills.right;
 			}
+			_isGhost = blueprint.isGhost;
 			setStartPixels();
 		}
 		
@@ -182,6 +184,9 @@ package dreamwisp.world.tile
 		public function killsLeft():Boolean { return kills.left; }
 		public function killsRight():Boolean { return kills.right; }
 		public function killsDown():Boolean { return kills.down; }
+		
+		/// Whether or not PlatformPhysics ignores this Tile's isSolid or kills functions
+		public function isGhost():Boolean { return _isGhost; }
 		
 		public function isSlope():Boolean
 		{
