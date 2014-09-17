@@ -64,7 +64,7 @@ package dreamwisp.entity.components.platformer
 			
 			canJump = function():Boolean
 			{
-				if (isBlockedAbove())
+				if (isBlockedAbove() || currentState != groundState)
 					return false;
 				return hasJumpsRemaining(); 
 			};
