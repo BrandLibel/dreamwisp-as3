@@ -52,15 +52,14 @@ package dreamwisp.audio
 		
 		private static function setCurrentMusic(music:Music):void 
 		{
-			if (muteMusic) return;
 			currentMusic = music;
+			if (muteMusic) return;
 			music.play();
 		}
 		
 		private static function playNextMusic():void 
 		{
 			currentMusic.purge();
-			stop();
 			setCurrentMusic(pendingMusic);
 		}
 		
@@ -72,10 +71,11 @@ package dreamwisp.audio
 		public static function toggleMuteMusic():void 
 		{
 			muteMusic = !muteMusic;
-			stop();
-			// resume the music playing before the mute
-			if (!muteMusic)
-				currentMusic.play();
+			
+			if (muteMusic)
+				currentMusic.stop();
+			else if (!muteMusic)
+				currentMusic.play(); // resume the music playing before the mute
 		}
 		
 		public static function stop():void 

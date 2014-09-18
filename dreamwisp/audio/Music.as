@@ -13,10 +13,10 @@ package dreamwisp.audio
 	 * @author Brandon
 	 */
 	
-	public class Music 
+	internal class Music 
 	{
-		public var startVolume:Number = 1;
-		public var sound:Sound;
+		private var startVolume:Number = 1;
+		internal var sound:Sound;
 		
 		private var channel:SoundChannel;
 		private var transform:SoundTransform;
@@ -34,7 +34,7 @@ package dreamwisp.audio
 			timer.addEventListener(TimerEvent.TIMER, fadeTick);
 		}
 		
-		public function play():void 
+		internal function play():void 
 		{
 			volume = startVolume;
 			channel = sound.play(0, int.MAX_VALUE, transform);
@@ -44,7 +44,7 @@ package dreamwisp.audio
 		 * Starts fading out the audio
 		 * @param	time Length of fade out in milliseconds
 		 */
-		public function fadeOut(time:Number, onFinish:Function):void 
+		internal function fadeOut(time:Number, onFinish:Function):void 
 		{
 			timer.start();
 			fadeDuration = time;
@@ -64,15 +64,21 @@ package dreamwisp.audio
 				onFinishFade.call();
 		}
 		
-		public function purge():void 
+		internal function purge():void 
 		{
 			timer.stop();
 			timer.removeEventListener(TimerEvent.TIMER, fadeTick);
 			timer = null;
 		}
 		
-		public function get volume():Number { return transform.volume; }
-		public function set volume(value:Number):void 
+		internal function stop():void 
+		{
+			channel.stop();
+			onFinishFade.call();
+		}
+		
+		internal function get volume():Number { return transform.volume; }
+		internal function set volume(value:Number):void 
 		{ 
 			transform.volume = value * SoundSystem.volume;
 		}
