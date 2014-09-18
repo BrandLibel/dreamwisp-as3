@@ -74,7 +74,7 @@ package dreamwisp.audio
 		internal function stop():void 
 		{
 			channel.stop();
-			onFinishFade.call();
+			if (onFinishFade != null) onFinishFade.call();
 		}
 		
 		internal function get volume():Number { return transform.volume; }
