@@ -224,7 +224,7 @@ package dreamwisp.entity.components.platformer
 			else if (velocityX < 0)
 			{
 				// setting the tile to dispatch for collision
-				if (topLeftTile().isSolidRight() || bottomLeftTile().isSolidRight())
+				if (topLeftTile().isSolidRight() && bottomLeftTile().isSolidRight())
 					tileToCollide = midLeftTile();
 				else if (topLeftTile().isSolidRight())
 					tileToCollide = topLeftTile();
@@ -235,7 +235,7 @@ package dreamwisp.entity.components.platformer
 					collideLeft(tileToCollide);
 				
 				// setting the tile to dispatch for killing the entity
-				if (topLeftTile().killsRight() || bottomLeftTile().killsRight())
+				if (topLeftTile().killsRight() && bottomLeftTile().killsRight())
 					tileThatKills = midLeftTile();
 				else if (topLeftTile().killsRight())
 					tileThatKills = topLeftTile();
