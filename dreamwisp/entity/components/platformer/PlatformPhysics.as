@@ -353,23 +353,38 @@ package dreamwisp.entity.components.platformer
 		private function collideSlope():void 
 		{
 			var tile:Tile = bottomMidTile();
-			
 			isOnSlope = false;
 			
 			if (currentState == fallState)
 			{
 				tile = centerTile();
-				setYOnSlope(tile);
+				// 'pull' glitch description: (entity falls to slope with speed > normal)
+				// falling -> slope detected before feet touch -> correct y on slope
+				// SOLUTION: wait until entity clips into slope, then react with following:
+				if (body.y > slopeY(tile) && tile.isSlope())
+				{
+					body.y = slopeY(tile)
+					isOnSlope = true;
+					if (currentState != groundState)
+						changeState("groundState");
+				}
 			}
 			else if (currentState == groundState)
 			{
 				tile = bottomMidTile();
 				setYOnSlope(tile);
-				tile = primaryFoot();				
+				tile = primaryFoot();
 				setYOnSlope(tile);
+				// 'bounce' glitch description:
+				// hits slope -> correct y on slope -> next update() -> fail groundState slope ->
+				// collideBottom() simulator -> clips to ground below -> next update() -> 
+				// collides bottom -> groundState slope? -> correct y on slope
+				// SOLUTION: prevent 'fail groundState slope' with the following:
+				if (!isOnSlope)
+					setYOnSlope(centerTile());
 			}
 			
-			// Simulate regular collideBottom(). On the last frame of climbing up a slope /[]\ 
+			// Simulate regular collideBottom(). On the last frame of climbing up a slope /[]\
 			// the entity ends up horizontally clipped inside the solid tile []. 
 			// This happens because at this point it is reading the [] and no longer sees a tile,
 			// causing it to skip any kind of body.y adjustment until it proceeds to collision code.
@@ -382,6 +397,20 @@ package dreamwisp.entity.components.platformer
 		{
 			if (!tile.isSlope())
 				return;
+				
+			body.y = slopeY(tile);
+			
+			// escape when stuck in ground after stepping off slope /[]\.
+			while (bottomMidTile().isSolidUp())
+				body.y--;
+			
+			isOnSlope = true;
+			if (currentState != groundState)
+				changeState("groundState");
+		}
+		
+		private function slopeY(tile:Tile):Number
+		{
 			// Equation: y = mx + b
 			// m is slope direction (up or down)
 			// with (0, 0) in top left, up is negative
@@ -391,16 +420,7 @@ package dreamwisp.entity.components.platformer
 			var m:Number = (tile.type == "slope_up") ? -1 : 1;
 			var b:Number = (tile.type == "slope_up") ? tileHeight: 0;
 			b += tile.y - body.height;
-			body.y = (m * x) + b;
-			
-			// escape when stuck in ground
-			while (bottomMidTile().isSolidUp())
-				body.y--;
-			
-			isOnSlope = true;
-			
-			if (currentState != groundState)
-				changeState("groundState");
+			return (m * x) + b;
 		}
 		
 		public function jump():void 
