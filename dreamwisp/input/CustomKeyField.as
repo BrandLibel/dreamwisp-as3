@@ -1,13 +1,12 @@
 package dreamwisp.input 
 {
 	import com.demonsters.debugger.MonsterDebugger;
-	import dreamwisp.input.KeyMap;
 	import flash.display.MovieClip;
 	import flash.text.TextField;
 	import flash.utils.Dictionary;
 	
 	/**
-	 * CustomKeyField is the interface for rebinding KeyMap keys.
+	 * CustomKeyField is the interface for rebinding key controls
 	 * @author Brandon
 	 */
 	
@@ -16,11 +15,11 @@ package dreamwisp.input
 		private var _mc:MovieClip;
 		private var actionName:String;
 		
-		private var keyMap:KeyMap;
 		private var keyString:String;
 		private var keyDict:Dictionary;
+		private var keyBinds:Object;
 		
-		public function CustomKeyField(mc:MovieClip, actionName:String, keyMap:KeyMap, keyString:String, keyDict:Dictionary) 
+		public function CustomKeyField(mc:MovieClip, actionName:String, keyString:String, keyDict:Dictionary, keyBinds:Object) 
 		{
 			_mc = mc;
 			if (mc.getChildByName("keyName") == null)
@@ -29,9 +28,9 @@ package dreamwisp.input
 				throw new Error("The CustomKeyField MovieClip has no actionName field");
 			
 			setActionName(actionName);
-			this.keyMap = keyMap;
 			this.keyString = keyString;
 			this.keyDict = keyDict;
+			this.keyBinds = keyBinds;
 			
 			sync();
 		}
@@ -50,16 +49,17 @@ package dreamwisp.input
 		
 		public function rebind(keyCode:uint):void 
 		{
-			keyMap.rebind(keyString, keyCode);
+			keyBinds[keyString] = keyCode;
 			sync();
 		}
 		
 		/**
 		 * Sync the keyCode string in the TextField with the keyBind.
 		 */
-		public function sync():void 
+		public function sync(keyBinds:Object = null):void 
 		{
-			setKeyName( keyDict[ keyMap.codeOf(keyString) ] );
+			if (keyBinds == null) keyBinds = this.keyBinds;
+			setKeyName( keyDict[ keyBinds[keyString] ] );
 		}
 		
 		public function get mc():MovieClip { return _mc; }

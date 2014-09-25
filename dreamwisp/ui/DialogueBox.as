@@ -34,8 +34,9 @@ package dreamwisp.ui
 		
 		private var _movieClip:MovieClip;
 		private var visible:Boolean;
+		private var keyMap:KeyMap;
 		
-		public function DialogueBox(movieClip:MovieClip, typeSpeed:uint = 1) 
+		public function DialogueBox(movieClip:MovieClip, keyMap:KeyMap, typeSpeed:uint = 1) 
 		{
 			if (movieClip.getChildByName(KEY_SPEAKER) == null)
 				throw new Error("The MovieClip for DialogueBox is missing a necessary speaker textField!");
@@ -46,6 +47,8 @@ package dreamwisp.ui
 			_movieClip.visible = false;
 			
 			dialogueWriter = new TypeWriter(accessField(KEY_DIALOGUE), typeSpeed);
+			
+			this.keyMap = keyMap;
 		}
 		
 		public function readPrev():void 
@@ -102,6 +105,11 @@ package dreamwisp.ui
 		public function isHidden():Boolean
 		{
 			return state == STATE_HIDDEN;
+		}
+		
+		public function handleInput(inputState:InputState):void 
+		{
+			keyMap.readInput(inputState);
 		}
 		
 		public function update():void 

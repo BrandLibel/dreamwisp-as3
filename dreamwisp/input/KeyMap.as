@@ -58,12 +58,14 @@ package dreamwisp.input {
 			keyBind.getKeyCodes()[0] = newCode;
 		}
 		
+		/// Adds a new onPress callback to an existing keyBind 
 		public function addPressAction(label:String, pressActions:Object):void 
 		{
 			const keyBind:KeyBind = keyLegend[label];
 			keyBind.addPressAction(pressActions);
 		}
 		
+		/// Adds a new onRelease callback to an existing keyBind
 		public function addReleaseAction(label:String, releaseActions:Object):void
 		{
 			const keyBind:KeyBind = keyLegend[label];
