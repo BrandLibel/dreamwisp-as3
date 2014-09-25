@@ -35,10 +35,9 @@ package dreamwisp.input
 			sync();
 		}
 		
-		public function setKeyName(text:String):void 
+		public function setKeyName(text:String):void
 		{
 			TextField(mc.getChildByName("keyName")).text = text;
-			
 		}
 		
 		private function setActionName(text:String):void 
@@ -58,7 +57,10 @@ package dreamwisp.input
 		 */
 		public function sync(keyBinds:Object = null):void 
 		{
-			if (keyBinds == null) keyBinds = this.keyBinds;
+			if (keyBinds == null)
+				keyBinds = this.keyBinds;
+			else
+				this.keyBinds = keyBinds;
 			setKeyName( keyDict[ keyBinds[keyString] ] );
 		}
 		
