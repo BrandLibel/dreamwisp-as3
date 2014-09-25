@@ -1,13 +1,13 @@
 package dreamwisp.entity.hosts
 {
 	import dreamwisp.core.GameScreen;
-	import dreamwisp.entity.components.Animation;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.Health;
 	import dreamwisp.entity.components.Physics;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.components.Weapon;
 	import dreamwisp.swift.geom.SwiftRectangle;
+	import dreamwisp.visual.Animation;
 	import dreamwisp.visual.lighting.LightSource;
 	import dreamwisp.entity.EntityManager;
 	import flash.utils.getDefinitionByName;
@@ -27,10 +27,10 @@ package dreamwisp.entity.hosts
 		private var _body:Body;
 		private var _health:Health;
 		private var _weapon:Weapon;
-		private var _animation:Animation;
 		private var _view:View;
 		private var _lightSource:LightSource;
-		public var _physics:Physics;
+		private var _physics:Physics;
+		protected var animation:Animation;
 		
 		private var _entityCreated:Signal;
 		private var _destroyed:Signal;
@@ -97,7 +97,6 @@ package dreamwisp.entity.hosts
 		public function update():void {
 			
 			//if (physics) physics.update();
-			if (animation) animation.update();
 			//if (hasLeftBounds()) leftBounds.dispatch(this);
 		}
 		
@@ -133,10 +132,6 @@ package dreamwisp.entity.hosts
 		public function get weapon():Weapon { return _weapon; }
 		
 		public function set weapon(value:Weapon):void { _weapon = value; }
-		
-		public function get animation():Animation { return _animation; }
-		
-		public function set animation(value:Animation):void { _animation = value; }
 		
 		public function get view():View { return _view; }
 		

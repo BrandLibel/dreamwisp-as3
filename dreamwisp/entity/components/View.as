@@ -14,13 +14,6 @@ package dreamwisp.entity.components
 	 * This class is for anything that can be visually rendered on the screen.
 	 * Invisible entitys will not need this.
 	 */
-	
-	//TODO: Replace the View component in Entitys with an IGraphicsObject component.
-	//		Whenever added to a ContainerView it gives a reference from getGraphicsData().
-	//		Get rid of all the GraphicsFactory stuff. Instantiate each class individually.
-	//		The GraphicsObject concrete class should contain most of the properties
-	//		included in this class. some special GraphicsObjects will handle animation,
-	//		some will handle relative positioning.
 	 
 	public class View
 	{
@@ -48,11 +41,6 @@ package dreamwisp.entity.components
 		
 		public function render(interpolation:Number):void
 		{
-			if (movieClip)
-			{
-				if (host.animation) movieClip.gotoAndStop(host.animation.currentFrame());
-			}
-			
 			if (host.physics)
 			{
 				displayObject.x = host.body.x + (host.physics.velocityX * interpolation) + offsetX;

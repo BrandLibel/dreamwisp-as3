@@ -1,6 +1,5 @@
 package dreamwisp.entity.hosts {
 	
-	import dreamwisp.entity.components.Animation;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.Health;
 	import dreamwisp.entity.components.Physics;
@@ -27,8 +26,6 @@ package dreamwisp.entity.hosts {
         function set health(value:Health):void
         function get weapon():Weapon;
         function set weapon(value:Weapon):void;
-		function get animation():Animation;
-		function set animation(value:Animation):void;
         function get view():View;
         function set view(value:View):void;
 		function get lightSource():LightSource;
