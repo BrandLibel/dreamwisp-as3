@@ -159,7 +159,7 @@ package dreamwisp.world.tile
 		 * Shift entire grid contents in specified direction.
 		 * Assumes there is space to move to, and the space is empty.
 		 */
-		private function shift(deltaRow:int, deltaCol:int):void 
+		protected function shift(deltaRow:int, deltaCol:int):void 
 		{
 			var tileList:Vector.<Tile> = getTileList();
 			empty();
