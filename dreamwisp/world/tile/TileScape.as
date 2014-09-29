@@ -21,12 +21,10 @@ package dreamwisp.world.tile
 		private var tileRect:Rectangle;
 		private var _tileWidth:uint;
 		private var _tileHeight:uint;
-		/// Reusable Point to draw tile onto canvas
-		private const destPoint:Point = new Point();
 		/// Reusable Rectangle
 		private const drawRect:Rectangle = new Rectangle();
 		
-		private var tileGrid:Vector.<Vector.<Tile>> = new Vector.<Vector.<Tile>>;
+		private var tileGrid:Vector.<Vector.<Tile>>;
 		
 		private var canvasData:BitmapData;
 		private var canvas:Bitmap;
@@ -37,7 +35,6 @@ package dreamwisp.world.tile
 		/// PNG spritesheet of all tiles
 		private var tileSheet:BitmapData;
 		internal var spriteSheet:SpriteSheet;
-		
 		
 		public var gameScreen:GameScreen;
 		
@@ -115,6 +112,7 @@ package dreamwisp.world.tile
 		 */
 		private function build(rows:uint, cols:uint, tileMap:Array):void
 		{
+			tileGrid = new Vector.<Vector.<Tile>>
 			var destPoint:Point = new Point();
 			for (var a:uint = 0; a < rows; a++)
 			{
@@ -129,15 +127,16 @@ package dreamwisp.world.tile
 			}
 		}
 		
+		/// Adds a tile into the grid and positions it at specified coordinates
 		public function insertTile(row:uint, col:uint, tile:Tile):void 
 		{
 			tileGrid[row][col] = tile;
-			destPoint.x = tile.point.x = tile.body.x = col * tileWidth;
-			destPoint.y = tile.point.y = tile.body.y = row * tileHeight;
+			
+			// positions the tile and draw point
+			drawRect.x = tile.point.x = tile.body.x = col * tileWidth;
+			drawRect.y = tile.point.y = tile.body.y = row * tileHeight;
 			
 			// draw emptiness
-			drawRect.x = destPoint.x;
-			drawRect.y = destPoint.y;
 			drawRect.width = tileWidth;
 			drawRect.height = tileHeight;
 			canvasData.fillRect(drawRect, 0x00000000);
@@ -157,16 +156,28 @@ package dreamwisp.world.tile
 		}
 		
 		/**
+		 * Shift entire grid contents in specified direction.
+		 * Assumes there is space to move to, and the space is empty.
+		 */
+		private function shift(deltaRow:int, deltaCol:int):void 
+		{
+			var tileList:Vector.<Tile> = getTileList();
+			empty();
+			for each (var tile:Tile in tileList) 
+				if (!tile.isEmpty())
+					insertTile(tile.row() + deltaRow, tile.col() + deltaCol, tile);
+		}
+		
+		/**
 		 * Adds a new row to the bottom edge of the TileScape
 		 * @param	tileNum the type of tile to add, defaults to 0
 		 */
 		public function addRow(tileNum:uint = 0):void 
 		{
 			updateBitmapSize(0, tileHeight);
-			tileGrid[tileGrid.length] = new Vector.<Tile>();
-			for (var i:uint = 0; i < tileGrid[0].length; i++){
-				tileGrid[tileGrid.length -1].push( Tile.NIL );
-			}
+			tileGrid.push(new Vector.<Tile>);
+			for (var i:uint = 0; i < tileGrid[0].length; i++)
+				tileGrid[tileGrid.length -1].push( compose(tileNum) );
 		}
 		
 		/**
@@ -176,9 +187,24 @@ package dreamwisp.world.tile
 		public function addCol(tileNum:uint = 0):void 
 		{
 			updateBitmapSize(tileWidth, 0);
-			for (var i:uint = 0; i < tileGrid.length; i++){
-				tileGrid[i].push( Tile.NIL );
-			}
+			for (var i:uint = 0; i < tileGrid.length; i++)
+				tileGrid[i].push( compose(tileNum) );
+		}
+		
+		/// Adds a new row to the top edge of the TileScape
+		public function addRowOrigin(tileNum:uint = 0):void 
+		{
+			// esssentially, addRow() plus shifting all tiles down
+			addRow(tileNum);
+			shift(1, 0);
+		}
+		
+		/// Adds a new column to the left edge of the TileScape
+		public function addColOrigin(tileNum:uint = 0):void 
+		{
+			// esssentially, addCol() plus shifting all tiles right
+			addCol(tileNum);
+			shift(0, 1);
 		}
 		
 		/**
@@ -209,6 +235,41 @@ package dreamwisp.world.tile
 				tileGrid[i].pop();
 				tilesRemoved.push( removedTile );
 			}
+			return tilesRemoved;
+		}
+		
+		/// Removes the row at the top edge of the TileScape
+		public function removeRowOrigin():Vector.<Tile>
+		{
+			// make NIL the top row, shift tiles up, then remove bottom row
+			var tilesRemoved:Vector.<Tile> = new Vector.<Tile>();
+			for each (var tile:Tile in tileGrid[0])
+			{
+				if (tile.isEmpty())
+					continue;
+				tilesRemoved.push(tile);
+				insertTile(tile.row(), tile.col(), Tile.NIL);
+			}
+			shift( -1, 0);
+			removeRow();
+			return tilesRemoved;
+		}
+		
+		/// Removes the column at the left edge of the TileScape
+		public function removeColOrigin():Vector.<Tile>
+		{
+			// make NIL the left column, shift tiles left, then remove right column
+			var tilesRemoved:Vector.<Tile> = new Vector.<Tile>();
+			for (var i:int = 0; i < tileGrid.length; i++)
+			{
+				var tile:Tile = tileGrid[i][0];
+				if (tile.isEmpty())
+					continue;
+				tilesRemoved.push(tile);
+				insertTile(tile.row(), tile.col(), Tile.NIL);
+			}
+			shift(0, -1);
+			removeCol();
 			return tilesRemoved;
 		}
 		
@@ -243,7 +304,7 @@ package dreamwisp.world.tile
 		}
 		
 		/**
-		 * Exceutes a function on every tile in the grid.
+		 * Exceutes a function on every tile in the grid. Function must accept tile:Tile param.
 		 * @param	action
 		 */
 		public function execute(action:Function):void
@@ -269,6 +330,15 @@ package dreamwisp.world.tile
 						tiles.push(tile);
 				}
 			}
+			return tiles;
+		}
+		
+		private function getTileList():Vector.<Tile>
+		{
+			var tiles:Vector.<Tile> = new Vector.<Tile>;
+			for (var i:int = 0; i < tileGrid.length; i++) 
+				for (var j:int = 0; j < tileGrid[0].length; j++) 
+					tiles.push(tileAt(i, j));
 			return tiles;
 		}
 		
