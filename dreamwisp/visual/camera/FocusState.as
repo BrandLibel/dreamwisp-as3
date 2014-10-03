@@ -1,4 +1,5 @@
 package dreamwisp.visual.camera {
+	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
 	import flash.geom.Point;
@@ -34,11 +35,15 @@ package dreamwisp.visual.camera {
 			var focus:View = camera.focusView;
 			var center:Point = camera.center;
 
-			if (focus.displayObject.x > center.x && center.x < camera.maxX) center.x = focus.displayObject.x; 
-			if (focus.displayObject.x < center.x && center.x > camera.minX) center.x = focus.displayObject.x;
+			if (focus.displayObject.x > center.x && center.x < camera.maxX)
+				center.x = focus.displayObject.x;
+			else if (focus.displayObject.x < center.x && center.x > camera.minX)
+				center.x = focus.displayObject.x;
 				
-			if (focus.displayObject.y > center.y && center.y < camera.maxY) center.y = focus.displayObject.y; 
-			if (focus.displayObject.y < center.y && center.y > camera.minY) center.y = focus.displayObject.y;
+			if (focus.displayObject.y > center.y && center.y < camera.maxY)
+				center.y = focus.displayObject.y; 
+			else if (focus.displayObject.y < center.y && center.y > camera.minY)
+				center.y = focus.displayObject.y;
 			
 			camera.stayInBounds();
 		}

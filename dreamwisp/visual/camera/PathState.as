@@ -24,7 +24,7 @@ package dreamwisp.visual.camera {
 		/* INTERFACE dreamwisp.visual.camera.ICameraState */
 		
 		public function scroll():void {
-			var focus:Body = camera.focus;
+			var focus:Body = camera.focusBody;
 			//var node:Object = camera.node;
 			
 			if (path.type == path.NODE_LOITER) {

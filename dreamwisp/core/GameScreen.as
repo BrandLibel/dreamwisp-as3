@@ -29,7 +29,7 @@ package dreamwisp.core {
 				
 		protected var paused:Boolean = false;
 	
-		private var _view:ContainerView;
+		public var view:ContainerView;
 		
 		protected var keyMap:KeyMap;
 		
@@ -52,9 +52,9 @@ package dreamwisp.core {
 		/// The transitionPosition above which this screen is considered active for input.
 		protected var activeThreshold:Number = 0;
 				
-		private var _rect:SwiftRectangle;
-		private var _entityManager:EntityManager;
-		private var _camera:Camera;
+		public var rect:SwiftRectangle;
+		public var entityManager:EntityManager;
+		public var camera:Camera;
 		
 		public function GameScreen(game:Game) {
 			this.game = game;
@@ -100,6 +100,25 @@ package dreamwisp.core {
 			}
 		}
 		
+		public function render(interpolation:Number):void {
+			//if (paused) return;
+			renderTransition(interpolation);
+			if (entityManager) entityManager.render(interpolation);
+			if (view) {
+				// TODO: this block is temporary; it allows the ContainerView to be synced
+				// 		 with the x and y values of the actual Location (necessary for proper placement
+				//		 of Levels in Areas). 
+				if (rect) {
+					view.x = rect.x;
+					view.y = rect.y;
+				}
+				
+				view.render(interpolation);
+			}
+			if (inActiveHalf())
+				if (camera) camera.render(interpolation);
+		}
+		
 		private function updateTransition(direction:int):Boolean {
 			//TODO: use timer & milliseconds to determine delta
 			transitionDelta = (direction < 0) ? transitionTimeOut : transitionTimeIn;
@@ -137,25 +156,6 @@ package dreamwisp.core {
 			return ((state == STATE_TRANSITION_IN && transitionPosition >= activeThreshold) || state == STATE_ACTIVE);
 		}
 		
-		public function render(interpolation:Number):void {
-			//if (paused) return;
-			renderTransition(interpolation);
-			if (entityManager) entityManager.render(interpolation);
-			if (view) {
-				// TODO: this block is temporary; it allows the ContainerView to be synced
-				// 		 with the x and y values of the actual Location (necessary for proper placement
-				//		 of Levels in Areas). 
-				if (rect) {
-					view.x = rect.x;
-					view.y = rect.y;
-				}
-				
-				view.render(interpolation);
-			}
-			if (inActiveHalf())
-				if (camera) camera.update(interpolation);
-		}
-		
 		/**
 		 * Tell the screen to start gradually transitioning in.
 		 */
@@ -188,33 +188,6 @@ package dreamwisp.core {
 				screenManager.removeScreen(this);
 			}
 		}
-		
-		public function positionCamera(user:ICamUser = null, boundary:SwiftRectangle = null, focus:Body = null):void {
-			if (camera) {
-				camera.user = user;
-				camera.setBounds(boundary);
-				camera.focus = focus;
-			}
-		}
-		public function positionCameraView(user:ICamUser = null, boundary:SwiftRectangle = null, focusView:View = null):void {
-			if (camera) {
-				camera.user = user;
-				camera.setBounds(boundary);
-				camera.focusView = focusView;
-			}
-		}
-		
-		public function get view():ContainerView { return _view; }
-		public function set view(value:ContainerView):void { _view = value; }
-
-		public function get rect():SwiftRectangle { return _rect; }
-		public function set rect(value:SwiftRectangle):void { _rect = value; }
-		
-		public function get entityManager():EntityManager { return _entityManager; }
-		public function set entityManager(value:EntityManager):void { _entityManager = value; }
-		
-		public function get camera():Camera { return _camera; }
-		public function set camera(value:Camera):void { _camera = value; }		
 		
 	}
 

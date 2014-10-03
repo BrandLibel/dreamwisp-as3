@@ -1,7 +1,6 @@
-package dreamwisp.visual.camera {
-	
+package dreamwisp.visual.camera
+{
 	import com.demonsters.debugger.MonsterDebugger;
-	import dreamwisp.action.IActionReceptor;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.hosts.Entity;
@@ -10,11 +9,11 @@ package dreamwisp.visual.camera {
 	import flash.geom.Point;
 	
 	/**
-	 * The Camera class can 
+	 * The Camera class can
 	 */
 	
-	public class Camera implements IActionReceptor {
-		
+	public class Camera
+	{
 		public static const STATE_FOCUS:String = "focusState";
 		public static const STATE_PATH:String = "pathState";
 		public static const STATE_SLOW_FOCUS:String = "slowFocusState";
@@ -23,15 +22,17 @@ package dreamwisp.visual.camera {
 		public static const MAX_Y:String = "maxY";
 		public static const MIN_X:String = "minX";
 		public static const MIN_Y:String = "minY";
-						
-		private var _center:Point;// = new Point(width / 2, height / 2);
+		
+		public var center:Point;
 		
 		internal var velocityX:int;
 		internal var velocityY:int;
 		
-		private var _user:ICamUser;
-		private var _focus:Body;
-		private var _focusView:View;
+		/// Camera users are usually a View subclass implementing ICamUser.
+		private var user:ICamUser;
+		/// The focus is the body of the entity which the camera follows.
+		internal var focusBody:Body;
+		internal var focusView:View;
 		
 		private var currentState:ICameraState;
 		private var lastState:ICameraState;
@@ -41,15 +42,6 @@ package dreamwisp.visual.camera {
 		
 		internal var cameraPath:CameraPath;
 		
-		private var actionQueue:Array = new Array();
-		
-		// After performing calculations, these optional offset values
-		// can be added to the camera center in order to create a visual effect.
-		// This will not affect normal camera position calculation.
-		private var offsetX:Number = 0;
-		private var offsetY:Number = 0;
-		
-		private var isShaking:Boolean = false;
 		private var initialShakeSeverity:uint = 0;
 		private var shakeSeverity:uint = 0;
 		private var shakeCount:uint = 0;
@@ -59,7 +51,8 @@ package dreamwisp.visual.camera {
 		
 		private var boundRect:SwiftRectangle;
 		
-		public function Camera(width:uint = 768, height:uint = 480, initialStateName:String = STATE_FOCUS) {
+		public function Camera(width:uint = 768, height:uint = 480, initialStateName:String = STATE_FOCUS)
+		{
 			this.width = width;
 			this.height = height;
 			
@@ -72,197 +65,179 @@ package dreamwisp.visual.camera {
 			changeToState(initialStateName);
 		}
 		
-		public function update(interpolation:Number):void {
+		public function render(interpolation:Number):void
+		{
 			currentState.scroll();
 			
+			// After performing calculations, these optional offset values
+			// can be added to the camera center in order to create a visual effect.
+			// This will not affect normal camera position calculation.
+			var offsetX:Number = 0;
+			var offsetY:Number = 0;
+			
 			// camera shake code
-			if (isShaking) {
-				MonsterDebugger.trace(this, "shaking: " + shakeSeverity + "||" +offsetX+"/"+offsetY);
+			if (shakeSeverity > 0)
+			{
 				offsetX = Math.random() * shakeSeverity;
 				offsetY = Math.random() * shakeSeverity;
+				MonsterDebugger.trace(this, "shaking: " + shakeSeverity + "||" + offsetX + "/" + offsetY);
 				shakeSeverity--;
-				if (shakeSeverity == 0) {
-					//shakeSeverity = 60;
-					if (shakeCount == 0) {
-						isShaking = false;
-					} else {
+				if (shakeSeverity == 0)
+				{
+					if (shakeCount > 0)
+					{
 						// another shake 
 						shakeCount--;
 						shakeSeverity = initialShakeSeverity;
 					}
 				}
-			} else {
-				offsetX = 0;
-				offsetY = 0;
 			}
 			
-			// offsets are added to create visual effect without affecting camera position calculation
 			user.followCamera(center.x + offsetX, center.y + offsetY);
-			
-			// IActionReceptor
-			if (actionQueue.length != 0) executeAction(actionQueue.shift()); 
 		}
 		
 		/**
-		 * Determines the boundaries of the possible scrolling area.
-		 * @param	rect The rectangular area that the camera is allowed to scroll through.
+		 * Sets the new boundaries to limit the camera's movement
+		 * @param	user the view that needs to be scrolled
+		 * @param	boundary the rectangular limits of the area
 		 */
-		public function setBounds(rect:SwiftRectangle):void { 
-			// for setting camera to top-left most position of given rect
-			// important for first time entry into locations
-			user.followCamera(minX, minY);
-			
-			// camera repositioned, reset the path
-			velocityX = 0;
-			velocityY = 0;
-			cameraPath = null;
-		}
-		
-		public function position(user:ICamUser, boundary:SwiftRectangle, focus:Entity):void 
+		public function redefineBounds(user:ICamUser, boundary:SwiftRectangle):void 
 		{
 			this.user = user;
 			this.boundRect = boundary;
-			this.focus = focus.body;
-			this.focusView = focus.view;
 		}
 		
 		/**
-		 * 
+		 * Sets a new focus for the Camera to follow
+		 * @param	focus the new entity to focus on
+		 */
+		public function refocus(focus:Entity):void
+		{
+			focusBody = focus.body;
+			focusView = focus.view;
+			focusView.render(1);
+			
+			currentState.scroll();
+			user.followCamera(center.x, center.y);
+		}
+		
+		/**
+		 *
 		 * @param	path An array of pathNode objects (properties x, y, velocityX, velocityY)
 		 */
-		public function followPath(path:Array):void {
+		public function followPath(path:Array):void
+		{
 			cameraPath = new CameraPath(path);
 			changeState(pathState);
 			MonsterDebugger.trace(this, cameraPath);
 		}
 		
 		/**
-		 * 
+		 *
 		 * @param	severity
 		 * @param	repeats The number of additional camera shakes to add.
 		 */
-		public function shake(severity:uint = 60, repeats:uint = 0):void {
-			isShaking = true;
+		public function shake(severity:uint = 60, repeats:uint = 0):void
+		{
 			initialShakeSeverity = severity;
 			shakeSeverity = severity;
 			shakeCount = repeats;
 		}
-				
-		internal function changeToState(stateName:String):void {
-			if (this[stateName] is ICameraState) {
+		
+		internal function changeToState(stateName:String):void
+		{
+			if (this[stateName] is ICameraState)
 				changeState(this[stateName]);
-			} else {
+			else
 				throw new Error("Tried to change the Camera state to a nonexistant state.");
-			}
-			
+		
 		}
 		
-		internal function changeState(cameraState:ICameraState):void {
+		internal function changeState(cameraState:ICameraState):void
+		{
 			// only remember last state if its different from the new state
-			if (cameraState !== currentState) lastState = currentState;
+			if (cameraState !== currentState)
+				lastState = currentState;
 			currentState = cameraState;
 			currentState.enter();
 		}
 		
-		internal function changeToLastState():void {
+		internal function changeToLastState():void
+		{
 			changeState(lastState);
 		}
 		
-		internal function stayInBounds():void {
-			// does not allow the camera to leave the bounds
+		/// Stops the Camera from being outside of bounds
+		internal function stayInBounds():void
+		{
 			if (passedRightBound()) center.x = maxX;
 			if (passedLeftBound()) center.x = minX;
 			if (passedDownBound()) center.y = maxY;
 			if (passedUpBound()) center.y = minY;
 		}
 		
-		internal function passedLeftBound():Boolean {
+		internal function passedLeftBound():Boolean
+		{
 			return (center.x < minX);
 		}
 		
-		internal function passedRightBound():Boolean {
+		internal function passedRightBound():Boolean
+		{
 			return (center.x > maxX);
 		}
 		
-		internal function passedUpBound():Boolean {
+		internal function passedUpBound():Boolean
+		{
 			return (center.y < minY);
 		}
 		
-		internal function passedDownBound():Boolean {
+		internal function passedDownBound():Boolean
+		{
 			return (center.y > maxY);
-		}
-		
-		// INTERFACE dreamwisp.action.IActionReceptor //
-		
-		public function queueAction(action:Object):void {
-			actionQueue.push(action);
-		}
-		
-		public function executeAction(action:Object):void {
-			if (action.type == "followPath") {
-				this[action.type].call(null, action.path);
-			} else {
-				this[action.type].call(null, action);
-			}
-			
-		}
-		
-		public function attemptAction(action:Object):void {
-			
-		}
-		
-		public function abortAction(action:Object):void {
-			actionQueue.splice(  actionQueue.indexOf(action), 1 );
 		}
 		
 		/**
 		 * If the target rect is bigger than the stage, allows camera to move.
 		 */
-		private function isScrollable():Boolean {
+		private function isScrollable():Boolean
+		{
 			return (boundRect.width > width || boundRect.height > height);
 		}
 		
-		internal function centralizeX(value:*):* {
+		internal function centralizeX(value:*):*
+		{
 			return (value + width);
 		}
 		
-		internal function centralizeY(value:*):* {
+		internal function centralizeY(value:*):*
+		{
 			return (value + height);
 		}
 		
-		/// The focus is the body of the entity which the camera follows.
-		public function get focus():Body { return _focus; }
-		public function set focus(value:Body):void {
-			_focus = value;
-		}
-		
-		public function get center():Point { return _center; }
-		public function set center(value:Point):void { _center = value; }
-		
-		/// Camera users are usually a View subclass implementing ICamUser.
-		public function get user():ICamUser { return _user; }
-		public function set user(value:ICamUser):void { _user = value; }
-		
-		public function get focusView():View {
-			return _focusView;
-		}
-		
-		public function set focusView(value:View):void {
-			_focusView = value;
-		}
-		
 		/// The right most edge that the camera center can be, in pixels.
-		public function get maxX():uint { return boundRect.width - (width / 2) + boundRect.x; }
+		internal function get maxX():uint
+		{
+			return boundRect.width - (width / 2) + boundRect.x;
+		}
 		
 		/// The left most edge that the camera center can be, in pixels.
-		public function get minX():uint { return (width / 2) + boundRect.x; }
+		internal function get minX():uint
+		{
+			return (width / 2) + boundRect.x;
+		}
 		
 		/// The bottom most edge that the camera center can be, in pixels.
-		public function get maxY():uint { return boundRect.height - (height / 2) + boundRect.y; }
+		internal function get maxY():uint
+		{
+			return boundRect.height - (height / 2) + boundRect.y;
+		}
 		
 		/// The top most edge that the camera center can be, in pixels.
-		public function get minY():uint { return (height / 2) + boundRect.y; }
-		
+		internal function get minY():uint
+		{
+			return (height / 2) + boundRect.y;
+		}
+	
 	}
 
 }
