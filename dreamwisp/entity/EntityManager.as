@@ -147,7 +147,7 @@ package dreamwisp.entity
 		{
 			for each (var entity:Entity in entitys)
 			{
-				if (entity.actorID == id)
+				if (entity.id == id)
 					return entity;
 			}
 			throw new Error("No entity found by requested ID: " + id);

@@ -31,7 +31,7 @@ package dreamwisp.world.tile
 		private var tileHeight:uint = 1;
 		
 		public var type:String;
-		private var id:uint;
+		//private var id:uint;
 		///Object containing booleans left, right, up, down determining 
 		///whether a SolidBody collides or passes through that direction.
 		protected var solid:Object;
@@ -245,11 +245,6 @@ package dreamwisp.world.tile
 		public function row():uint
 		{
 			return body.y / tileHeight;
-		}
-		
-		public function getID():uint 
-		{
-			return id;
 		}
 		
 		public function isPlatform():Boolean

@@ -22,7 +22,7 @@ package dreamwisp.entity.hosts
 	public class Entity implements IEntity
 	{
 		private var _name:String;
-		public var actorID:uint;
+		public var id:uint;
 		
 		private var _body:Body;
 		private var _health:Health;
@@ -61,6 +61,8 @@ package dreamwisp.entity.hosts
 			{
 				name = myData.name;
 			}
+			if (myData.hasOwnProperty("guid"))
+				id = myData.guid;
 			if (myData.body != null)
 			{
 				var bodyData:Object = components["body"][myData.body];

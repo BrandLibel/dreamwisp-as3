@@ -326,7 +326,7 @@ package dreamwisp.world.tile
 				for (var j:int = 0; j < tileGrid[0].length; j++) 
 				{
 					var tile:Tile = tileAt(i, j);
-					if (tile.getID() == id)
+					if (tile.id == id)
 						tiles.push(tile);
 				}
 			}
@@ -349,9 +349,9 @@ package dreamwisp.world.tile
 				{
 					var i:uint = tile.row();
 					var j:uint = tile.col();
-					if (tile.getID() == id1)
+					if (tile.id == id1)
 						alterTile(i, j, id2)
-					else if (tile.getID() == id2)
+					else if (tile.id == id2)
 						alterTile(i, j, id1);
 				}
 			);
@@ -429,7 +429,7 @@ package dreamwisp.world.tile
 				tileMap.push(new Array());
 				for (var col:int = 0; col < tileGrid[0].length; col++) 
 				{
-					tileMap[row][col] = tileAt(row, col).getID();
+					tileMap[row][col] = tileAt(row, col).id;
 				}
 			}
 			return tileMap;
@@ -444,7 +444,7 @@ package dreamwisp.world.tile
 				str += "\t[";
 				for (var col:int = 0; col < tileGrid[0].length; col++) 
 				{
-					str += tileAt(row, col).getID();
+					str += tileAt(row, col).id;
 					if (col != tileGrid[0].length - 1)
 						str += comma;
 				}
