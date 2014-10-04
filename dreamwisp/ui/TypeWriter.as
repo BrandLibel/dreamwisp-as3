@@ -14,6 +14,9 @@ package dreamwisp.ui
 		private var displayedText:String;
 		private var transferSpeed:uint;
 		
+		private static const CALLOUT:String = "*";
+		private var startTag:Boolean = true;
+		
 		public function TypeWriter(textField:TextField, transferSpeed:uint = 1)
 		{
 			this.textField = textField;
@@ -33,14 +36,30 @@ package dreamwisp.ui
 		public function write():Boolean
 		{
 			var charsToTransfer:uint = transferSpeed;
+			var cutLength:Number;
 			while (charsToTransfer > 0)
 			{
 				var cutString:String = loadedText.substr(0, 1);
+				
 				// counts an HTML tag as a single character.
 				if (cutString == "<")
 					cutString = loadedText.substr(0, loadedText.indexOf(">"));
+					
+				cutLength = cutString.length;
+					
+				// expand shorthand into full HTML 'callout' tags (highlighting text)
+				if (cutString == CALLOUT)
+				{
+					if (startTag)
+						cutString = "<span class='callout'>";
+					else
+						cutString = "</span>";
+					startTag = !startTag;
+					cutLength = 1;
+				}
+				
 				displayedText += cutString;
-				loadedText = loadedText.substr(cutString.length);
+				loadedText = loadedText.substr(cutLength);
 				charsToTransfer--;
 			}
 			
