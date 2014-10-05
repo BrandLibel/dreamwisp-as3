@@ -74,7 +74,7 @@ package dreamwisp.entity
 		
 		public function spawnEntity(prototypeID:uint):Entity
 		{
-			var entity:Entity = factory.createEntity2(prototypeID);
+			var entity:Entity = factory.createEntity(prototypeID);
 			addEntity(entity);
 			return entity;
 		}

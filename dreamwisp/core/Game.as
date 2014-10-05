@@ -14,7 +14,7 @@
 		public var saveSystem:SaveSystem;
 		
 		protected var inputState:InputState;
-								
+		
 		public function Game(stage:Stage = null) {
 			Data.prepare();
 			sprite = new Sprite();
