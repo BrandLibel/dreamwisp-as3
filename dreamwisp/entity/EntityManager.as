@@ -15,7 +15,6 @@ package dreamwisp.entity
 	 */
 	public dynamic class EntityManager
 	{
-		private var prototypesJSON:Object;
 		private var entitys:Vector.<Entity> = new Vector.<Entity>;
 		private var tempEntityList:Vector.<Entity> = new Vector.<Entity>;
 		private var controllableEntitys:Vector.<IPlayerControllable> = new Vector.<IPlayerControllable>;
@@ -29,10 +28,9 @@ package dreamwisp.entity
 		
 		private var markedForPurge:Boolean = false;
 		
-		public function EntityManager(factory:IEntityFactory, prototypesJSON:Object)
+		public function EntityManager(factory:IEntityFactory)
 		{
 			this.factory = factory;
-			this.prototypesJSON = prototypesJSON;
 			// defining signals
 			entityAttached = new Signal(Entity);
 			entityRemoved = new Signal(Entity);
