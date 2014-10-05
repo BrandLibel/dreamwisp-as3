@@ -2,7 +2,7 @@ package dreamwisp.entity.components.platformer
 {
 	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
-	import dreamwisp.entity.components.Physics;
+	import dreamwisp.entity.components.TileBasedPhysics;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.world.tile.Tile;
 	import dreamwisp.world.tile.TileScape;
@@ -13,16 +13,9 @@ package dreamwisp.entity.components.platformer
 	 * ...
 	 * @author Brandon
 	 */
-	public class PlatformPhysics extends Physics
+	public class PlatformPhysics extends TileBasedPhysics
 	{
-		private static const DEFAULT_TILE_WIDTH:uint = 32;
-		private static const DEFAULT_TILE_HEIGHT:uint = 32;
 		private static const DEFAULT_GRAVITY:Number = 1.6;
-		
-		private var tileWidth:uint = DEFAULT_TILE_WIDTH;
-		private var tileHeight:uint = DEFAULT_TILE_HEIGHT;
-		private var tileScape:TileScape;
-		private var prevRow:uint;
 		
 		private var entity:Entity;
 		private var body:Body;
@@ -36,9 +29,7 @@ package dreamwisp.entity.components.platformer
 		public var gravity:Number = 1.3;
 		internal var jumpsMade:uint = 0;
 		internal var jumpsAllowed:uint = 1;
-		/**
-		 * No params, must return boolean
-		 */
+		/// No params, must return boolean
 		public var canJump:Function;
 		
 		private var movementSM:StateMachine;
@@ -52,6 +43,8 @@ package dreamwisp.entity.components.platformer
 		public var collidedTile:Signal;
 		public var steppedNewTile:Signal;
 		public var touchedKillerTile:Signal;
+		
+		private var prevRow:uint;
 
 		public function PlatformPhysics(entity:Entity, maxWalkSpeed:uint, walkAcceleration:Number, jumpPower:int, maxSpeedY:uint) 
 		{
@@ -101,13 +94,6 @@ package dreamwisp.entity.components.platformer
 			movementSM.changeState(state);
 			currentState = this[state];
 			currentState.enter();
-		}
-		
-		/* INTERFACE dreamwisp.entity.components.IPhysics */
-		
-		public function setTileScape(tileScape:TileScape):void 
-		{
-			this.tileScape = tileScape;
 		}
 		
 		public function getTileScape():TileScape

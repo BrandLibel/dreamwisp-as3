@@ -89,6 +89,11 @@ package dreamwisp.entity.components
 			velocityX += Math.sin(-host.body.angle) * power;
 			velocityY += Math.cos(-host.body.angle) * power;
 		}
+		
+		public function isMoving():Boolean
+		{
+			return (velocityX != 0 || velocityY != 0);
+		}
 	
 	}
 
