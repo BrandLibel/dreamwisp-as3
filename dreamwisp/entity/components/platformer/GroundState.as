@@ -21,7 +21,7 @@ package dreamwisp.entity.components.platformer
 		override public function update():void
 		{
 			var tileUnderFoot:Tile = platformPhysics.primaryFoot();
-			if (tileUnderFoot.isSolidUp())
+			if (tileUnderFoot.isSolidUp() && !platformPhysics.ignoresCollision(tileUnderFoot))
 			{
 				if (tileUnderFoot != lastTile)
 					platformPhysics.steppedNewTile.dispatch(tileUnderFoot);

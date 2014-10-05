@@ -181,7 +181,7 @@ package dreamwisp.entity.components.platformer
 		//}
 		
 		public var ignoresGhosts:Boolean = true;
-		protected function ignoresCollision(tile:Tile):Boolean
+		public function ignoresCollision(tile:Tile):Boolean
 		{
 			return (isOnSlope || (tile.isGhost() && ignoresGhosts) );
 		}
