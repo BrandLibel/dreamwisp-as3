@@ -24,6 +24,11 @@ package dreamwisp.entity.components
 			tileHeight = tileScape.tileHeight;
 		}
 		
+		public function getTileScape():TileScape 
+		{
+			return tileScape;
+		}
+		
 	}
 
 }

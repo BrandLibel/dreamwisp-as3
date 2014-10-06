@@ -1,2 +1,3 @@
 The DreamWisp Engine's Swift package contains redesigned 
-Flash library classes that are optimized for better performance.
+Flash library classes that are optimized for better performance,
+as well as generic data structures and algorithms.

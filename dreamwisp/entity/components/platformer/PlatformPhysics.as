@@ -96,11 +96,6 @@ package dreamwisp.entity.components.platformer
 			currentState.enter();
 		}
 		
-		public function getTileScape():TileScape
-		{
-			return tileScape;
-		}
-		
 		override public function moveLeft():void 
 		{
 			currentState.moveLeft();

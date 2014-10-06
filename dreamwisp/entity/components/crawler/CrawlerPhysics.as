@@ -1,5 +1,6 @@
 package dreamwisp.entity.components.crawler 
 {
+	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Physics;
 	import dreamwisp.entity.components.TileBasedPhysics;
 	import dreamwisp.entity.hosts.Entity;
@@ -70,10 +71,13 @@ package dreamwisp.entity.components.crawler
 		
 		public function moveTo(row:int, col:int):void 
 		{
-			if (row < 0 || col < 0 || row > tileScape.gridHeight() - 1 || col > tileScape.gridWidth() - 1)
+			if (row < 0 || col < 0 || row >= tileScape.gridHeight() || col >= tileScape.gridWidth())
 				return;
 			if (tileScape.tileAt(row, col).isCompleteSolid())
+			{
+				MonsterDebugger.trace(this, "failed move on solid");
 				return;
+			}
 			
 			host.body.x = col * tileScape.tileWidth;
 			host.body.y = row * tileScape.tileHeight;
