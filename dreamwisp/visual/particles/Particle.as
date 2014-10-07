@@ -71,8 +71,34 @@ package dreamwisp.visual.particles
 			
 			const bitmapData:BitmapData = bitmap.bitmapData;
 			bitmapData.copyPixels(srcImage, rect, ORIGIN);
-			bitmapData.lock();
 			
+			const length:uint = rect.width * rect.height;
+			var prevX:Number = rect.x;
+			var prevY:Number = rect.y;
+			rect.x = 0;
+			rect.y = 0;
+			
+			var vector:Vector.<uint> = bitmapData.getVector(rect);
+			for (var i:int = 0; i < length; i++) 
+			{
+				var x:int = i % rect.width;
+				var y:int = i / rect.height;
+				
+				var ARGB:uint = vector[i];
+				var alpha:uint = ((ARGB >> 24) & 0xFF) * this.alpha;
+				var red:uint = (color >> 16) & 0xFF;
+				var green:uint = (color >> 8) & 0xFF;
+				var blue:uint = color & 0xFF;
+				vector[i] = ( (alpha << 24) | (red << 16) | (green << 8) | blue );
+			}
+			bitmapData.setVector(rect, vector);
+			
+			canvas.copyPixels(bitmapData, rect, point, null, null, true);
+			rect.x = prevX;
+			rect.y = prevY;
+			
+			// OLD: lock(), getVector(), setPixel(), unlock() - slower than getPixel()
+			//bitmapData.lock();
 			/*const vector:Vector.<uint> = bitmapData.getVector(rect);
 			for (var i:int = 0; i < vector.length; i++) 
 			{
@@ -88,8 +114,8 @@ package dreamwisp.visual.particles
 				bitmapData.setPixel32(x, y, newARGB);
 			}*/
 			
-			const length:uint = rect.width * rect.height;
-			for (var i:int = 0; i < length; i++) 
+			// OLD: lock(), getPixel(), setPixel(), unlock() - slower than setVector()
+			/*for (var i:int = 0; i < length; i++) 
 			{
 				const x:int = i % rect.width;
 				const y:int = i / rect.height;
@@ -103,15 +129,7 @@ package dreamwisp.visual.particles
 				
 				bitmapData.setPixel32(x, y, newARGB);
 			}
-			
-			bitmapData.unlock();
-			const prevX:Number = rect.x;
-			const prevY:Number = rect.y;
-			rect.x = 0;
-			rect.y = 0;
-			canvas.copyPixels(bitmapData, rect, point, null, null, true);
-			rect.x = prevX;
-			rect.y = prevY;
+			bitmapData.unlock();*/
 		}
 		
 	}
