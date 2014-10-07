@@ -11,7 +11,7 @@ package dreamwisp.swift.pathfind
 	{
 		public var x:int;
 		public var y:int;
-		public var visited:Boolean = false;
+		public var priority:int = 0;
 		private var nodeList:SwiftArray;
 		
 		/// Default: North, East, South, West. Remove these if the neighbor's side is solid
@@ -27,7 +27,7 @@ package dreamwisp.swift.pathfind
 			this.nodeList = nodeList;
 		}
 		
-		/// Array of graph coordinates (x, y) for adjacent nodes
+		/// Array of adjacent nodes
 		public function neighbors():Array
 		{
 			var result:Array = [];
@@ -46,7 +46,7 @@ package dreamwisp.swift.pathfind
 					var node:Node = nodeList.access(row, col);
 					if (node == null || node.solid[oppositeDir])
 						continue;
-					result.push([row, col]);
+					result.push(node);
 				}
 			}
 			

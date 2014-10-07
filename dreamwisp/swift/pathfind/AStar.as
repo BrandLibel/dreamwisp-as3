@@ -1,5 +1,7 @@
-package dreamwisp.swift.pathfind {
+package dreamwisp.swift.pathfind
+{
 	import com.demonsters.debugger.MonsterDebugger;
+	import dreamwisp.swift.ds.PriorityQueue;
 	import dreamwisp.swift.SwiftArray;
 	import dreamwisp.world.tile.Tile;
 	import dreamwisp.world.tile.TileScape;
@@ -14,12 +16,6 @@ package dreamwisp.swift.pathfind {
 	{
 		private var nodeList:SwiftArray;
 		
-		private var frontier:Array;
-		/// Map with Key Node : Value Node, used recreate path through nodes
-		private var cameFrom:Dictionary;
-		private var goal:Node;
-		private var start:Node;
-		
 		protected var MOVE_COST:Number = 1;
 		
 		public function AStar() 
@@ -27,7 +23,11 @@ package dreamwisp.swift.pathfind {
 			
 		}
 		
-		/// Scans a tileScape to produce a grid of Nodes based on tiles.
+		/**
+		 * Scans a tileScape to produce a grid of Nodes based on tiles.
+		 * Only rescan when there is a change in the tileScape.
+		 * @param	tileScape
+		 */
 		public function scan(tileScape:TileScape):void 
 		{
 			var rows:uint = tileScape.gridHeight();
@@ -38,60 +38,60 @@ package dreamwisp.swift.pathfind {
 				for (var col:int = 0; col < cols; col++)
 				{
 					var t:Tile = tileScape.tileAt(row, col);
-					//MonsterDebugger.trace(this, "aR: " + row + ", " + "aC: " + col);
-					var node:Node = new Node(row, col, nodeList);
-					node.solid[0] = t.isSolidUp();
-					node.solid[1] = t.isSolidRight();
-					node.solid[2] = t.isSolidDown();
-					node.solid[3] = t.isSolidLeft();
-					// don't add a complete solid (obstacle) into the nodeList
-					if (!t.isCompleteSolid())
-						nodeList.put(row, col, node );
-					else
-						nodeList.put(row, col, null)
-					// remove the edges 
+					nodeList.put(row, col, makeNode(row, col, t));
 				}
 			}
 		}
 		
-		public function ping(row:uint, col:uint):Array 
+		/// Creates a node from a provided tile
+		protected function makeNode(row:int, col:int, t:Tile):Node 
 		{
-			var neighbors:Array = nodeList.access(row, col).neighbors();
-			//MonsterDebugger.trace(this, neighbors);
-			return neighbors;
+			if (t.isCompleteSolid())
+				return null;
+			var node:Node = new Node(row, col, nodeList);
+			node.solid[0] = t.isSolidUp();
+			node.solid[1] = t.isSolidRight();
+			node.solid[2] = t.isSolidDown();
+			node.solid[3] = t.isSolidLeft();
+			return node;
 		}
 		
 		/**
 		 * 
-		 * @param	sRow
-		 * @param	sCol 
+		 * @param	sRow the row coordinate of the start node
+		 * @param	sCol the column coordinate of the start node
 		 * @param	gRow the row coordinate of the goal node
 		 * @param	gCol the column coordinate of the goal node
 		 * @return
 		 */
 		public function findPath(sRow:uint, sCol:uint, gRow:uint, gCol:uint):Vector.<Node> 
 		{
-			start = nodeList.access(sRow, sCol);
-			goal = nodeList.access(gRow, gCol);
+			var start:Node = nodeList.access(sRow, sCol);
+			var goal:Node = nodeList.access(gRow, gCol);
 			
-			frontier = new Array();
-			cameFrom = new Dictionary();
-			frontier.push(start);
-			while (frontier.length > 0) 
+			var frontier:PriorityQueue = new PriorityQueue();
+			frontier.enqueue(start, 0);
+			var cameFrom:Dictionary = new Dictionary(true);
+			var costSoFar:Dictionary = new Dictionary(true);
+			costSoFar[start] = 0;
+			
+			while (!frontier.isEmpty())
 			{
-				var current:Node = frontier.shift();
-				if (current == goal)
-					break;
+				if (frontier.front() == null) continue;
+				var current:Node = frontier.dequeue();
+				
+				if (current == goal) break;
 					
-				for each (var coords:Array in current.neighbors()) 
+				for each (var next:Node in current.neighbors()) 
 				{
-					var node:Node = nodeList.access(coords[0], coords[1]);
+					var newCost:int = costSoFar[current] + MOVE_COST;
 					
-					if (!node.visited)
+					if (costSoFar[next] == null || newCost < costSoFar[next])
 					{
-						frontier.push(node);
-						node.visited = true;
-						cameFrom[node] = current;
+						costSoFar[next] = newCost;
+						var priority:int = newCost + h(goal, next);
+						frontier.enqueue(next, priority);
+						cameFrom[next] = current;
 					}
 				}
 			}
@@ -113,7 +113,7 @@ package dreamwisp.swift.pathfind {
 		
 		protected function f(from:Node, to:Node):Number
 		{
-			return g(from, to) + h(from);
+			return g(from, to) + h(from, to);
 		}
 		
 		/// Actual cost to reach a target node
@@ -123,10 +123,10 @@ package dreamwisp.swift.pathfind {
 		}
 		
 		/// Estimated (heuristic) cost to reach the goal node
-		protected function h(start:Node):Number
+		protected function h(from:Node, to:Node):Number
 		{
-			var dx:Number = Math.abs(goal.x - start.x);
-			var dy:Number = Math.abs(goal.y - start.y);
+			var dx:Number = Math.abs(from.x - to.x);
+			var dy:Number = Math.abs(from.y - to.y);
 			return MOVE_COST * (dx + dy);
 		}
 		
