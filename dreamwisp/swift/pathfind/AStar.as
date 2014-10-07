@@ -101,6 +101,8 @@ package dreamwisp.swift.pathfind
 			
 			var pathHead:Node = goal;
 			path.push(pathHead);
+			if (cameFrom[pathHead] == null)
+				return null;
 			
 			while (pathHead != start)
 			{
