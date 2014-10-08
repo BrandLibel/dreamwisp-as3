@@ -14,8 +14,8 @@ package dreamwisp.swift.pathfind
 	 */
 	public class AStar 
 	{
-		private var nodeList:SwiftArray;
-		
+		protected var nodeList:SwiftArray;
+		protected var tileScape:TileScape;
 		protected var MOVE_COST:Number = 1;
 		
 		public function AStar() 
@@ -30,6 +30,7 @@ package dreamwisp.swift.pathfind
 		 */
 		public function scan(tileScape:TileScape):void 
 		{
+			this.tileScape = tileScape;
 			var rows:uint = tileScape.gridHeight();
 			var cols:uint = tileScape.gridWidth();
 			nodeList = new SwiftArray(rows, cols);
