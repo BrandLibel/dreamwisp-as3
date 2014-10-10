@@ -269,20 +269,20 @@ package dreamwisp.entity.components.platformer
 			if (velocityY > 0)
 			{
 				// setting the tile to dispatch for collision
-				if (bottomLeftTile().isSolidUp() && bottomRightTile().isSolidUp())
+				if (bottomLeftTile().isSolidUp() && bottomRightTile().isSolidUp() && !ignoresCollision(bottomMidTile()))
 					tileToCollide = bottomMidTile();
-				else if (bottomLeftTile().isSolidUp())
+				else if (bottomLeftTile().isSolidUp() && !ignoresCollision(bottomLeftTile()))
 					tileToCollide = bottomLeftTile();
-				else if (bottomRightTile().isSolidUp())
+				else if (bottomRightTile().isSolidUp() && !ignoresCollision(bottomRightTile()))
 					tileToCollide = bottomRightTile();
 					
 				if (bottomLeftTile().isSolidUp() || bottomRightTile().isSolidUp())
-				{		
+				{
 					if (bottomLeftTile().isPlatform() || bottomRightTile().isPlatform())
 					{
 						if (prevRow < bottomEdge())
 							collideBottom(tileToCollide);
-					} 
+					}
 					else 
 						collideBottom(tileToCollide);
 				}
@@ -322,7 +322,7 @@ package dreamwisp.entity.components.platformer
 		/// Hit the floor
 		protected function collideBottom(tile:Tile):void 
 		{
-			if (ignoresCollision(tile))
+			if (tile == null) // null means all tiles below ignored collisions
 				return;
 			body.y = bottomEdge() * tileHeight-body.height;
 			velocityY = 0;
@@ -631,9 +631,9 @@ package dreamwisp.entity.components.platformer
 			var leftFoot:Tile = this.leftFoot();
 			var midFoot:Tile = this.midFoot();
 			var rightFoot:Tile = this.rightFoot();
-			if (midFoot.isSolidUp() || midFoot.isSlope())
+			if ((midFoot.isSolidUp() || midFoot.isSlope()) && !ignoresCollision(midFoot))
 				return midFoot;
-			else if (leftFoot.isSolidUp() || leftFoot.isSlope())
+			else if ((leftFoot.isSolidUp() || leftFoot.isSlope()) && !ignoresCollision(leftFoot))
 				return leftFoot;
 			else
 				return rightFoot;
