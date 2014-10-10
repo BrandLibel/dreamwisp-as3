@@ -12,11 +12,21 @@ package dreamwisp.swift.pathfind
 		public var x:int;
 		public var y:int;
 		public var priority:int = 0;
-		private var nodeList:SwiftArray;
+		protected var nodeList:SwiftArray;
 		
+		public var h:Number;
+		
+		public static const NORTH:Array = [0, -1];
+		public static const EAST:Array = [1, 0];
+		public static const SOUTH:Array = [0, 1];
+		public static const WEST:Array = [ -1, 0];
+		public static const NORTH_EAST:Array = [1, -1];
+		public static const SOUTH_EAST:Array = [1, 1];
+		public static const SOUTH_WEST:Array = [-1, 1];
+		public static const NORTH_WEST:Array = [ -1, -1];
 		/// Default: North, East, South, West. Remove these if the neighbor's side is solid
 		/// this.solidUp ?-> remeove North; south.solidUp ?-> remove South
-		protected var directions:Array = [[0, -1], [1, 0], [0, 1], [ -1, 0]];
+		protected var directions:Array = [NORTH, EAST, SOUTH, WEST];
 		/// Up, Right, Down, Left
 		internal var solid:Array = [false, false, false, false]
 		

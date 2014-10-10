@@ -69,12 +69,15 @@ package dreamwisp.swift.pathfind
 		{
 			var start:Node = nodeList.access(sRow, sCol);
 			var goal:Node = nodeList.access(gRow, gCol);
+			if (goal == null)
+				return null;
 			
 			var frontier:PriorityQueue = new PriorityQueue();
 			frontier.enqueue(start, 0);
 			var cameFrom:Dictionary = new Dictionary(true);
 			var costSoFar:Dictionary = new Dictionary(true);
 			costSoFar[start] = 0;
+			var nearest:Node = start;
 			
 			while (!frontier.isEmpty())
 			{
@@ -86,11 +89,14 @@ package dreamwisp.swift.pathfind
 				for each (var next:Node in current.neighbors()) 
 				{
 					var newCost:int = costSoFar[current] + MOVE_COST;
-					
+					next.h = h(goal, next);
+					if (next.h < nearest.h)
+						nearest = next;
 					if (costSoFar[next] == null || newCost < costSoFar[next])
 					{
 						costSoFar[next] = newCost;
-						var priority:int = newCost + h(goal, next);
+						var priority:int = newCost + next.h;
+						
 						frontier.enqueue(next, priority);
 						cameFrom[next] = current;
 					}
@@ -101,9 +107,11 @@ package dreamwisp.swift.pathfind
 			var path:Vector.<Node> = new Vector.<Node>();
 			
 			var pathHead:Node = goal;
-			path.push(pathHead);
+			// goal is unreachable - settle for nearest to goal
 			if (cameFrom[pathHead] == null)
-				return null;
+				pathHead = nearest;
+				
+			path.push(pathHead);
 			
 			while (pathHead != start)
 			{
