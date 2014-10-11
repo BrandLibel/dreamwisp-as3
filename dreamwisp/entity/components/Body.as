@@ -50,10 +50,7 @@ package dreamwisp.entity.components {
 		 * @param	body
 		 */
 		public function touches(body:Body):Boolean {
-			if (this.getAsRectangle().intersects( body.getAsRectangle() )) {
-				return true;
-			}
-			return false;
+			return this.getAsRectangle().intersects( body.getAsRectangle() );
 		}
 		
 		public function touchesPoint(x:Number, y:Number):Boolean {
@@ -63,6 +60,12 @@ package dreamwisp.entity.components {
 				}
 			}
 			return false;
+		}
+		
+		public function touchesRect(x:Number, y:Number, width:Number, height:Number):Boolean 
+		{
+			var rect:SwiftRectangle = new SwiftRectangle(x, y, width, height);
+			return this.getAsRectangle().intersects(rect);
 		}
 		
 		public function get centerX():Number {

@@ -11,6 +11,7 @@ package dreamwisp.swift.pathfind
 	{
 		public var x:int;
 		public var y:int;
+		
 		public var priority:int = 0;
 		public var h:Number;
 		
@@ -33,8 +34,8 @@ package dreamwisp.swift.pathfind
 		
 		public function Node(row:uint, col:uint, nodeList:SwiftArray) 
 		{
-			x = row;
-			y = col;
+			y = row;
+			x = col;
 			this.nodeList = nodeList;
 			specialNeighbors = [];
 		}
@@ -51,8 +52,8 @@ package dreamwisp.swift.pathfind
 			for (var i:uint = 0; i < directions.length; i++)
 			{
 				var dir:Array = directions[i];
-				var row:int = x + dir[1];
-				var col:int = y + dir[0];
+				var row:int = y + dir[1];
+				var col:int = x + dir[0];
 					
 				// neighbors must be in bounds
 				if (0 <= row && row < nodeList.numRows() && 0 <= col && col < nodeList.numCols())

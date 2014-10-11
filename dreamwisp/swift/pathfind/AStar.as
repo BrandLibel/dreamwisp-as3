@@ -136,8 +136,8 @@ package dreamwisp.swift.pathfind
 		/// Estimated (heuristic) cost to reach the goal node
 		protected function h(from:Node, to:Node):Number
 		{
-			var dx:Number = Math.abs(from.x - to.x);
-			var dy:Number = Math.abs(from.y - to.y);
+			var dx:Number = Math.abs(from.y - to.y);
+			var dy:Number = Math.abs(from.x - to.x);
 			return MOVE_COST * (dx + dy);
 		}
 		
