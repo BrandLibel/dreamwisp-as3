@@ -24,7 +24,7 @@ package dreamwisp.swift
 		
 		public function access(row:uint, col:uint):*
 		{
-			var index:int = (row * cols) + col;
+			var index:uint = (row * cols) + col;
 			if (index >= size())
 				throw new Error("Row and col index exceeded grid bounds.");
 			return array[index];
@@ -32,7 +32,7 @@ package dreamwisp.swift
 		
 		public function put(row:uint, col:uint, item:*):void
 		{
-			var index:int = (row * cols) + col;
+			var index:uint = (row * cols) + col;
 			if (index >= size())
 				throw new Error("Row and col index exceeded grid bounds.");
 			array[index] = item;

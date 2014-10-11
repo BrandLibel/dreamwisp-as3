@@ -12,9 +12,10 @@ package dreamwisp.swift.pathfind
 		public var x:int;
 		public var y:int;
 		public var priority:int = 0;
-		protected var nodeList:SwiftArray;
-		
 		public var h:Number;
+		
+		protected var nodeList:SwiftArray;
+		protected var specialNeighbors:Array;
 		
 		public static const NORTH:Array = [0, -1];
 		public static const EAST:Array = [1, 0];
@@ -35,6 +36,12 @@ package dreamwisp.swift.pathfind
 			x = row;
 			y = col;
 			this.nodeList = nodeList;
+			specialNeighbors = [];
+		}
+		
+		public function addNeighbor(node:Node):void 
+		{
+			specialNeighbors.push(node);
 		}
 		
 		/// Array of adjacent nodes
@@ -59,6 +66,7 @@ package dreamwisp.swift.pathfind
 					result.push(node);
 				}
 			}
+			result = result.concat(specialNeighbors);
 			
 			return result;
 		}

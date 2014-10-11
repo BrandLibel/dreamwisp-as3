@@ -58,12 +58,12 @@ package dreamwisp.swift.pathfind
 		}
 		
 		/**
-		 * 
+		 * Finds the lowest cost path from a start node to a goal node.
+		 * Returns the nearest if the goal is unreachable, and null if goal is an invalid node.
 		 * @param	sRow the row coordinate of the start node
 		 * @param	sCol the column coordinate of the start node
 		 * @param	gRow the row coordinate of the goal node
 		 * @param	gCol the column coordinate of the goal node
-		 * @return
 		 */
 		public function findPath(sRow:uint, sCol:uint, gRow:uint, gCol:uint):Vector.<Node> 
 		{
