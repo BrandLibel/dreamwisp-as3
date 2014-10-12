@@ -71,7 +71,8 @@ package dreamwisp.swift.pathfind
 			var goal:Node = nodeList.access(gRow, gCol);
 			if (goal == null)
 				return null;
-			
+			start.h = h(start, goal);
+				
 			var frontier:PriorityQueue = new PriorityQueue();
 			frontier.enqueue(start, 0);
 			var cameFrom:Dictionary = new Dictionary(true);
@@ -90,7 +91,7 @@ package dreamwisp.swift.pathfind
 				{
 					var newCost:int = costSoFar[current] + MOVE_COST;
 					next.h = h(goal, next);
-					if (next.h < nearest.h)
+					if (next.h < nearest.h && next != goal) // nearest is the lowest cost non-goal node
 						nearest = next;
 					if (costSoFar[next] == null || newCost < costSoFar[next])
 					{
@@ -108,7 +109,7 @@ package dreamwisp.swift.pathfind
 			
 			var pathHead:Node = goal;
 			// goal is unreachable - settle for nearest to goal
-			if (cameFrom[pathHead] == null)
+			if (isUnreachable(cameFrom, goal))
 				pathHead = nearest;
 				
 			path.push(pathHead);
@@ -118,8 +119,13 @@ package dreamwisp.swift.pathfind
 				pathHead = cameFrom[pathHead];
 				path.unshift(pathHead);
 			}
-			
 			return path;
+		}
+		
+		/// Determines whether it's impossible to form a path to the goal
+		protected function isUnreachable(path:Dictionary, goal:Node):Boolean
+		{
+			return path[goal] == null;
 		}
 		
 		protected function f(from:Node, to:Node):Number

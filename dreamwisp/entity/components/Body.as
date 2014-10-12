@@ -65,7 +65,7 @@ package dreamwisp.entity.components {
 		public function touchesRect(x:Number, y:Number, width:Number, height:Number):Boolean 
 		{
 			var rect:SwiftRectangle = new SwiftRectangle(x, y, width, height);
-			return this.getAsRectangle().intersects(rect);
+			return getAsRectangle().intersects(rect);
 		}
 		
 		public function get centerX():Number {
