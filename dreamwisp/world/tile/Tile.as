@@ -256,6 +256,11 @@ package dreamwisp.world.tile
 			return (solid.left && solid.right && solid.up && solid.down);
 		}
 		
+		public function isKiller():Boolean
+		{
+			return (kills.left || kills.right || kills.up || kills.down);
+		}
+		
 		public function isEmpty():Boolean
 		{
 			return isNIL;

@@ -30,7 +30,7 @@ package dreamwisp.swift.pathfind
 		/// this.solidUp ?-> remeove North; south.solidUp ?-> remove South
 		protected var directions:Array = [NORTH, EAST, SOUTH, WEST];
 		/// Up, Right, Down, Left
-		internal var solid:Array = [false, false, false, false]
+		public var solid:Array = [false, false, false, false]
 		
 		public function Node(row:uint, col:uint, nodeList:SwiftArray) 
 		{
@@ -43,6 +43,16 @@ package dreamwisp.swift.pathfind
 		public function addNeighbor(node:Node):void 
 		{
 			specialNeighbors.push(node);
+		}
+		
+		public function addNeighbors(...rest):void 
+		{
+			specialNeighbors = specialNeighbors.concat(rest);
+		}
+		
+		public function addNeighborArray(neighbors:Array):void 
+		{
+			specialNeighbors = specialNeighbors.concat(neighbors);
 		}
 		
 		/// Array of adjacent nodes

@@ -89,7 +89,7 @@ package dreamwisp.swift.pathfind
 					
 				for each (var next:Node in current.neighbors()) 
 				{
-					var newCost:int = costSoFar[current] + MOVE_COST;
+					var newCost:int = costSoFar[current] + cost(current, next);
 					next.h = h(goal, next);
 					if (next.h < nearest.h && next != goal) // nearest is the lowest cost non-goal node
 						nearest = next;
@@ -128,15 +128,10 @@ package dreamwisp.swift.pathfind
 			return path[goal] == null;
 		}
 		
-		protected function f(from:Node, to:Node):Number
+		/// Actual cost to travel between two adjacent nodes
+		protected function cost(from:Node, to:Node):Number 
 		{
-			return g(from, to) + h(from, to);
-		}
-		
-		/// Actual cost to reach a target node
-		protected function g(from:Node, to:Node):Number 
-		{
-			return 0;
+			return MOVE_COST;
 		}
 		
 		/// Estimated (heuristic) cost to reach the goal node
