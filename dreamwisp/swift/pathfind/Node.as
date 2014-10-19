@@ -42,6 +42,10 @@ package dreamwisp.swift.pathfind
 		
 		public function addNeighbor(node:Node):void 
 		{
+			// avoid duplicates in special neighbors
+			for each (var item:Node in specialNeighbors) 
+				if (item == node)
+					return;
 			specialNeighbors.push(node);
 		}
 		
