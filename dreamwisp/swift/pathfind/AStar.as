@@ -69,7 +69,7 @@ package dreamwisp.swift.pathfind
 		{
 			var start:Node = nodeList.access(sRow, sCol);
 			var goal:Node = nodeList.access(gRow, gCol);
-			if (goal == null)
+			if (start == null || goal == null)
 				return null;
 			start.h = h(start, goal);
 				
