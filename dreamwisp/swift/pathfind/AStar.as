@@ -122,6 +122,16 @@ package dreamwisp.swift.pathfind
 			return path;
 		}
 		
+		public function findPathFrom(node:Node, gRow:uint, gCol:uint):Vector.<Node> 
+		{
+			return findPath(node.y, node.x, gRow, gCol);
+		}
+		
+		public function getNode(row:uint, col:uint):Node
+		{
+			return nodeList.access(row, col);
+		}
+		
 		/// Determines whether it's impossible to form a path to the goal
 		protected function isUnreachable(path:Dictionary, goal:Node):Boolean
 		{
