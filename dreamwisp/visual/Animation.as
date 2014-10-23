@@ -23,6 +23,7 @@ package dreamwisp.visual
 		private var speed:int = 0;
 		private var callBack:Function = null;
 		
+		/// Locked indicates that any new animation will not be played
 		private var locked:Boolean = false;
 		
 		public function Animation(movieClip:MovieClip) 
@@ -116,6 +117,7 @@ package dreamwisp.visual
 			targetFrame = 0;
 		}
 		
+		/// Returns the frame number of the provided label
 		private function findFrame(label:String):uint 
 		{
 			if (movieClip.totalFrames == 1)
@@ -137,7 +139,7 @@ package dreamwisp.visual
 			var numFrames:uint = 0;
 			const originalFrame:uint = movieClip.currentFrame;
 			movieClip.gotoAndStop(frameLabel);
-			while (movieClip.currentLabel == frameLabel)
+			while (movieClip.currentLabel == frameLabel && movieClip.currentFrame != movieClip.totalFrames)
 			{
 				numFrames++;
 				movieClip.nextFrame();
