@@ -95,7 +95,7 @@ package dreamwisp.visual
 		/// Essentially movieClip.gotoAndPlay(startLabel); stops once the label is finished
 		public function play(startLabel:String, callBack:Function = null):void 
 		{
-			if (locked) return;
+			if (locked || !hasLabel(startLabel)) return;
 			speed = 1;
 			frame = findFrame(startLabel);
 			targetFrame = frame + countFrames(startLabel) - 1;
@@ -146,6 +146,14 @@ package dreamwisp.visual
 			}
 			movieClip.gotoAndStop(originalFrame);
 			return numFrames;
+		}
+		
+		private function hasLabel(label:String):Boolean
+		{
+			for each (var frameLabel:FrameLabel in movieClip.currentLabels)
+				if (frameLabel.name == label)
+					return true;
+			return false;
 		}
 		
 		/// Call to set the movieClip's frame
