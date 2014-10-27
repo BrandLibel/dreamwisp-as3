@@ -26,9 +26,11 @@ package dreamwisp.visual
 		/// Locked indicates that any new animation will not be played
 		private var locked:Boolean = false;
 		
-		public function Animation(movieClip:MovieClip) 
+		public function Animation(movieClip:MovieClip, initLabel:String = "") 
 		{
 			this.movieClip = movieClip;
+			if (initLabel != "")
+				setFrame(initLabel);
 		}
 		
 		/**
@@ -139,9 +141,12 @@ package dreamwisp.visual
 			var numFrames:uint = 0;
 			const originalFrame:uint = movieClip.currentFrame;
 			movieClip.gotoAndStop(frameLabel);
-			while (movieClip.currentLabel == frameLabel && movieClip.currentFrame != movieClip.totalFrames)
+			while (movieClip.currentLabel == frameLabel)
 			{
 				numFrames++;
+				// placed in middle so numFrames increments even on the breaking frame
+				if (movieClip.currentFrame == movieClip.totalFrames)
+					break;
 				movieClip.nextFrame();
 			}
 			movieClip.gotoAndStop(originalFrame);
