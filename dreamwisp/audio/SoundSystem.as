@@ -18,8 +18,8 @@ package dreamwisp.audio
 		private static var transform:SoundTransform = new SoundTransform();
 		/// The master volume for all audio in the game
 		public static var volume:Number = 1;
-		private static var muteSound:Boolean = false;
-		private static var muteMusic:Boolean = false;
+		private static var mutedSound:Boolean = false;
+		private static var mutedMusic:Boolean = false;
 		
 		private static var currentMusic:Music;
 		private static var pendingMusic:Music;
@@ -33,19 +33,19 @@ package dreamwisp.audio
 		
 		public static function play(sound:Sound, volume:Number = 1):void 
 		{
-			if (muteSound) return;
+			if (mutedSound) return;
 			
 			transform.volume = volume * SoundSystem.volume;
 			channel = sound.play(0, 0, transform);
 		}
 		
-		public static function playMusic(sound:Sound, volume:Number = 1, fadeTime:Number = DEFAULT_FADE_TIME):void 
+		public static function playMusic(music:Sound, volume:Number = 1, fadeTime:Number = DEFAULT_FADE_TIME):void 
 		{
 			if (currentMusic == null)
-				setCurrentMusic(new Music(volume, sound));
-			else if (sound != currentMusic.sound)
+				setCurrentMusic(new Music(volume, music));
+			else if (music != currentMusic.sound)
 			{
-				pendingMusic = new Music(volume, sound);
+				pendingMusic = new Music(volume, music);
 				currentMusic.fadeOut(fadeTime, playNextMusic);
 			}
 		}
@@ -53,7 +53,7 @@ package dreamwisp.audio
 		private static function setCurrentMusic(music:Music):void 
 		{
 			currentMusic = music;
-			if (muteMusic) return;
+			if (mutedMusic) return;
 			music.play();
 		}
 		
@@ -65,17 +65,17 @@ package dreamwisp.audio
 		
 		public static function toggleMuteSound():void 
 		{
-			muteSound = !muteSound;
+			mutedSound = !mutedSound;
 		}
 		
 		public static function toggleMuteMusic():void 
 		{
-			muteMusic = !muteMusic;
+			mutedMusic = !mutedMusic;
 			
-			if (muteMusic)
+			if (mutedMusic)
 				currentMusic.stop();
-			else if (!muteMusic)
-				currentMusic.play(); // resume the music playing before the mute
+			else if (!mutedMusic)
+				currentMusic.play(); // restart the music playing before the mute
 		}
 		
 		public static function stop():void 

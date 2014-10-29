@@ -58,7 +58,9 @@ package dreamwisp.audio
 		{
 			time += TIME_INTERVAL;
 			volume = startVolume - (startVolume * (time / fadeDuration));
-			channel.soundTransform = transform;
+			// bugfix: a muted music never plays so -> channel == null.
+			if (channel != null)
+				channel.soundTransform = transform;
 			
 			if (time >= fadeDuration)
 				onFinishFade.call();
