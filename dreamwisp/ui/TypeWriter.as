@@ -25,7 +25,7 @@ package dreamwisp.ui
 		
 		public function load(text:String):void 
 		{
-			loadedText = text;
+			loadedText = text.substring();
 			displayedText = "";
 		}
 		
@@ -73,8 +73,8 @@ package dreamwisp.ui
 		 */
 		public function finish():void 
 		{
-			displayedText += loadedText;
-			loadedText = "";
+			while (loadedText.length > 0)
+				write();
 		}
 		
 		public function render():void 
