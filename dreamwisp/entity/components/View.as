@@ -55,7 +55,7 @@ package dreamwisp.entity.components
 		}
 		
 		/**
-		 * Alters the tinting of this view
+		 * Applies a destructive (prev tint is ignored) tint.
 		 * @param	colors red, green, and blue multiplier (0 - 1) values
 		 */
 		public function applyTint(colors:Array, displayObject:DisplayObject = null):void 
@@ -70,6 +70,15 @@ package dreamwisp.entity.components
 			colorTransform.blueMultiplier = colors[2];
 			
 			displayObject.transform.colorTransform = colorTransform;
+		}
+		
+		public function applyTintRGB(rgb:uint, displayObject:DisplayObject = null):void 
+		{
+			var colors:Array = [];
+			colors[0] = (rgb >> 16 & 0xFF)	/ 0xFF;
+			colors[1] = (rgb >>  8 & 0xFF)	/ 0xFF;
+			colors[2] = (rgb >>  0 & 0xFF)	/ 0xFF;
+			applyTint(colors, displayObject);
 		}
 		
 		public function getTint():Array 
