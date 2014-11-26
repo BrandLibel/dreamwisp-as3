@@ -55,27 +55,33 @@ package dreamwisp.entity.components
             displayObject.rotation = host.body.angle * rotAngle;
 		}
 		
+		public function applyTint(r:Number, g:Number, b:Number, displayObject:DisplayObject = null):void 
+		{
+			currentTint[0] = r;
+			currentTint[1] = g;
+			currentTint[2] = b;
+			
+			if (displayObject == null) displayObject = this.displayObject;
+			
+			colorTransform = displayObject.transform.colorTransform;
+			colorTransform.redMultiplier = r;
+			colorTransform.greenMultiplier = g;
+			colorTransform.blueMultiplier = b;
+			displayObject.transform.colorTransform = colorTransform;
+		}
+		
 		/**
 		 * Applies a destructive (prev tint is ignored) tint.
 		 * @param	colors red, green, and blue multiplier (0 - 1) values
 		 */
-		public function applyTint(colors:Array, displayObject:DisplayObject = null):void 
+		public function applyTintArray(colors:Array, displayObject:DisplayObject = null):void 
 		{
-			currentTint = colors;
-			
-			if (displayObject == null) displayObject = this.displayObject;
-
-			colorTransform = displayObject.transform.colorTransform;
-			colorTransform.redMultiplier = colors[0];
-			colorTransform.greenMultiplier = colors[1];
-			colorTransform.blueMultiplier = colors[2];
-			
-			displayObject.transform.colorTransform = colorTransform;
+			applyTint(colors[0], colors[1], colors[2], displayObject);
 		}
 		
 		public function applyTintRGB(rgb:uint, displayObject:DisplayObject = null):void 
 		{
-			applyTint(Belt.rgbToMultipliers(rgb), displayObject);
+			applyTintArray(Belt.rgbToMultipliers(rgb), displayObject);
 		}
 		
 		public function getTint():Array 

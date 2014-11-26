@@ -161,6 +161,39 @@
 		
 		/* COLOR RELATED FUNCTIONS */
 		
+		public static function combineRGB(r:uint, g:uint, b:uint):uint
+		{
+			return (r << 16) | (g << 8) | b << 0;
+		}
+		
+		/**
+		 * 
+		 * @param	rgb1
+		 * @param	rgb2
+		 * @param	t
+		 * @param	tTotal
+		 * @param	rInterp main render interpolation calculated by game loop
+		 * @return
+		 */
+		public static function interpolateColor(rgb1:uint, rgb2:uint, t:uint, tTotal:uint, rInterp:Number = 1):uint
+		{
+			var r1:uint = (rgb1 >> 16 & 0xFF);
+			var g1:uint = (rgb1 >>  8 & 0xFF);
+			var b1:uint = (rgb1 >>  0 & 0xFF);
+			
+			var r2:uint = (rgb2 >> 16 & 0xFF);
+			var g2:uint = (rgb2 >>  8 & 0xFF);
+			var b2:uint = (rgb2 >>  0 & 0xFF);
+			
+			var interpolation:Number = (t % tTotal) / tTotal;
+			interpolation *= rInterp;
+			
+			var r3:uint = r1 + (r2 - r1) * interpolation;
+			var g3:uint = g1 + (g2 - g1) * interpolation;
+			var b3:uint = b1 + (b2 - b1) * interpolation;
+			return r3 << 16 | g3 << 8 | b3;
+		}
+		
 		/**
 		 * Converts a RGB color into three 0.0 - 1.0 multiplier values.
 		 * These are for tinting displayObjects via ColorTransform multipliers.
@@ -256,6 +289,12 @@
 			}
 			
 			return [r + m, g + m, b + m];
+		}
+		
+		public static function hsvToRGB(h:int, s:Number, v:Number):uint
+		{
+			var rgb:Array = hsvToMultipliers(h, s, v);
+			return (rgb[0] * 0xFF) << 16 | (rgb[1] * 0xFF) << 8 | (rgb[0] * 0xFF);
 		}
 		
 		public static function toARGB(rgb:uint, newAlpha:uint):uint
