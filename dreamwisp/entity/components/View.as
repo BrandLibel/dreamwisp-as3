@@ -9,6 +9,7 @@ package dreamwisp.entity.components
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.geom.ColorTransform;
+	import tools.Belt;
 	
 	/**
 	 * This class is for anything that can be visually rendered on the screen.
@@ -74,11 +75,7 @@ package dreamwisp.entity.components
 		
 		public function applyTintRGB(rgb:uint, displayObject:DisplayObject = null):void 
 		{
-			var colors:Array = [];
-			colors[0] = (rgb >> 16 & 0xFF)	/ 0xFF;
-			colors[1] = (rgb >>  8 & 0xFF)	/ 0xFF;
-			colors[2] = (rgb >>  0 & 0xFF)	/ 0xFF;
-			applyTint(colors, displayObject);
+			applyTint(Belt.rgbToMultipliers(rgb), displayObject);
 		}
 		
 		public function getTint():Array 
