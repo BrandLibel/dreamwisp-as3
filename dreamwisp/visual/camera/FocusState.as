@@ -47,7 +47,7 @@ package dreamwisp.visual.camera {
 			
 			camera.stayInBounds();
 		}
-				
+		
 		public function enter():void {
 			
 		}

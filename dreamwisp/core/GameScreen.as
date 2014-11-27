@@ -8,7 +8,6 @@ package dreamwisp.core {
 	import dreamwisp.input.KeyMap;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.camera.Camera;
-	import dreamwisp.visual.camera.ICamUser;
 	import dreamwisp.visual.ContainerView;
 	import dreamwisp.entity.EntityManager;
 	

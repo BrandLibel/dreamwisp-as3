@@ -5,6 +5,7 @@ package dreamwisp.visual.camera
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.swift.geom.SwiftRectangle;
+	import dreamwisp.visual.ContainerView;
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	
@@ -29,7 +30,7 @@ package dreamwisp.visual.camera
 		internal var velocityY:int;
 		
 		/// Camera users are usually a View subclass implementing ICamUser.
-		private var user:ICamUser;
+		private var user:ContainerView;
 		/// The focus is the body of the entity which the camera follows.
 		internal var focusBody:Body;
 		internal var focusView:View;
@@ -46,15 +47,15 @@ package dreamwisp.visual.camera
 		private var shakeSeverity:uint = 0;
 		private var shakeCount:uint = 0;
 		
-		private var height:uint;
-		private var width:uint;
+		private var _height:uint;
+		private var _width:uint;
 		
 		private var boundRect:SwiftRectangle;
 		
 		public function Camera(width:uint = 768, height:uint = 480, initialStateName:String = STATE_FOCUS)
 		{
-			this.width = width;
-			this.height = height;
+			_width = width;
+			_height = height;
 			
 			center = new Point(width / 2, height / 2);
 			
@@ -93,6 +94,12 @@ package dreamwisp.visual.camera
 				}
 			}
 			
+			if (_width != width() || _height != height())
+			{
+				offsetX += (width() / zoomValue);
+				offsetY += (height() / zoomValue);
+			}
+			
 			user.followCamera(center.x + offsetX, center.y + offsetY);
 		}
 		
@@ -101,10 +108,23 @@ package dreamwisp.visual.camera
 		 * @param	user the view that needs to be scrolled
 		 * @param	boundary the rectangular limits of the area
 		 */
-		public function redefineBounds(user:ICamUser, boundary:SwiftRectangle):void 
+		public function redefineBounds(user:ContainerView, boundary:SwiftRectangle):void 
 		{
 			this.user = user;
 			this.boundRect = boundary;
+		}
+		
+		public var zoomValue:Number = 1;
+		public function zoom(value:Number):void 
+		{
+			user.scaleX = value;
+			user.scaleY = value;
+			zoomValue = value;
+		}
+		
+		public function zoomPlus():void 
+		{
+			zoom(zoomValue + 1);
 		}
 		
 		/**
@@ -201,7 +221,7 @@ package dreamwisp.visual.camera
 		 */
 		private function isScrollable():Boolean
 		{
-			return (boundRect.width > width || boundRect.height > height);
+			return (boundRect.width > width() || boundRect.height > height());
 		}
 		
 		internal function centralizeX(value:*):*
@@ -217,25 +237,35 @@ package dreamwisp.visual.camera
 		/// The right most edge that the camera center can be, in pixels.
 		internal function get maxX():uint
 		{
-			return boundRect.width - (width / 2) + boundRect.x;
+			return boundRect.width - (width() / 2) + boundRect.x;
 		}
 		
 		/// The left most edge that the camera center can be, in pixels.
 		internal function get minX():uint
 		{
-			return (width / 2) + boundRect.x;
+			return (width() / 2) + boundRect.x;
 		}
 		
 		/// The bottom most edge that the camera center can be, in pixels.
 		internal function get maxY():uint
 		{
-			return boundRect.height - (height / 2) + boundRect.y;
+			return boundRect.height - (height() / 2) + boundRect.y;
 		}
 		
 		/// The top most edge that the camera center can be, in pixels.
 		internal function get minY():uint
 		{
-			return (height / 2) + boundRect.y;
+			return (height() / 2) + boundRect.y;
+		}
+		
+		private function width():uint 
+		{
+			return (_width / zoomValue);
+		}
+		
+		private function height():uint
+		{
+			return (_height / zoomValue);
 		}
 	
 	}
