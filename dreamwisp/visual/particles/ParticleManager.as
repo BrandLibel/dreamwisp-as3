@@ -12,10 +12,10 @@ package dreamwisp.visual.particles
 	
 	public class ParticleManager 
 	{
-		private static var particleList:CircularParticleArray;
 		public static var bitmap:Bitmap;
 		private static var bitmapData:BitmapData;
 		private static var bitmapRect:Rectangle;
+		private static var particleList:CircularParticleArray;
 		
 		public static function init(capacity:uint):void 
 		{
@@ -30,10 +30,28 @@ package dreamwisp.visual.particles
 			bitmap.bitmapData = bitmapData;
 		}
 		
+		/**
+		 * 
+		 * @param	img bitmap of the particle or sprite sheet of particle
+		 * @param	rX x-coord to blit from img
+		 * @param	rY y-coord to blit from img
+		 * @param	rW width of rect to blit from img
+		 * @param	rH height of rect to blit from img
+		 * @param	x position to draw particle at
+		 * @param	y position to draw particle at
+		 * @param	velX change of x every update()
+		 * @param	velY change of y every update()
+		 * @param	duration number of update()s before death
+		 * @param	scale only used when sizeBehavior == sizeShrink
+		 * @param	color tint applied to the particle
+		 * @param	moveBehavior defines how x and y are affected by velocity (default: friction)
+		 * @param	sizeBehavior defines how scale changes over time (default: no change)
+		 * @param	colorBehavior definees how color changes over time (default: alpha decrease) 
+		 */
 		public static function createParticle
 			(img:BitmapData, rX:int, rY:int, rW:int, rH:int,
 			x:int, y:int, velX:Number, velY:Number,
-			duration:uint, scale:Number = 1, color:int = 0xFFFFFF,
+			duration:uint, color:int = 0xFFFFFF, scale:Number = 1,
 			moveBehavior:Function = null, sizeBehavior:Function = null, colorBehavior:Function = null):void 
 		{
 			var particle:Particle;
@@ -101,11 +119,6 @@ package dreamwisp.visual.particles
 					removalCount++;
 			}
 			particleList.numActive -= removalCount;
-		}
-		
-		public static function randomSign():int
-		{
-			return (Math.random() > 0.5) ? 1 : -1;
 		}
 		
 		private static function swap(list:CircularParticleArray, index1:uint, index2:uint):void 

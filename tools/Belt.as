@@ -159,6 +159,11 @@
 			return new Bitmap(bitmapData);
 		}
 		
+		public static function randomSign():int
+		{
+			return (Math.random() > 0.5) ? 1 : -1;
+		}
+		
 		/* COLOR RELATED FUNCTIONS */
 		
 		public static function combineRGB(r:uint, g:uint, b:uint):uint
