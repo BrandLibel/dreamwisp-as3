@@ -57,11 +57,11 @@ package dreamwisp.entity.components
 		
 		public function applyTint(r:Number, g:Number, b:Number, displayObject:DisplayObject = null):void 
 		{
+			if (displayObject == null) displayObject = this.displayObject;
+			
 			currentTint[0] = r;
 			currentTint[1] = g;
 			currentTint[2] = b;
-			
-			if (displayObject == null) displayObject = this.displayObject;
 			
 			colorTransform = displayObject.transform.colorTransform;
 			colorTransform.redMultiplier = r;
@@ -86,7 +86,7 @@ package dreamwisp.entity.components
 		
 		public function getTint():Array 
 		{
-			return currentTint;
+			return currentTint.concat();
 		}
 		
 		public function hasTint():Boolean
