@@ -76,6 +76,11 @@ package dreamwisp.ui
 			visible = false;
 		}
 		
+		public function currentText():String
+		{
+			return dialogueTextField.text;
+		}
+		
 	}
 
 }
