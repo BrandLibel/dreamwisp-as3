@@ -117,7 +117,7 @@ package dreamwisp.core {
 		public function removeScreen(screen:GameScreen):void {
 			screens.splice( screens.indexOf(screen), 1);
 			tempScreensList.splice( screens.indexOf(screen), 1);
-			game.removeContainerView( screen.view );
+			screen.view.removeFromParent(game.sprite);
 		}
 		
 		/**
@@ -130,7 +130,7 @@ package dreamwisp.core {
 			// preventing duplicates from entering the list
 			if (screens.indexOf(screen) == -1) {
 				// add view before enter is to allow view.stage access
-				game.addContainerView(screen.view);
+				screen.view.addToParent(game.sprite);
 				screen.enter();
 				screens.push(screen);
 			}

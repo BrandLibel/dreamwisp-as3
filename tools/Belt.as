@@ -7,8 +7,12 @@
 	import flash.display.IBitmapDrawable;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
+	import flash.ui.Keyboard;
+	import flash.utils.describeType;
+	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 	
 	public final class Belt
@@ -164,6 +168,30 @@
 			return (Math.random() > 0.5) ? 1 : -1;
 		}
 		
+		private static var keyDict:Dictionary;
+		
+		public static function getKeyDict():Dictionary
+		{
+			if (keyDict == null)
+			{
+				var keyDescription:XML = describeType(Keyboard);
+				var keyNames:XMLList = keyDescription..constant.@name;
+
+				keyDict = new Dictionary();
+
+				var len:int = keyNames.length();
+				for(var i:int = 0; i < len; i++) {
+					keyDict[Keyboard[keyNames[i]]] = keyNames[i];
+				}
+			}
+			return keyDict;
+		}
+		
+		public static function nameOfKey(keyCode:uint):String
+		{
+			return getKeyDict()[keyCode];
+		}
+		
 		/* COLOR RELATED FUNCTIONS */
 		
 		public static function combineRGB(r:uint, g:uint, b:uint):uint
@@ -245,6 +273,7 @@
 			return [h, s, v];
 		}
 		
+		/// Converts a HSV color into an array of r, g, b multiplier (0.0 - 1.0) values
 		public static function hsvToMultipliers(h:int, s:Number, v:Number):Array 
 		{
 			var c:Number = v * s;
@@ -309,5 +338,23 @@
 			argb += (newAlpha << 24);
 			return argb;
 		}
+		
+		/**
+		 * Applies a color transformation to the provided displayObject
+		 * @param	displayObject the thing to apply color transform to
+		 * @param	r the red multiplier (0.0 - 1.0)
+		 * @param	g the green multiplier (0.0 - 1.0)
+		 * @param	b the blue multiplier (0.0 - 1.0)
+		 */ 
+		public static function applyTint(displayObject:DisplayObject, r:Number, g:Number, b:Number):ColorTransform 
+		{
+			var colorTransform:ColorTransform = displayObject.transform.colorTransform;
+			colorTransform.redMultiplier = r;
+			colorTransform.greenMultiplier = g;
+			colorTransform.blueMultiplier = b;
+			displayObject.transform.colorTransform = colorTransform;
+			return colorTransform;
+		}
+		
 	}
 }

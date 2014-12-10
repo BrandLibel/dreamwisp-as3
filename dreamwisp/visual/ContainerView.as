@@ -15,9 +15,9 @@ package dreamwisp.visual
 	public class ContainerView
 	{
 		private var layers:Vector.<DisplayObjectContainer>
+		private var background:Sprite;
 		public var container:Sprite;
-		/// Always appears over the layers in container
-		public var overlay:Sprite;
+		private var overlay:Sprite;
 		
 		public var x:Number;
 		public var y:Number;
@@ -28,14 +28,15 @@ package dreamwisp.visual
 		public var rotationY:int;
 		public var scrollRect:Rectangle;
 		
-		/// ViewPort width
+		/// ViewPort (not total) width
 		private var width:Number;
-		/// ViewPort height
+		/// ViewPort (not total) height
 		private var height:Number;
 		
 		public function ContainerView(width:Number = 768, height:Number = 480, numLayers:uint = 1)
 		{
 			container = new Sprite();
+			background = new Sprite();
 			overlay = new Sprite();
 			layers = new Vector.<DisplayObjectContainer>();
 			while (layers.length < numLayers)
@@ -56,12 +57,36 @@ package dreamwisp.visual
 		}
 		
 		/**
+		 * Attaches a component that ignores Camera scrolling 
+		 * and sits below all other layers in the Container.
+		 * @param	displayObject
+		 */
+		public function addBackground(displayObject:DisplayObject):void 
+		{
+			background.addChild(displayObject);
+		}
+		
+		/**
 		 * Attaches a component (usually UI) that ignores Camera scrolling
 		 * and sits atop all other layers in the Container.
 		 */
 		public function addOverlay(displayObject:DisplayObject):void
 		{
 			overlay.addChild(displayObject);
+		}
+		
+		public function addToParent(parent:DisplayObjectContainer):void 
+		{
+			parent.addChild(background);
+			parent.addChild(container);
+			parent.addChild(overlay);
+		}
+		
+		public function removeFromParent(parent:DisplayObjectContainer):void 
+		{
+			parent.removeChild(background);
+			parent.removeChild(container);
+			parent.removeChild(overlay);
 		}
 		
 		public function render(interpolation:Number):void

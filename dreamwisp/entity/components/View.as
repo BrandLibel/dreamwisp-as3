@@ -63,11 +63,7 @@ package dreamwisp.entity.components
 			currentTint[1] = g;
 			currentTint[2] = b;
 			
-			colorTransform = displayObject.transform.colorTransform;
-			colorTransform.redMultiplier = r;
-			colorTransform.greenMultiplier = g;
-			colorTransform.blueMultiplier = b;
-			displayObject.transform.colorTransform = colorTransform;
+			colorTransform = Belt.applyTint(displayObject, r, g, b);
 		}
 		
 		/**

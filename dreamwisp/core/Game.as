@@ -65,24 +65,6 @@
 			screenManager.render(interpolation);
 		}
 		
-		public function addContainerView(view:ContainerView):void 
-		{
-			if (!sprite.contains(view.container))
-			{
-				sprite.addChild(view.container);
-				sprite.addChild(view.overlay);
-			}
-		}
-		
-		public function removeContainerView(view:ContainerView):void 
-		{
-			if (sprite.contains(view.container))
-			{
-				sprite.removeChild(view.container);
-				sprite.removeChild(view.overlay);
-			}
-		}
-		
 	}
 	
 }
