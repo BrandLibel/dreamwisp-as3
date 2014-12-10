@@ -91,11 +91,12 @@ package dreamwisp.visual
 		
 		public function render(interpolation:Number):void
 		{
-			container.x = x;
-			container.y = y;
-			container.alpha = alpha;
-			container.scaleX = scaleX;
-			container.scaleY = scaleY;
+			background.x = container.x = overlay.x = x;
+			background.y = container.y = overlay.y = y;
+			background.alpha = container.alpha = overlay.alpha = alpha;
+			background.scaleX = container.scaleX = overlay.scaleX = scaleX;
+			background.scaleY = container.scaleY = overlay.scaleY = scaleY;
+			
 			if (scrollRect)
 			{
 				container.scrollRect = scrollRect;
