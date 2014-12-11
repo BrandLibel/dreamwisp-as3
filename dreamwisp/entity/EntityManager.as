@@ -116,7 +116,7 @@ package dreamwisp.entity
 				if (entity.name == name)
 					return entity;
 			}
-			throw new Error("No entity found by requested name: " + name);
+			return null;
 		}
 		
 		public function getEntitys():Vector.<Entity>
