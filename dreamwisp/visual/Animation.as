@@ -171,6 +171,7 @@ package dreamwisp.visual
 		public function isLocked():Boolean { return locked;  }
 		
 		public function currentFrame():uint { return frame; }
+		public function currentLabel():String { return movieClip.currentLabel; }
 		
 	}
 
