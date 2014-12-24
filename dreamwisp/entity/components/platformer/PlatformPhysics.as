@@ -16,6 +16,10 @@ package dreamwisp.entity.components.platformer
 	public class PlatformPhysics extends TileBasedPhysics
 	{
 		private static const DEFAULT_GRAVITY:Number = 1.6;
+		public static const COLLIDE_DIR_LEFT:uint = 0;
+		public static const COLLIDE_DIR_UP:uint = 1;
+		public static const COLLIDE_DIR_RIGHT:uint = 2;
+		public static const COLLIDE_DIR_DOWN:uint = 3;
 		
 		private var entity:Entity;
 		private var body:Body;
@@ -63,7 +67,7 @@ package dreamwisp.entity.components.platformer
 			};
 			
 			jumped = new Signal();
-			collidedTile = new Signal(Tile);
+			collidedTile = new Signal(Tile, uint);
 			steppedNewTile = new Signal(Tile);
 			touchedKillerTile = new Signal();
 			
@@ -243,7 +247,7 @@ package dreamwisp.entity.components.platformer
 			body.x = (leftEdge() + 1) * tileWidth;
 			velocityX = 0;
 			currentState.collideLeft();
-			collidedTile.dispatch(tile);
+			collidedTile.dispatch(tile, COLLIDE_DIR_LEFT);
 		}
 		
 		/// Hit a wall to the right
@@ -254,7 +258,7 @@ package dreamwisp.entity.components.platformer
 			body.x = rightEdge() * tileWidth - body.width;
 			velocityX = 0;
 			currentState.collideRight();
-			collidedTile.dispatch(tile);
+			collidedTile.dispatch(tile, COLLIDE_DIR_RIGHT);
 		}
 		
 		/**
@@ -316,7 +320,7 @@ package dreamwisp.entity.components.platformer
 			body.y = bottomEdge() * tileHeight + 1;
 			velocityY = 0;
 			currentState.collideTop();
-			collidedTile.dispatch(tile);
+			collidedTile.dispatch(tile, COLLIDE_DIR_UP);
 		}
 		
 		/// Hit the floor
@@ -327,7 +331,7 @@ package dreamwisp.entity.components.platformer
 			body.y = bottomEdge() * tileHeight-body.height;
 			velocityY = 0;
 			currentState.collideBottom();
-			collidedTile.dispatch(tile);
+			collidedTile.dispatch(tile, COLLIDE_DIR_DOWN);
 		}
 		
 		public var isOnSlope:Boolean = false;
