@@ -2,7 +2,7 @@ package dreamwisp.ui
 {
 	import dreamwisp.input.InputState;
 	import dreamwisp.input.KeyMap;
-	import flash.display.MovieClip;
+	import flash.display.DisplayObjectContainer;
 	import flash.text.TextField;
 	
 	/**
@@ -22,15 +22,17 @@ package dreamwisp.ui
 
 		private var keyMap:KeyMap;
 		
-		public function DialogueBox(movieClip:MovieClip, keyMap:KeyMap, typeSpeed:uint = 1) 
+		public function DialogueBox(graphic:DisplayObjectContainer, keyMap:KeyMap, typeSpeed:uint = 1) 
 		{
-			super(movieClip, typeSpeed);
+			init(graphic, typeSpeed);
+		}
+		
+		override protected function init(graphic:DisplayObjectContainer, typeSpeed:uint = 1):void 
+		{
+			super.init();
 			
-			if (movieClip.getChildByName(KEY_SPEAKER) == null)
-				throw new Error("The MovieClip for DialogueBox is missing a necessary speaker textField!");
-			
-			super.movieClip = movieClip;
-			super.movieClip.visible = false;
+			super.graphic = graphic;
+			super.graphic.visible = false;
 			
 			dialogueWriter = new TypeWriter(accessField(SpeechBubble.KEY_DIALOGUE), typeSpeed);
 			
@@ -89,7 +91,7 @@ package dreamwisp.ui
 		
 		override public function render(interpolation:Number):void 
 		{
-			movieClip.visible = visible;
+			graphic.visible = visible;
 			if (state == SpeechBubble.STATE_HIDDEN) return;
 			accessField(KEY_SPEAKER).htmlText = displayedSpeaker;
 			dialogueWriter.render();
@@ -97,7 +99,7 @@ package dreamwisp.ui
 		
 		private function accessField(field:String):TextField
 		{
-			return TextField(movieClip.getChildByName(field));
+			return TextField(graphic.getChildByName(field));
 		}
 		
 	}
