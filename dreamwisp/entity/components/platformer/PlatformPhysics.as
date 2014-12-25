@@ -455,8 +455,12 @@ package dreamwisp.entity.components.platformer
 		{
 			var heightDiff:uint = Math.abs(tileHeight - body.height) + 1;
 			var aboveEdge:int =  (Math.floor((body.y - heightDiff) / tileHeight));
-			return (tileScape.tileAt(aboveEdge, leftEdge()).isSolidDown()
-				|| tileScape.tileAt(aboveEdge, rightEdge()).isSolidDown());
+			var above1:Tile = tileScape.tileAt(aboveEdge, leftEdge());
+			var above2:Tile = tileScape.tileAt(aboveEdge, rightEdge());
+			return (
+				above1.isSolidDown() && !ignoresCollision(above1) ||
+				above2.isSolidDown() && !ignoresCollision(above2)
+			);
 		}
 		
 		public function hasJumpsRemaining():Boolean
