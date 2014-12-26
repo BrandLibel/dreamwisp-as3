@@ -83,6 +83,9 @@ package dreamwisp.audio
 			SoundMixer.stopAll();
 		}
 		
+		public static function isMutedSound():Boolean { return mutedSound; }
+		public static function isMutedMusic():Boolean { return mutedMusic; }
+		
 	}
 
 }
