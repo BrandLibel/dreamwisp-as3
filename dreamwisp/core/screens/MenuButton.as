@@ -48,6 +48,15 @@ package dreamwisp.core.screens
 			return button.hitTestPoint(x, y);
 		}
 		
+		/// Disables the button and lowers its alpha
+		public function lock():void 
+		{
+			button.enabled = false;
+			button.alpha = 0.5;
+		}
+		
+		public function isLocked():Boolean { return !button.enabled}
+		
 	}
 
 }

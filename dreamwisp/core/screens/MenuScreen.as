@@ -20,7 +20,7 @@ package dreamwisp.core.screens
 	public class MenuScreen extends GameScreen 
 	{
 		protected var mc:MovieClip;
-		private var buttons:Vector.<MenuButton>;
+		protected var buttons:Vector.<MenuButton>;
 		protected var selectedButton:MenuButton;
 		
 		public var buttonPressed:Signal;
@@ -31,7 +31,7 @@ package dreamwisp.core.screens
 			this.mc = mc;
 			detectButtons();
 			
-			buttonPressed = new Signal(String);
+			buttonPressed = new Signal(MenuButton);
 			buttonPressed.add(handleButtonPress);
 			
 			view = new ContainerView();
@@ -115,7 +115,7 @@ package dreamwisp.core.screens
 			if (selectedButton != null)
 				selectedButton.deselect();
 			selectedButton = button;
-			button.select();;
+			button.select();
 		}
 		
 		/**
@@ -134,11 +134,10 @@ package dreamwisp.core.screens
 		
 		protected function confirm():void 
 		{
-			const btnCode:String = selectedButton.btnCode;
-			buttonPressed.dispatch(btnCode);
+			buttonPressed.dispatch(selectedButton);
 		}
 		
-		protected function handleButtonPress(btnCode:String):void 
+		protected function handleButtonPress(button:MenuButton):void 
 		{
 			throw new Error("Must override abstract method handleButtonPress and ignore super call");
 		}
