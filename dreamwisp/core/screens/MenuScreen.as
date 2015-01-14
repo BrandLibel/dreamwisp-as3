@@ -97,10 +97,10 @@ package dreamwisp.core.screens
 						button = btn;
 						break;
 					}
-					// deselect button on mouse out
-					else if (selectedButton != null)
-						deselect();
 				}
+				// deselect button on mouse out
+				if (button == null && selectedButton != null)
+					deselect();
 				if (button != null)
 				{
 					select(button);

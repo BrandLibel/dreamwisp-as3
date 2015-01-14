@@ -28,6 +28,7 @@ package dreamwisp.ui
 			super(null, 0); // this super call gets ignored since init() is overrided and empty
 			sprite = new Sprite();
 			sprite.addChild(textField);
+			super.graphic = sprite;
 			
 			this.yOffset = yOffset;
 			this.padding = padding;
@@ -39,7 +40,6 @@ package dreamwisp.ui
 			textField.multiline = true;
 			textField.selectable = false;
 			
-			graphic = sprite;
 			dialogueTextField = textField;
 			dialogueWriter = new TypeWriter(dialogueTextField, typeSpeed);
 		}
@@ -53,13 +53,31 @@ package dreamwisp.ui
 		{
 			super.render(interpolation);
 			sprite.graphics.clear();
-			sprite.graphics.lineStyle(1);
-			sprite.graphics.beginFill(0xFFFFFF);
+			sprite.graphics.lineStyle(lineThickness, lineColor, lineAlpha);
+			sprite.graphics.beginFill(fillColor, fillAlpha);
 			sprite.graphics.drawRect(0, 0, dialogueTextField.textWidth + padding, dialogueTextField.textHeight + padding * 2);
 			sprite.graphics.endFill();
 			
-			var bottomEdge:Number = sprite.y + yOffset;
+			dialogueTextField.height = dialogueTextField.textHeight + dialogueTextField.getTextFormat().size;
+			
+			if (yOffset == 0) return;
+			var bottomEdge:Number = y - yOffset;
 			sprite.y = bottomEdge - dialogueTextField.textHeight;
+		}
+		
+		private var fillColor:uint = 0xFFFFFF;
+		private var fillAlpha:Number = 1;
+		private var lineThickness:Number = 1;
+		private var lineColor:uint = 0;
+		private var lineAlpha:Number = 1;
+		
+		public function setStyle(fillColor:uint = 0xFFFFFF, fillAlpha:Number = 1, lineThickness:Number = 1, lineColor:uint = 0, lineAlpha:Number = 1):void 
+		{
+			this.fillColor = fillColor;
+			this.fillAlpha = fillAlpha;
+			this.lineThickness = lineThickness;
+			this.lineColor = lineColor;
+			this.lineAlpha = lineAlpha;
 		}
 		
 	}

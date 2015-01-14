@@ -18,6 +18,8 @@ package dreamwisp.ui
 		protected var state:uint = STATE_HIDDEN;
 		
 		public var graphic:DisplayObjectContainer;
+		public var x:Number;
+		public var y:Number;
 		protected var visible:Boolean;
 		protected var dialogueTextField:TextField;
 		protected var dialogueWriter:TypeWriter;
@@ -63,6 +65,8 @@ package dreamwisp.ui
 		public function render(interpolation:Number):void 
 		{
 			graphic.visible = visible;
+			graphic.x = x;
+			graphic.y = y;
 			if (state == STATE_HIDDEN) return;
 			dialogueWriter.render();
 		}
