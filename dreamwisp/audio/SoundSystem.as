@@ -5,6 +5,7 @@ package dreamwisp.audio
 	import flash.media.SoundChannel;
 	import flash.media.SoundMixer;
 	import flash.media.SoundTransform;
+	import org.osflash.signals.Signal;
 	
 	/**
 	 * Static class that manages audio.
@@ -17,14 +18,16 @@ package dreamwisp.audio
 		private static var channel:SoundChannel = new SoundChannel();
 		private static var transform:SoundTransform = new SoundTransform();
 		/// The master volume for all audio in the game
-		public static var volume:Number = 1;
+		private static var _volume:Number = 1;
 		private static var mutedSound:Boolean = false;
 		private static var mutedMusic:Boolean = false;
 		
 		private static var currentMusic:Music;
 		private static var pendingMusic:Music;
-		
 		private static const DEFAULT_FADE_TIME:Number = 2000;
+		
+		public static var volumeChanged:Signal = new Signal(Number);
+		public static var muteToggled:Signal = new Signal(Boolean, Boolean);
 		
 		public function SoundSystem() 
 		{
@@ -54,7 +57,7 @@ package dreamwisp.audio
 		{
 			currentMusic = music;
 			if (mutedMusic) return;
-			music.play();
+			currentMusic.play();
 		}
 		
 		private static function playNextMusic():void 
@@ -63,19 +66,33 @@ package dreamwisp.audio
 			setCurrentMusic(pendingMusic);
 		}
 		
-		public static function toggleMuteSound():void 
+		public static function setMuteSound(muted:Boolean):void 
 		{
-			mutedSound = !mutedSound;
+			if (mutedSound == muted) return;
+			mutedSound = muted;
+			muteToggled.dispatch(mutedSound, mutedMusic);
 		}
 		
-		public static function toggleMuteMusic():void 
+		public static function setMuteMusic(muted:Boolean):void 
 		{
-			mutedMusic = !mutedMusic;
+			if (mutedMusic == muted) return;
+			mutedMusic = muted;
+			muteToggled.dispatch(mutedSound, mutedMusic);
 			
 			if (mutedMusic)
 				currentMusic.stop();
 			else if (!mutedMusic)
 				currentMusic.play(); // restart the music playing before the mute
+		}
+		
+		public static function toggleMuteSound():void 
+		{
+			setMuteSound(!mutedSound);
+		}
+		
+		public static function toggleMuteMusic():void 
+		{
+			setMuteMusic(!mutedMusic);
 		}
 		
 		public static function stop():void 
@@ -85,6 +102,13 @@ package dreamwisp.audio
 		
 		public static function isMutedSound():Boolean { return mutedSound; }
 		public static function isMutedMusic():Boolean { return mutedMusic; }
+		
+		static public function get volume():Number { return _volume; }
+		static public function set volume(value:Number):void
+		{
+			_volume = value;
+			volumeChanged.dispatch(_volume);
+		}
 		
 	}
 

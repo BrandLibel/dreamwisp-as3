@@ -52,7 +52,10 @@ package dreamwisp.data
 		public function retrieveOptions():Object
 		{
 			sharedObj = SharedObject.getLocal(saveFileName);
-			return sharedObj.data.options;
+			if (sharedObj.data.hasOwnProperty("options"))
+				return sharedObj.data.options;
+			else
+				return null;
 		}
 		
 		public function erase(slotNum:uint = 0):void
