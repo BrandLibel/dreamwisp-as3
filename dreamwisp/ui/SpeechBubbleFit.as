@@ -52,13 +52,17 @@ package dreamwisp.ui
 		override public function render(interpolation:Number):void 
 		{
 			super.render(interpolation);
-			sprite.graphics.clear();
-			sprite.graphics.lineStyle(lineThickness, lineColor, lineAlpha);
-			sprite.graphics.beginFill(fillColor, fillAlpha);
-			sprite.graphics.drawRect(0, 0, dialogueTextField.textWidth + padding, dialogueTextField.textHeight + padding * 2);
-			sprite.graphics.endFill();
 			
-			dialogueTextField.height = dialogueTextField.textHeight + dialogueTextField.getTextFormat().size;
+			if (visible)
+			{
+				sprite.graphics.clear();
+				sprite.graphics.lineStyle(lineThickness, lineColor, lineAlpha);
+				sprite.graphics.beginFill(fillColor, fillAlpha);
+				sprite.graphics.drawRect(0, 0, dialogueTextField.textWidth + padding, dialogueTextField.textHeight + padding * 2);
+				sprite.graphics.endFill();
+				
+				dialogueTextField.height = dialogueTextField.textHeight + dialogueTextField.getTextFormat().size;
+			}
 			
 			if (yOffset == 0) return;
 			var bottomEdge:Number = y - yOffset;
