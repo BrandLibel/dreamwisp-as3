@@ -17,7 +17,7 @@ package dreamwisp.ui
 		private static const CALLOUT:String = "*";
 		private var startTag:Boolean = true;
 		
-		public function TypeWriter(textField:TextField, transferSpeed:uint = 1)
+		public function TypeWriter(textField:TextField, transferSpeed:uint = 0)
 		{
 			this.textField = textField;
 			this.transferSpeed = transferSpeed;
@@ -36,6 +36,9 @@ package dreamwisp.ui
 		public function write():Boolean
 		{
 			var charsToTransfer:uint = transferSpeed;
+			if (transferSpeed == 0)
+				charsToTransfer = loadedText.length;
+			
 			var cutLength:Number;
 			while (charsToTransfer > 0)
 			{

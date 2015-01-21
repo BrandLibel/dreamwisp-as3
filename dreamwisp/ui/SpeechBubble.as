@@ -24,12 +24,12 @@ package dreamwisp.ui
 		protected var dialogueTextField:TextField;
 		protected var dialogueWriter:TypeWriter;
 		
-		public function SpeechBubble(graphic:DisplayObjectContainer, typeSpeed:uint = 1) 
+		public function SpeechBubble(graphic:DisplayObjectContainer, typeSpeed:uint = 0) 
 		{
 			init(graphic, typeSpeed);
 		}
 		
-		protected function init(graphic:DisplayObjectContainer, typeSpeed:uint = 1):void 
+		protected function init(graphic:DisplayObjectContainer, typeSpeed:uint = 0):void 
 		{
 			this.graphic = graphic;
 			dialogueTextField = TextField(graphic.getChildByName(KEY_DIALOGUE));

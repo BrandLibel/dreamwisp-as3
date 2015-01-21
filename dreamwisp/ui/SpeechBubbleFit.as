@@ -23,7 +23,7 @@ package dreamwisp.ui
 		 * @param	padding pixels between the text and the border
 		 * @param	typeSpeed
 		 */
-		public function SpeechBubbleFit(textField:TextField, maxWidth:Number, yOffset:Number, padding:Number, typeSpeed:uint=1) 
+		public function SpeechBubbleFit(textField:TextField, maxWidth:Number, yOffset:Number, padding:Number, typeSpeed:uint=0) 
 		{
 			super(null, 0); // this super call gets ignored since init() is overrided and empty
 			sprite = new Sprite();

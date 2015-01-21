@@ -22,12 +22,12 @@ package dreamwisp.ui
 
 		private var keyMap:KeyMap;
 		
-		public function DialogueBox(graphic:DisplayObjectContainer, keyMap:KeyMap, typeSpeed:uint = 1) 
+		public function DialogueBox(graphic:DisplayObjectContainer, keyMap:KeyMap, typeSpeed:uint = 0) 
 		{
 			init(graphic, typeSpeed);
 		}
 		
-		override protected function init(graphic:DisplayObjectContainer, typeSpeed:uint = 1):void 
+		override protected function init(graphic:DisplayObjectContainer, typeSpeed:uint = 0):void 
 		{
 			super.init();
 			
