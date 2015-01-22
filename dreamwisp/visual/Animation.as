@@ -44,8 +44,15 @@ package dreamwisp.visual
 			frame += speed;
 			if (frame == targetFrame)
 			{
+				speed = 0;
+				targetFrame = 0; // setting to invalid frame (0) prevents unwanted future stops
+				
+				// trigger callbacks
+				if (callBack != null)
+					callBack.call();
+				
 				stopped = true;
-				stop();
+				locked = false;
 			}
 		}
 		
@@ -56,18 +63,6 @@ package dreamwisp.visual
 		 * because we aren't locked but we should be - the frame right after a locked stop()
 		 */
 		public function shouldKillUpdate():Boolean { return locked || (stopped && hadLock) }
-		
-		private function stop():void 
-		{
-			speed = 0;
-			targetFrame = 0; // setting to invalid frame (0) prevents unwanted future stops
-			
-			// trigger callbacks
-			if (callBack != null)
-				callBack.call();
-			
-			locked = false;
-		}
 		
 		/// Plays to the target frame
 		public function runTo(targetFrame:uint, speed:int = 1, callBack:Function = null):void 
@@ -98,9 +93,17 @@ package dreamwisp.visual
 		public function play(startLabel:String, callBack:Function = null):void 
 		{
 			if (locked || !hasLabel(startLabel)) return;
-			speed = 1;
+			
+			var numFrames:uint = countFrames(startLabel);
+			if (numFrames == 1)
+			{
+				setFrame(startLabel);
+				return;
+			}
+			
 			frame = findFrame(startLabel);
-			targetFrame = frame + countFrames(startLabel) - 1;
+			targetFrame = frame + numFrames - 1;
+			speed = 1;
 			this.callBack = callBack;
 		}
 		
