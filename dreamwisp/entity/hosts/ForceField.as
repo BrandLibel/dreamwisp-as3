@@ -37,20 +37,33 @@ package dreamwisp.entity.hosts
 			for each (var entity:Entity in entityManager.getEntitys()) 
 			{
 				var distance:Number = body.distanceTo(entity.body);
-				if (radius < distance && distance < maxRange && entity.physics != null)
+				if (shouldApplyForceOn(entity, distance))
 				{
 					var dX:Number = entity.body.centerX - body.centerX;
 					var dY:Number = entity.body.centerY - body.centerY;
+					
 					var force:Number = strength / Math.pow(distance - radius, 0.5);
-					// avoid ridiculously high force values
-					if (force > strength)
+					if (force > strength) // avoid ridiculously high force values
 						force = strength;
 					var angle:Number = Math.atan2(dY, dX);
-					entity.physics.externalAccelerationX += Math.cos(angle) * force;
-					entity.physics.externalAccelerationY += Math.sin(angle) * force;
 					
+					applyForces(entity, angle, force);
 				}
 			}
+		}
+		
+		/// Determines whether or not an Entity is affected by this force field.
+		protected function shouldApplyForceOn(entity:Entity, distance:Number):Boolean
+		{
+			return	radius < distance &&
+					distance < maxRange &&
+					entity.physics != null;
+		}
+		
+		protected function applyForces(entity:Entity, angle:Number, force:Number):void 
+		{
+			entity.physics.externalAccelerationX += Math.cos(angle) * force;
+			entity.physics.externalAccelerationY += Math.sin(angle) * force;
 		}
 		
 	}
