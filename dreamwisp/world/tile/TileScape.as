@@ -9,6 +9,7 @@ package dreamwisp.world.tile
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.system.System;
+	import tools.Belt;
 	
 	/**
 	 * ...
@@ -24,7 +25,7 @@ package dreamwisp.world.tile
 		/// Reusable Rectangle
 		private const drawRect:Rectangle = new Rectangle();
 		
-		private var tileGrid:Vector.<Vector.<Tile>>;
+		protected var tileGrid:Vector.<Vector.<Tile>>;
 		
 		private var canvasData:BitmapData;
 		private var canvas:Bitmap;
@@ -34,11 +35,12 @@ package dreamwisp.world.tile
 		protected var tileList:Array;
 		/// PNG spritesheet of all tiles
 		private var tileSheet:BitmapData;
-		internal var spriteSheet:SpriteSheet;
+		public var spriteSheet:SpriteSheet;
 		
 		public var gameScreen:GameScreen;
 		
 		private var myBounds:SwiftRectangle;
+		protected var tiles:Object;
 				
 		/**
 		 *
@@ -50,6 +52,7 @@ package dreamwisp.world.tile
 		 */
 		public function TileScape(width:Number, height:Number, spriteSheet:SpriteSheet, tiles:Object, tileMap:Array)
 		{
+			this.tiles = tiles;
 			readTileData(tiles);
 			tileRect = new Rectangle(0, 0, tileWidth, tileHeight);
 			
@@ -435,7 +438,20 @@ package dreamwisp.world.tile
 			return tileMap;
 		}
 		
-		public function toString():String
+		/**
+		 * Copies this TileScpae using the same spriteSheet and tiles file,
+		 * but with optional different other parameters.
+		 */
+		public function copy(width:Number = 0, height:Number = 0, tileMap:Array = null):TileScape
+		{
+			return new TileScape(width, height, spriteSheet, tiles, tileMap);
+		}
+		
+		/**
+		 * 
+		 * @param	tabs amount of leading tabs for each line
+		 */
+		public function toString(tabs:Number = 0):String
 		{
 			var str:String = "";
 			const comma:String = ",";
@@ -451,7 +467,7 @@ package dreamwisp.world.tile
 				str += "]";
 				if (row != tileGrid.length -1)
 					str += comma;
-				str += "\n";
+				str += "\n" + Belt.tabs(tabs);
 			}
 			return str;
 		}

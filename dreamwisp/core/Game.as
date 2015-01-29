@@ -16,7 +16,6 @@
 		protected var inputState:InputState;
 		
 		public function Game(stage:Stage = null) {
-			Data.prepare();
 			sprite = new Sprite();
 			if (stage) inputState = new InputState(stage);
 			screenManager = new ScreenManager(this);

@@ -107,6 +107,17 @@
 			return outputString;
 		}
 		
+		public static function tabs(num:uint):String
+		{
+			const tab:String = "\t";
+			var str:String = "";
+			for (var i:int = 0; i < num; i++) 
+			{
+				str += tab;
+			}
+			return str;
+		}
+		
 		public static const CLASS_MOVIECLIP:uint = 0;
 		
 		public static function addClassFromLibrary(className:String, classType:uint):*
