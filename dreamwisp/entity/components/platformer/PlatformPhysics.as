@@ -69,7 +69,7 @@ package dreamwisp.entity.components.platformer
 			jumped = new Signal();
 			collidedTile = new Signal(Tile, uint);
 			steppedNewTile = new Signal(Tile);
-			touchedKillerTile = new Signal();
+			touchedKillerTile = new Signal(Tile);
 			
 			movementSM = new StateMachine();
 			groundState = new GroundState(this, entity);
@@ -236,7 +236,7 @@ package dreamwisp.entity.components.platformer
 		{
 			if (ignoresCollision(tile))
 				return;
-			touchedKillerTile.dispatch();
+			touchedKillerTile.dispatch(tile);
 		}
 		
 		/// Hit a wall to the left
@@ -290,8 +290,12 @@ package dreamwisp.entity.components.platformer
 					else 
 						collideBottom(tileToCollide);
 				}
-				if (bottomLeftTile().killsUp() || bottomRightTile().killsUp())
-					touchedKillerTile.dispatch();
+				
+				// killing tiles
+				if (bottomLeftTile().killsUp())
+					touchKillerTile(bottomLeftTile());
+				else if (bottomRightTile().killsUp())
+					touchKillerTile(bottomRightTile());
 			}
 			// check collision above
 			else if (velocityY < 0)
@@ -306,8 +310,12 @@ package dreamwisp.entity.components.platformer
 					
 				if (topLeftTile().isSolidDown() || topRightTile().isSolidDown())
 					collideTop(tileToCollide);
-				if (topLeftTile().killsDown() || topRightTile().killsDown())
-					touchedKillerTile.dispatch();
+					
+				// killing tiles
+				if (topLeftTile().killsDown())
+					touchKillerTile( topLeftTile() );
+				else if (topRightTile().killsDown())
+					touchKillerTile( topRightTile() );
 			}
 			prevRow = bottomEdge();
 		}
