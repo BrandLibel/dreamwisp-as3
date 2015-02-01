@@ -13,7 +13,7 @@
 		public var screenManager:ScreenManager;
 		public var saveSystem:SaveSystem;
 		
-		protected var inputState:InputState;
+		public var inputState:InputState;
 		
 		public function Game(stage:Stage = null) {
 			sprite = new Sprite();

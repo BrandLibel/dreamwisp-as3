@@ -58,6 +58,8 @@ package dreamwisp.core.screens
 		{
 			return movieClip.hitTestPoint(x, y);
 		}
+		
+		override public function getDisplayObject():DisplayObject { return movieClip; }
 	}
 
 }

@@ -4,6 +4,7 @@ package dreamwisp.input
 	import flash.display.Stage;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import org.osflash.signals.Signal;
 	
 	/**
 	 * InputState tracks input events from the stage, storing
@@ -20,7 +21,7 @@ package dreamwisp.input
 		private static const STATE_LOCKED:uint = 1;
 		private static const STATE_PRESSED:uint = 2;
 		private static const STATE_RELEASED:uint = 3;
-				
+		
 		/// Key states this cycle. 0 - pressable; 1 - unpressable;  2 - pressed; 3 - released.
 		private var keyStates:Vector.<uint> = new Vector.<uint>(TOTAL_KEYCODES + 1, true)
 		
@@ -30,6 +31,8 @@ package dreamwisp.input
 		private var prevMouseX:int;
 		private var prevMouseY:int;
 		private var wasClicked:Boolean;
+		
+		public var mobileButtonPressed:Signal = new Signal(uint);
 		
 		public function InputState(stage:Stage)
 		{
@@ -64,7 +67,7 @@ package dreamwisp.input
 		{
 			// return false if an invalid key code was entered
 			if (keyCode > TOTAL_KEYCODES) return false;
-			return keyStates[keyCode] != STATE_UNLOCKED;;
+			return keyStates[keyCode] != STATE_UNLOCKED;
 		}
 		
 		/// Check if the supplied key was pressed this tick
@@ -96,6 +99,16 @@ package dreamwisp.input
 		
 		private function registerKeyboard(e:KeyboardEvent):void
 		{
+			// non-keyboard (mobile, controller, etc.) button presses
+			if (e.keyCode > keyStates.length)
+			{
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				if (e.type == KeyboardEvent.KEY_UP)
+					mobileButtonPressed.dispatch(e.keyCode);
+				return;
+			}
+			
 			if (e.type == KeyboardEvent.KEY_DOWN && keyStates[e.keyCode] == STATE_UNLOCKED)
 				keyStates[e.keyCode] = STATE_PRESSED;
 			else if (e.type == KeyboardEvent.KEY_UP)
