@@ -13,6 +13,8 @@ package dreamwisp.core.screens
 		private var movieClip:MovieClip;
 		private var playVelocity:int = 0;
 		
+		private var hasLock:Boolean = false;
+		
 		public function MenuButtonMC(graphic:DisplayObject, btnCode:String) 
 		{
 			super(graphic, btnCode);
@@ -53,6 +55,14 @@ package dreamwisp.core.screens
 			// play backwards
 			playVelocity = -1;
 		}
+		
+		override public function lock():void 
+		{
+			hasLock = true;
+			movieClip.alpha = 0.5;
+		}
+		
+		override public function isLocked():Boolean { return hasLock; }
 		
 		override public function hitTestPoint(x:int, y:int):Boolean 
 		{
