@@ -55,6 +55,12 @@ package dreamwisp.core.screens
 			button.alpha = 0.5;
 		}
 		
+		public function unlock():void 
+		{
+			button.enabled = true;
+			button.alpha = 1;
+		}
+		
 		public function isLocked():Boolean { return !button.enabled }
 		
 		/// Returns the button or movieClip displayObject that represents this button.

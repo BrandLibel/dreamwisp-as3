@@ -62,6 +62,12 @@ package dreamwisp.core.screens
 			movieClip.alpha = 0.5;
 		}
 		
+		override public function unlock():void 
+		{
+			hasLock = false;
+			movieClip.alpha = 1;
+		}
+		
 		override public function isLocked():Boolean { return hasLock; }
 		
 		override public function hitTestPoint(x:int, y:int):Boolean 
