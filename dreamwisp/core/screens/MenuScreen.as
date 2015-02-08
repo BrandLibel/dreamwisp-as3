@@ -95,6 +95,7 @@ package dreamwisp.core.screens
 					if (btn.hitTestPoint(mX, mY))
 					{
 						button = btn;
+						if (button.isLocked()) continue;
 						break;
 					}
 				}
