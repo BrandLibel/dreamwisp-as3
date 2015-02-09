@@ -129,9 +129,8 @@ package dreamwisp.input
 		}
 		
 		private function registerMouse(e:MouseEvent):void {
-			// casting x and y to ints because only whole-pixel values are needed/expected
-			mouseX = int(e.stageX);
-			mouseY = int(e.stageY);
+			mouseX = e.stageX;
+			mouseY = e.stageY;
 			
 			// indicates mouse is being held...
 			if (e.type == MouseEvent.MOUSE_DOWN) 
