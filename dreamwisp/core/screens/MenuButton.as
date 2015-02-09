@@ -13,14 +13,16 @@ package dreamwisp.core.screens
 	{
 		private var button:SimpleButton;
 		public var btnCode:String;
+		protected var hasLock:Boolean = false;
 		
 		public function MenuButton(graphic:DisplayObject, btnCode:String)
 		{
 			if (graphic is SimpleButton)
 			{				
-				button = SimpleButton(graphic);
+				button = graphic as SimpleButton;
 				button.useHandCursor = false;
 				button.mouseEnabled = false;
+				button.enabled = false;
 			}
 			
 			this.btnCode = btnCode;
@@ -51,17 +53,25 @@ package dreamwisp.core.screens
 		/// Disables the button and lowers its alpha
 		public function lock():void 
 		{
-			button.enabled = false;
+			hasLock = true;
 			button.alpha = 0.5;
 		}
 		
 		public function unlock():void 
 		{
-			button.enabled = true;
+			hasLock = false;
 			button.alpha = 1;
 		}
 		
-		public function isLocked():Boolean { return !button.enabled }
+		public function toggleLock():void 
+		{
+			if (isLocked())
+				unlock();
+			else
+				lock();
+		}
+		
+		public function isLocked():Boolean { return hasLock; }
 		
 		/// Returns the button or movieClip displayObject that represents this button.
 		public function getDisplayObject():DisplayObject { return button; }
