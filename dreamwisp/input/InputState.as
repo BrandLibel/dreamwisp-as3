@@ -1,9 +1,10 @@
 package dreamwisp.input
 {
-	import com.demonsters.debugger.MonsterDebugger;
 	import flash.display.Stage;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.system.Capabilities;
+	import flash.system.TouchscreenType;
 	import org.osflash.signals.Signal;
 	
 	/**
@@ -140,6 +141,11 @@ package dreamwisp.input
 				isMousePressed = false;
 				wasClicked = true;
 			}
+		}
+		
+		public function isTouch():Boolean
+		{
+			return !(Capabilities.touchscreenType == TouchscreenType.NONE);
 		}
 
 	}

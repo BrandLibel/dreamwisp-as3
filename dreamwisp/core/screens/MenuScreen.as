@@ -87,26 +87,47 @@ package dreamwisp.core.screens
 			const mX:int = inputState.mouseX;
 			const mY:int = inputState.mouseY;
 			var button:MenuButton = null;
+			var btn:MenuButton;
 			
-			if (inputState.isMouseMoving() || inputState.isMousePressed || inputState.wasMouseClicked())
+			if (!inputState.isTouch() && inputState.isMouseMoving())
 			{
-				for each (var btn:MenuButton in buttons) 
+				for each (btn in buttons) 
 				{
 					if (btn.hitTestPoint(mX, mY))
 					{
 						button = btn;
+						if (inputState.isMousePressed || inputState.wasMouseClicked()) break;
 						if (button.isLocked()) continue;
+						select(button);
 						break;
 					}
 				}
 				// deselect button on mouse out
 				if (button == null && selectedButton != null)
 					deselect();
-				if (button != null)
+			}
+			
+			if (inputState.isTouch())
+			{
+				for each (btn in buttons)
 				{
-					select(button);
-					if (inputState.wasMouseClicked())
-						confirm();
+					if (btn.hitTestPoint(mX, mY))
+					{
+						button = btn;
+						if (button.isLocked()) continue;
+						select(button);
+						break;
+					}
+				}
+				if (button == null && selectedButton != null)
+					deselect();
+			}
+			
+			if (inputState.wasMouseClicked())
+			{
+				if (selectedButton != null)
+				{
+					confirm();
 				}
 			}
 		}
