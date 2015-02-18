@@ -107,7 +107,7 @@ package dreamwisp.core.screens
 					deselect();
 			}
 			
-			if (inputState.isTouch())
+			if (inputState.isTouch() && inputState.isMousePressed)
 			{
 				for each (btn in buttons)
 				{
