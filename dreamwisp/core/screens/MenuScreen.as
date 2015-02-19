@@ -68,16 +68,25 @@ package dreamwisp.core.screens
 		{
 			buttons = new Vector.<MenuButton>();
 			var btnNum:uint = 1;
+			var button:MenuButton;
 			while (mc.getChildByName("B" + btnNum) != null)
 			{
 				const btnCode:String = "B" + btnNum; 
 				const child:DisplayObject = mc.getChildByName(btnCode);
 				if (child is SimpleButton)
-					buttons.push(new MenuButton(child, btnCode)); 
+					button = new MenuButton(child, btnCode);
 				else if (child is MovieClip)
-					buttons.push(new MenuButtonMC(child, btnCode));
+					button = new MenuButtonMC(child, btnCode);
+					
+				button.btnNum = btnNum;
+				addDetectedButton(button);
 				btnNum++;
 			}
+		}
+		
+		protected function addDetectedButton(button:MenuButton):void 
+		{
+			buttons.push(button);
 		}
 		
 		override public function handleInput(inputState:InputState):void 

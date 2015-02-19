@@ -13,6 +13,7 @@ package dreamwisp.core.screens
 	{
 		private var button:SimpleButton;
 		public var btnCode:String;
+		public var btnNum:uint;
 		protected var hasLock:Boolean = false;
 		
 		public function MenuButton(graphic:DisplayObject, btnCode:String)
