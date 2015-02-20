@@ -13,9 +13,9 @@ package dreamwisp.core.screens
 		private var movieClip:MovieClip;
 		private var playVelocity:int = 0;
 		
-		public function MenuButtonMC(graphic:DisplayObject, btnCode:String) 
+		public function MenuButtonMC(graphic:DisplayObject, btnCode:String, btnNum:uint) 
 		{
-			super(graphic, btnCode);
+			super(graphic, btnCode, btnNum);
 			movieClip = MovieClip(graphic);
 			
 			// verify movieClip has all frame labels necessary

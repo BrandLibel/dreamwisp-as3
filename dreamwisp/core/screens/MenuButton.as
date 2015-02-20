@@ -16,7 +16,7 @@ package dreamwisp.core.screens
 		public var btnNum:uint;
 		protected var hasLock:Boolean = false;
 		
-		public function MenuButton(graphic:DisplayObject, btnCode:String)
+		public function MenuButton(graphic:DisplayObject, btnCode:String, btnNum:uint)
 		{
 			if (graphic is SimpleButton)
 			{				
@@ -27,6 +27,7 @@ package dreamwisp.core.screens
 			}
 			
 			this.btnCode = btnCode;
+			this.btnNum = btnNum;
 		}
 		
 		public function update():void 

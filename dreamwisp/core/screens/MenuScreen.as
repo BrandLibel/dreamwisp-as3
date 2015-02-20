@@ -72,16 +72,23 @@ package dreamwisp.core.screens
 			while (mc.getChildByName("B" + btnNum) != null)
 			{
 				const btnCode:String = "B" + btnNum; 
-				const child:DisplayObject = mc.getChildByName(btnCode);
-				if (child is SimpleButton)
-					button = new MenuButton(child, btnCode);
-				else if (child is MovieClip)
-					button = new MenuButtonMC(child, btnCode);
-					
-				button.btnNum = btnNum;
+				const graphic:DisplayObject = mc.getChildByName(btnCode);
+				
+				button = makeButton(graphic, btnCode, btnNum);
 				addDetectedButton(button);
+				
 				btnNum++;
 			}
+		}
+		
+		protected function makeButton(graphic:DisplayObject, btnCode:String, btnNum:uint):MenuButton 
+		{
+			var button:MenuButton;
+			if (graphic is SimpleButton)
+				button = new MenuButton(graphic, btnCode, btnNum);
+			else if (graphic is MovieClip)
+				button = new MenuButtonMC(graphic, btnCode, btnNum);
+			return button;
 		}
 		
 		protected function addDetectedButton(button:MenuButton):void 
