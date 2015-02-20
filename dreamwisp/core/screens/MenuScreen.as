@@ -113,7 +113,6 @@ package dreamwisp.core.screens
 					{
 						button = btn;
 						if (inputState.isMousePressed || inputState.wasMouseClicked()) break;
-						if (button.isLocked()) continue;
 						select(button);
 						break;
 					}
@@ -130,7 +129,6 @@ package dreamwisp.core.screens
 					if (btn.hitTestPoint(mX, mY))
 					{
 						button = btn;
-						if (button.isLocked()) continue;
 						select(button);
 						break;
 					}
