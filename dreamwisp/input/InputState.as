@@ -5,12 +5,11 @@ package dreamwisp.input
 	import flash.events.MouseEvent;
 	import flash.system.Capabilities;
 	import flash.system.TouchscreenType;
-	import org.osflash.signals.Signal;
 	
 	/**
-	 * InputState tracks input events from the stage, storing
-	 * the relevant information.
-	 * It gets passed into the game systems every update cycle.
+	 * InputState is a poll based input system for Adobe Flash and AIR.
+	 * Only one instance of InputState can handle all input for a project.
+	 * It supports keyboard, mouse, and touch input.
 	 * @author Brandon
 	 */
 	
@@ -24,16 +23,21 @@ package dreamwisp.input
 		private static const STATE_RELEASED:uint = 3;
 		
 		/// Key states this cycle. 0 - pressable; 1 - unpressable;  2 - pressed; 3 - released.
-		private var keyStates:Vector.<uint> = new Vector.<uint>(TOTAL_KEYCODES + 1, true)
+		private var keyStates:Vector.<uint> = new Vector.<uint>(TOTAL_KEYCODES + 1, true);
 		
-		public var isMousePressed:Boolean;
 		public var mouseX:int;
 		public var mouseY:int;
+		
+		/**
+		 * Must set this to a function with 1 uint param; 
+		 * it is called when a mobile button (e.g. Keyboard.BACK) is pressed
+		 */ 
+		public var mobileButtonCallback:Function;
+		
+		private var mousePressed:Boolean;
 		private var prevMouseX:int;
 		private var prevMouseY:int;
 		private var wasClicked:Boolean;
-		
-		public var mobileButtonPressed:Signal = new Signal(uint);
 		
 		public function InputState(stage:Stage)
 		{
@@ -42,11 +46,6 @@ package dreamwisp.input
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, registerMouse);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, registerKeyboard);
 			stage.addEventListener(KeyboardEvent.KEY_UP, registerKeyboard);
-		}
-		
-		public function update():InputState
-		{
-			return this;
 		}
 		
 		/**
@@ -106,7 +105,7 @@ package dreamwisp.input
 				e.preventDefault();
 				e.stopImmediatePropagation();
 				if (e.type == KeyboardEvent.KEY_UP)
-					mobileButtonPressed.dispatch(e.keyCode);
+					mobileButtonCallback.call(null, e.keyCode);
 				return;
 			}
 			
@@ -114,6 +113,11 @@ package dreamwisp.input
 				keyStates[e.keyCode] = STATE_PRESSED;
 			else if (e.type == KeyboardEvent.KEY_UP)
 				keyStates[e.keyCode] = STATE_RELEASED;
+		}
+		
+		public function isMousePressed():Boolean
+		{
+			return mousePressed;
 		}
 		
 		/**
@@ -129,16 +133,16 @@ package dreamwisp.input
 			return (mouseX != prevMouseX || mouseY != prevMouseY);
 		}
 		
-		private function registerMouse(e:MouseEvent):void {
+		private function registerMouse(e:MouseEvent):void
+		{
 			mouseX = e.stageX;
 			mouseY = e.stageY;
 			
-			// indicates mouse is being held...
-			if (e.type == MouseEvent.MOUSE_DOWN) 
-				isMousePressed = true;
-			// ...which remains true until mouse is released
-			else if (e.type == MouseEvent.MOUSE_UP) {
-				isMousePressed = false;
+			if (e.type == MouseEvent.MOUSE_DOWN)
+				mousePressed = true;
+			else if (e.type == MouseEvent.MOUSE_UP)
+			{
+				mousePressed = false;
 				wasClicked = true;
 			}
 		}

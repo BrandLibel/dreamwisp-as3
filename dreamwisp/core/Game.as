@@ -1,5 +1,5 @@
-﻿package dreamwisp.core {
-	
+﻿package dreamwisp.core 
+{
 	import dreamwisp.data.SaveSystem;
 	import dreamwisp.input.InputState;
 	import dreamwisp.visual.ContainerView;
@@ -7,31 +7,24 @@
 	import flash.display.Stage;
 	import flash.utils.getTimer;
 	
-	public dynamic class Game {
-				
+	public dynamic class Game
+	{
 		public var sprite:Sprite;
 		public var screenManager:ScreenManager;
 		public var saveSystem:SaveSystem;
 		
 		public var inputState:InputState;
 		
-		public function Game(stage:Stage = null) {
+		public function Game(stage:Stage = null)
+		{
 			sprite = new Sprite();
 			if (stage) inputState = new InputState(stage);
 			screenManager = new ScreenManager(this);
 		}
 		
-		public function newGame():void {
-			trace("This is never reached if overriden");
-		}
+		public function loadGame():void { }
 		
-		public function loadGame():void {
-	
-		}
-		
-		public function save():void {
-			
-		}
+		public function save():void { }
 		
 		// Game updates per second
 		private static const TICKS_PER_SECOND:int = 30;
@@ -52,8 +45,9 @@
 		public function run():void 
 		{
 			loops = 0;
-			while ( getTimer() > nextGameTick && loops < MAX_FRAMESKIP) {
-				screenManager.update(inputState.update());
+			while ( getTimer() > nextGameTick && loops < MAX_FRAMESKIP) 
+			{
+				screenManager.update(inputState);
 				inputState.reset();
 				nextGameTick += SKIP_TICKS;
 				loops++;

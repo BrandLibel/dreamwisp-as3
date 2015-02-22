@@ -112,7 +112,7 @@ package dreamwisp.core.screens
 					if (btn.hitTestPoint(mX, mY))
 					{
 						button = btn;
-						if (inputState.isMousePressed || inputState.wasMouseClicked()) break;
+						if (inputState.isMousePressed() || inputState.wasMouseClicked()) break;
 						select(button);
 						break;
 					}
@@ -122,7 +122,7 @@ package dreamwisp.core.screens
 					deselect();
 			}
 			
-			if (inputState.isTouch() && inputState.isMousePressed)
+			if (inputState.isTouch() && inputState.isMousePressed())
 			{
 				for each (btn in buttons)
 				{
