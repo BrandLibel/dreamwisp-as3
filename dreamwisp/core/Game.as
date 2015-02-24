@@ -23,7 +23,7 @@
 		}
 		
 		/**
-		 * 
+		 * Perfrom a simple linear resize of the entire game sprite.
 		 * @param	stage reference to the main stage
 		 * @param	width the static project UI width
 		 * @param	height the static project UI height
