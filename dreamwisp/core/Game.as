@@ -22,6 +22,37 @@
 			screenManager = new ScreenManager(this);
 		}
 		
+		/**
+		 * 
+		 * @param	stage reference to the main stage
+		 * @param	width the static project UI width
+		 * @param	height the static project UI height
+		 */
+		public function rescale(stage:Stage, width:Number, height:Number):void 
+		{
+			var deviceWidth:Number = Math.min(stage.fullScreenWidth, stage.fullScreenHeight);
+			var deviceHeight:Number = Math.max(stage.fullScreenWidth, stage.fullScreenHeight);
+			var appWidth:Number = width;
+			var appHeight:Number = height;
+			var appScale:Number = 1;
+			
+			// if device is wider than GUI's aspect ratio, height determines scale
+			if ( (deviceWidth / deviceHeight) > (width / height) )
+			{
+				appScale = deviceHeight / height;
+				appWidth = deviceWidth / appScale;
+			}
+			// if device is taller than GUI's aspect ratio, width determines scale
+			else
+			{
+				appScale = deviceWidth / width;
+				appHeight = deviceHeight / appScale;
+			}
+			
+			sprite.scaleX = appScale;
+			sprite.scaleY = appScale;
+		}
+		
 		public function loadGame():void { }
 		
 		public function save():void { }
@@ -35,7 +66,6 @@
 		private var nextGameTick:uint = getTimer();
 		private var loops:uint = 0;
 		private var interpolation:Number = 1;
-		
 		
 		/**
 		 * The main game loop, allowing update() to run at TICKS_PER_SECOND
