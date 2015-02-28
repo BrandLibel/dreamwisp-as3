@@ -85,5 +85,10 @@ package dreamwisp.ui
 			textField.htmlText = displayedText;
 		}
 		
+		public function setSpeed(transferSpeed:uint):void 
+		{
+			this.transferSpeed = transferSpeed;
+		}
+		
 	}
 }
