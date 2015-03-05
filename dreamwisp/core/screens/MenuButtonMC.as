@@ -10,7 +10,7 @@ package dreamwisp.core.screens
 	
 	public class MenuButtonMC extends MenuButton 
 	{
-		private var movieClip:MovieClip;
+		protected var movieClip:MovieClip;
 		private var playVelocity:int = 0;
 		
 		public function MenuButtonMC(graphic:DisplayObject, btnCode:String, btnNum:uint) 
