@@ -15,8 +15,9 @@ package dreamwisp.audio
 	
 	internal class Music 
 	{
-		private var startVolume:Number = 1;
 		internal var sound:Sound;
+		private var startVolume:Number = 1;
+		private var prevPosition:Number = 0;
 		
 		private var channel:SoundChannel;
 		private var transform:SoundTransform;
@@ -37,7 +38,7 @@ package dreamwisp.audio
 		internal function play():void 
 		{
 			volume = startVolume;
-			channel = sound.play(0, int.MAX_VALUE, transform);
+			channel = sound.play(prevPosition, int.MAX_VALUE, transform);
 		}
 		
 		/**
@@ -75,6 +76,7 @@ package dreamwisp.audio
 		
 		internal function stop():void 
 		{
+			prevPosition = channel.position;
 			channel.stop();
 			if (onFinishFade != null) onFinishFade.call();
 		}
