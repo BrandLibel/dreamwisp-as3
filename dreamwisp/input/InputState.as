@@ -149,7 +149,7 @@ package dreamwisp.input
 		
 		public function isTouch():Boolean
 		{
-			return !(Capabilities.touchscreenType == TouchscreenType.NONE);
+			return Capabilities.touchscreenType == TouchscreenType.FINGER;
 		}
 
 	}
