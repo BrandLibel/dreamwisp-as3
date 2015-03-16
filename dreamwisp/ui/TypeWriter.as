@@ -78,6 +78,7 @@ package dreamwisp.ui
 		{
 			while (loadedText.length > 0)
 				write();
+			render();
 		}
 		
 		public function render():void 
