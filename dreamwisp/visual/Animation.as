@@ -89,10 +89,14 @@ package dreamwisp.visual
 			play( startLabel, function replay():void { loop(startLabel) } );
 		}
 		
-		/// Essentially movieClip.gotoAndPlay(startLabel); stops once the label is finished
-		public function play(startLabel:String, callBack:Function = null):void 
+		/**
+		 * Essentially movieClip.gotoAndPlay(startLabel); stops once the label is finished
+		 * @param	startLabel where to play from. If it's null, it will play from current label.
+		 */ 
+		public function play(startLabel:String = null, callBack:Function = null):void 
 		{
 			if (locked || !hasLabel(startLabel)) return;
+			if (startLabel == null) startLabel = currentLabel();
 			
 			var numFrames:uint = countFrames(startLabel);
 			if (numFrames == 1)
