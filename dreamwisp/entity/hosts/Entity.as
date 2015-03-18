@@ -108,13 +108,13 @@ package dreamwisp.entity.hosts
 		}
 		
 		protected function hasLeftBounds():Boolean {
-			if (body.centerX >= bounds.right)
+			if (body.centerX >= bounds.right())
 				return true;
-			if (body.centerX <= bounds.left)
+			if (body.centerX <= bounds.left())
 				return true;
-			if (body.centerY <= bounds.top)
+			if (body.centerY <= bounds.top())
 				return true;
-			if (body.centerY >= bounds.bottom) 
+			if (body.centerY >= bounds.bottom()) 
 				return true;
 			return false;
 		}

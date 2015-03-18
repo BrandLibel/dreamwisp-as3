@@ -21,21 +21,26 @@ package dreamwisp.entity.components {
 		public var height:uint;
 		public var angle:Number;
 		
-		public var facingDirection:int;
+		private var swiftRectangle:SwiftRectangle;
 		
 		public function Body(entity:Entity, width:uint, height:uint) {
 			host = entity;
 			this.width = width;
 			this.height = height;
+			swiftRectangle = new SwiftRectangle(0, 0, width, height);
 		}
 		
-		public final function teleport(x:Number, y:Number):void {
+		public final function teleport(x:Number, y:Number):void
+		{
 			this.x = x;
 			this.y = y;
 		}
 		
-		public function getAsRectangle():SwiftRectangle {
-			return new SwiftRectangle(x, y, width, height);
+		public function getAsRectangle():SwiftRectangle 
+		{
+			swiftRectangle.x = x;
+			swiftRectangle.y = y;
+			return swiftRectangle;
 		}
 		
 		public function distanceTo(other:Body):Number 
@@ -50,7 +55,7 @@ package dreamwisp.entity.components {
 		 * @param	body
 		 */
 		public function touches(body:Body):Boolean {
-			return this.getAsRectangle().intersects( body.getAsRectangle() );
+			return getAsRectangle().intersects( body.getAsRectangle() );
 		}
 		
 		public function touchesPoint(x:Number, y:Number):Boolean {

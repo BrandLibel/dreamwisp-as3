@@ -1,66 +1,82 @@
-package dreamwisp.swift.geom {
-	
+package dreamwisp.swift.geom
+{
+	import flash.geom.Rectangle;
 	/**
-	 * The SwiftRectangle is a redesign of flash.geom.Rectangle.
+	 * The SwiftRectangle is a simpler and more performant flash.geom.Rectangle.
 	 * @author Brandon
 	 */
 	
-	public class SwiftRectangle {
-		
+	public class SwiftRectangle
+	{
 		public var x:Number;
 		public var y:Number;
 		public var width:Number;
 		public var height:Number;
+		private var swiftPoint:SwiftPoint;
+		private var rectangle:Rectangle;
 		
-		public function SwiftRectangle(x:Number = 0, y:Number = 0, width:Number = 0, height:Number = 0) {
+		public function SwiftRectangle(x:Number = 0, y:Number = 0, width:Number = 0, height:Number = 0)
+		{
 			this.x = x;
 			this.y = y;
 			this.width = width;
 			this.height = height;
+			swiftPoint = new SwiftPoint(0);
 		}
 		
-		public function get bottom():Number {
-			return (y + height);
+		public function bottom():Number { return (y + height); }
+		
+		public function right():Number { return (x + width); }
+		
+		public function left():Number { return x; }
+		
+		public function top():Number { return y; }
+		
+		public function contains(x:Number, y:Number):Boolean
+		{
+			return  x > left() &&
+					x < right() &&
+					y > top() &&
+					y < bottom();
 		}
 		
-		public function get right():Number {
-			return (x + width);
+		public function containsPoint(point:SwiftPoint):Boolean
+		{
+			return  point.x >= left() &&
+					point.x <= right() && 
+					point.y >= top() &&
+					point.y <= bottom();
 		}
 		
-		public function get left():Number {
-			return x;
-		}
-		
-		public function get top():Number {
-			return y;
-		}
-		
-		public function contains(x:Number, y:Number):Boolean {
-			if (x > left && x < right && y > top && y < bottom) return true;
-			return false;
-		}
-		
-		public function containsPoint(point:SwiftPoint):Boolean {
-			if (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom) return true;
-			return false;
-		}
-		
-		public function intersects(toIntersect:SwiftRectangle):Boolean {
+		public function intersects(toIntersect:SwiftRectangle):Boolean
+		{
 			
-			if (bottom < toIntersect.top || top > toIntersect.bottom) return false;
-			if (left > toIntersect.right || right < toIntersect.left) return false;
+			if (bottom() < toIntersect.top() || top() > toIntersect.bottom())
+				return false;
+			if (left() > toIntersect.right() || right() < toIntersect.left())
+				return false;
 			
 			return true;
 		}
 		
-		public function get bottomRight():SwiftPoint {
-			return null;
+		public function bottomRight():SwiftPoint
+		{
+			swiftPoint.x = right();
+			swiftPoint.y = bottom();
+			return swiftPoint;
 		}
 		
-		public function set bottomRight(value:SwiftPoint):void {
-			
+		public function rect():Rectangle
+		{
+			if (rectangle == null) rectangle = new Rectangle(x, y, width, height);
+			else
+			{
+				rectangle.x = x;
+				rectangle.y = y;
+			}
+			return rectangle;
 		}
-		
+	
 	}
 
 }

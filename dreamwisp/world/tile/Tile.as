@@ -12,21 +12,17 @@ package dreamwisp.world.tile
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import org.osflash.signals.Signal;
-
-	//TODO: Position-based list sorting in order to improve performance of ray-casting algorithm.
-	//		Differentiate between solid/opaque bodies which are able to collide with light, and only
-	//		populate this 'lighting' entity list with solid/opaque things.
 	
 	public class Tile extends Entity
 	{
-		private static const ORIGIN:Point = new Point();
-		private var tileRect:Rectangle;
-		public static const NIL:Tile = new Tile(null, null);
 		private var isNIL:Boolean = false;
+		public static const NIL:Tile = new Tile(null, null);
+		private static const ORIGIN:Point = new Point();
 		
 		protected var tileScape:TileScape;
 		
-		internal var point:Point;
+		public var point:Point;
+		private var tileRect:Rectangle;
 		private var tileWidth:uint = 1;
 		private var tileHeight:uint = 1;
 		

@@ -234,6 +234,8 @@ package dreamwisp.entity.components.platformer
 		
 		private function touchKillerTile(tile:Tile):void 
 		{
+			if (!tile.bitmapData().hitTest(tile.point, 255, entity.body.getAsRectangle().rect()))
+				return;
 			if (ignoresCollision(tile))
 				return;
 			touchedKillerTile.dispatch(tile);
