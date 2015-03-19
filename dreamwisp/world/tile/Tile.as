@@ -21,7 +21,7 @@ package dreamwisp.world.tile
 		
 		protected var tileScape:TileScape;
 		
-		public var point:Point;
+		internal var point:Point;
 		private var tileRect:Rectangle;
 		private var tileWidth:uint = 1;
 		private var tileHeight:uint = 1;
@@ -194,6 +194,11 @@ package dreamwisp.world.tile
 		public function occupy(entity:Entity):void 
 		{
 			isOccupied = true;
+		}
+		
+		public function collides(body:Body):Boolean
+		{
+			return bitmapData().hitTest(point, alpha * 255, body.getAsRectangle().rect());
 		}
 		
 		public function bitmapData():BitmapData { return bitmap.bitmapData; }
