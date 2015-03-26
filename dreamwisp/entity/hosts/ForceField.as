@@ -36,7 +36,7 @@ package dreamwisp.entity.hosts
 			super.update();
 			for each (var entity:Entity in entityManager.getEntitys()) 
 			{
-				var distance:Number = body.distanceTo(entity.body);
+				var distance:Number = body.distanceToBody(entity.body);
 				if (shouldApplyForceOn(entity, distance))
 				{
 					var dX:Number = entity.body.centerX - body.centerX;

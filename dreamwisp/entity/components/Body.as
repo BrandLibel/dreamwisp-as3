@@ -43,11 +43,19 @@ package dreamwisp.entity.components {
 			return swiftRectangle;
 		}
 		
-		public function distanceTo(other:Body):Number 
+		public function distanceToBody(other:Body):Number 
 		{
-			return Math.sqrt( 
+			return distanceTo(other.centerX, other.centerY);
+			/*return Math.sqrt(
 				Math.pow(other.centerX - centerX, 2) +
-				Math.pow(other.centerY - centerY, 2) );
+				Math.pow(other.centerY - centerY, 2) );*/
+		}
+		
+		public function distanceTo(x:Number, y:Number):Number 
+		{
+			return Math.sqrt(
+				Math.pow(x - centerX, 2) +
+				Math.pow(y - centerY, 2) ); 
 		}
 		
 		/**

@@ -1,56 +1,48 @@
-package dreamwisp.visual.camera {
-	import com.demonsters.debugger.MonsterDebugger;
-	import dreamwisp.entity.components.Body;
+package dreamwisp.visual.camera
+{
+	import dreamwisp.swift.geom.SwiftPoint;
 	import flash.geom.Point;
-	import tools.Belt;
+	
 	/**
-	 * SlowFocusState is a Camera state where the camera approaches a Focus, an Entity Body.
+	 * SlowFocusState is a Camera state where the camera approaches a focus.
 	 * @author Brandon
 	 */
-	internal class SlowFocusState implements ICameraState {
+	
+	internal class SlowFocusState implements ICameraState
+	{
 		private var camera:Camera;
 		
-		public function SlowFocusState(camera:Camera) {
+		public function SlowFocusState(camera:Camera)
+		{
 			this.camera = camera;
-			
+		
 		}
 		
-		/* INTERFACE dreamwisp.visual.camera.ICameraState */
-		
-		public function scroll():void {
-			var focus:Body = camera.focusBody;
+		public function scroll():void
+		{
+			var focus:SwiftPoint;
 			var center:Point = camera.center;
+			var nearestPoint:SwiftPoint = camera.findNearestPoint();
 			
-			if (focus.globalX != center.x) {
-				camera.velocityX = 1 * Belt.getSignOf(focus.globalX - center.x);
-			}
-			if (focus.globalY != center.y) {
-				camera.velocityY = 1 * Belt.getSignOf(focus.globalY - center.y);
-			}
-			//MonsterDebugger.trace(this, center.x + "/" + focus.globalX);
-			if (center.x == Math.round(focus.globalX)) {
-				// stopping x movement 
-				camera.velocityX = 0;
-			}
-			//MonsterDebugger.trace(this, center.y + "/" + focus.globalY);
-			if (center.y == Math.round(focus.globalY)) {
-				// stopping y movement
-				camera.velocityY = 0;
-			}
-			if (camera.velocityX == 0 && camera.velocityY == 0) {
-				// centered on the focus
-			}
+			if (nearestPoint != null)
+				focus = nearestPoint;
+			else
+				focus = new SwiftPoint(camera.focusBody.x, camera.focusBody.y);
+				
+			var deltaX:Number = (focus.x - center.x) / 5;
+			var deltaY:Number = (focus.y - center.y) / 5;
 			
-			center.x += camera.velocityX;
-			center.y += camera.velocityY;
+			center.x += deltaX;
+			center.y += deltaY;
 			
 			camera.stayInBounds();
 		}
 		
-		public function enter():void {
-			
-		}
+		public function enter():void
+		{
 		
+		}
+	
 	}
 
 }
