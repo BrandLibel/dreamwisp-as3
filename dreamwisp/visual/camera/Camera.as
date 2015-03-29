@@ -4,7 +4,6 @@ package dreamwisp.visual.camera
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.hosts.Entity;
-	import dreamwisp.swift.geom.SwiftCircle;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.ContainerView;
 	import flash.display.Sprite;
@@ -35,7 +34,7 @@ package dreamwisp.visual.camera
 		/// The focus is the body of the entity which the camera follows.
 		internal var focusBody:Body;
 		internal var focusView:View;
-		internal var interestPoints:Vector.<SwiftCircle>;
+		internal var interestPoints:Vector.<InterestPoint>;
 		
 		private var currentState:ICameraState;
 		private var lastState:ICameraState;
@@ -133,14 +132,14 @@ package dreamwisp.visual.camera
 		 * Sets a new focus for the Camera to follow
 		 * @param	focus the new entity to focus on
 		 */
-		public function refocus(focus:Entity, interestPoints:Vector.<SwiftCircle> = null):void
+		public function refocus(focus:Entity, interestPoints:Vector.<InterestPoint> = null):void
 		{
 			focusBody = focus.body;
 			focusView = focus.view;
 			focusView.render(1);
 			
 			this.interestPoints = interestPoints;
-			var nearestPoint:SwiftCircle = findNearestPoint();
+			var nearestPoint:InterestPoint = findNearestPoint();
 			if (nearestPoint != null)
 			{
 				center.x = nearestPoint.x;
@@ -151,12 +150,12 @@ package dreamwisp.visual.camera
 			user.followCamera(center.x, center.y);
 		}
 		
-		internal function findNearestPoint():SwiftCircle
+		internal function findNearestPoint():InterestPoint
 		{
 			if (interestPoints == null || interestPoints.length == 0) return null;
-			var nearest:SwiftCircle = null;
+			var nearest:InterestPoint = null;
 			var lowest:Number = uint.MAX_VALUE;
-			for each (var point:SwiftCircle in interestPoints) 
+			for each (var point:InterestPoint in interestPoints) 
 			{
 				var dist:Number = focusBody.distanceTo(point.x, point.y);
 				
@@ -179,6 +178,12 @@ package dreamwisp.visual.camera
 			cameraPath = new CameraPath(path);
 			changeState(pathState);
 			MonsterDebugger.trace(this, cameraPath);
+		}
+		
+		public function slide(x:Number, y:Number):void 
+		{
+			// start from 0 -> target parabolically
+			// return from target -> 0 parabolically
 		}
 		
 		/**

@@ -2,7 +2,7 @@ package dreamwisp.swift.geom
 {
 	
 	/**
-	 * ...
+	 * A circle is a point with a radius.
 	 * @author Brandon
 	 */
 	public class SwiftCircle extends SwiftPoint

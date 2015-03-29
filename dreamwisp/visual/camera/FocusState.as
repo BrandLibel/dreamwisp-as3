@@ -1,8 +1,5 @@
 package dreamwisp.visual.camera
 {
-	import com.demonsters.debugger.MonsterDebugger;
-	import dreamwisp.entity.components.Body;
-	import dreamwisp.entity.components.View;
 	import dreamwisp.swift.geom.SwiftPoint;
 	import flash.geom.Point;
 	
@@ -13,7 +10,6 @@ package dreamwisp.visual.camera
 	 */
 	internal class FocusState implements ICameraState
 	{
-		
 		private var camera:Camera;
 		
 		public function FocusState(camera:Camera)
@@ -38,18 +34,33 @@ package dreamwisp.visual.camera
 		
 		public function scroll():void
 		{
-			var focus:View = camera.focusView;
+			var focus:SwiftPoint;
 			var center:Point = camera.center;
-			var nearestPoint:SwiftPoint = camera.findNearestPoint();
+			var nearestPoint:InterestPoint = camera.findNearestPoint();
 			
 			if (nearestPoint != null)
 			{
-				center.x = nearestPoint.x;
-				center.y = nearestPoint.y;
+				focus = nearestPoint;
+				const innerRadius:Number = nearestPoint.innerRadius;
+				var distToPoint:Number = camera.focusBody.distanceTo(focus.x, focus.y);
+				
+				if (distToPoint > innerRadius)
+				{
+					// we want the interpolation (0.0 - 1.0).
+					// using the interpolation of player from innerRadius,
+					// the camera will focus on a point between outerRadius and the center point.
+					var interp:Number = 1 - ((distToPoint - innerRadius) / (nearestPoint.radius - innerRadius));
+					var distX:Number = focus.x - camera.focusBody.x;
+					var distY:Number = focus.y - camera.focusBody.y;
+					
+					focus = new SwiftPoint(camera.focusBody.x, camera.focusBody.y);
+					focus.x += distX * interp;
+					focus.y += distY * interp;
+				}
 			}
 			else
 			{
-				if (focus.displayObject.x > center.x && center.x < camera.maxX)
+				/*if (focus.displayObject.x > center.x && center.x < camera.maxX)
 					center.x = focus.displayObject.x;
 				else if (focus.displayObject.x < center.x && center.x > camera.minX)
 					center.x = focus.displayObject.x;
@@ -57,8 +68,12 @@ package dreamwisp.visual.camera
 				if (focus.displayObject.y > center.y && center.y < camera.maxY)
 					center.y = focus.displayObject.y;
 				else if (focus.displayObject.y < center.y && center.y > camera.minY)
-					center.y = focus.displayObject.y;
+					center.y = focus.displayObject.y;*/
+				focus = new SwiftPoint(camera.focusBody.x, camera.focusBody.y);
 			}
+			
+			center.x = focus.x;
+			center.y = focus.y;
 			
 			camera.stayInBounds();
 		}

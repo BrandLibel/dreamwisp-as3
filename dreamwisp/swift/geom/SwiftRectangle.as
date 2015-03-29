@@ -32,6 +32,10 @@ package dreamwisp.swift.geom
 		
 		public function top():Number { return y; }
 		
+		public function centerX():Number { return x + width / 2; }
+		
+		public function centerY():Number { return y + height / 2; }
+		
 		public function contains(x:Number, y:Number):Boolean
 		{
 			return  x > left() &&
