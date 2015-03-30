@@ -1,6 +1,7 @@
 ﻿package tools
 {
 	import com.demonsters.debugger.MonsterDebugger;
+	import dreamwisp.visual.Frame;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
@@ -172,6 +173,35 @@
 			var bounds:Rectangle = displayObject.getBounds(displayObject);
 			bitmapData.draw(displayObject, new Matrix(1, 0, 0, 1, -bounds.left, -bounds.top));
 			return new Bitmap(bitmapData);
+		}
+		
+		public static function mcToFrames(mc:MovieClip, scale:Number = 1):Vector.<Frame> 
+		{
+			var frames:Vector.<Frame> = new Vector.<Frame>;
+			var matrix:Matrix = new Matrix(1, 0, 0, 1);
+			
+			while (mc.currentFrame < mc.totalFrames)
+			{
+				var bounds:Rectangle = mc.getRect(mc);
+				matrix.tx = -bounds.x;
+				matrix.ty = -bounds.y;
+				//sometimes there is clipping.
+				
+				var bitmapData:BitmapData = new BitmapData(Math.ceil(bounds.width), Math.ceil(bounds.height), true, 0);
+				bitmapData.draw(mc, matrix);
+				
+				var fr:Frame = new Frame();
+				fr.bitmapData = bitmapData;
+				fr.x = -matrix.tx;
+				fr.y = -matrix.ty;
+				fr.originalWidth = mc.width;
+				fr.originalHeight = mc.height;
+				fr.label = mc.currentFrameLabel;
+				
+				frames.push(fr);
+				mc.nextFrame();
+			}
+			return frames;
 		}
 		
 		public static function randomSign():int
