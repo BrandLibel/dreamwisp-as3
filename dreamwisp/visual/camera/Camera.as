@@ -50,6 +50,7 @@ package dreamwisp.visual.camera
 		
 		private var _height:uint;
 		private var _width:uint;
+		internal var zoomValue:Number = 1;
 		
 		private var boundRect:SwiftRectangle;
 		
@@ -115,7 +116,6 @@ package dreamwisp.visual.camera
 			this.boundRect = boundary;
 		}
 		
-		public var zoomValue:Number = 1;
 		public function zoom(value:Number):void 
 		{
 			user.scaleX = value;
@@ -132,13 +132,12 @@ package dreamwisp.visual.camera
 		 * Sets a new focus for the Camera to follow
 		 * @param	focus the new entity to focus on
 		 */
-		public function refocus(focus:Entity, interestPoints:Vector.<InterestPoint> = null):void
+		public function refocus(focus:Entity):void
 		{
 			focusBody = focus.body;
 			focusView = focus.view;
 			focusView.render(1);
 			
-			this.interestPoints = interestPoints;
 			var nearestPoint:InterestPoint = findNearestPoint();
 			if (nearestPoint != null)
 			{
@@ -148,6 +147,11 @@ package dreamwisp.visual.camera
 			
 			currentState.scroll();
 			user.followCamera(center.x, center.y);
+		}
+		
+		public function setInterestPoints(interestPoints:Vector.<InterestPoint>):void 
+		{
+			this.interestPoints = interestPoints;
 		}
 		
 		internal function findNearestPoint():InterestPoint
@@ -292,15 +296,9 @@ package dreamwisp.visual.camera
 			return (height() / 2) + boundRect.y;
 		}
 		
-		private function width():uint 
-		{
-			return (_width / zoomValue);
-		}
+		private function width():uint { return (_width / zoomValue); }
 		
-		private function height():uint
-		{
-			return (_height / zoomValue);
-		}
+		private function height():uint { return (_height / zoomValue); }
 	
 	}
 
