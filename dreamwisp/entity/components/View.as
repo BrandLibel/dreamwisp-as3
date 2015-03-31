@@ -1,9 +1,12 @@
 package dreamwisp.entity.components
 {
 	import com.demonsters.debugger.MonsterDebugger;
+	import dreamwisp.visual.animation.AnimatedFrames;
+	import dreamwisp.visual.animation.Animation;
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.visual.ContainerView;
+	import dreamwisp.visual.Frame;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
@@ -24,6 +27,8 @@ package dreamwisp.entity.components
 		protected const rotAngle:Number = (180 / Math.PI);
 		public var offsetX:Number = 0;
 		public var offsetY:Number = 0;
+		
+		public var animation:Animation;
 		
 		// color transformation tools
 		private var currentTint:Array = [1, 1, 1];
@@ -53,6 +58,14 @@ package dreamwisp.entity.components
 				displayObject.y = host.body.y + offsetY;
 			}
             displayObject.rotation = host.body.angle * rotAngle;
+			
+			if (animation != null && animation is AnimatedFrames)
+			{
+				var frame:Frame = AnimatedFrames(animation).frameObject();
+				displayObject.x += /*(host.body.width / 2) +*/ frame.x;
+				displayObject.y += /*(host.body.height / 2) +*/ frame.y;
+				if (displayObject.scaleX == -1) displayObject.x += frame.originalWidth;
+			}
 		}
 		
 		public function applyTint(r:Number, g:Number, b:Number, displayObject:DisplayObject = null):void 
@@ -113,9 +126,7 @@ package dreamwisp.entity.components
 		
 		public function get layer():uint { return _layer; }
 		
-		public function set layer(value:uint):void {
-			_layer = value;
-		}
+		public function set layer(value:uint):void { _layer = value; }
 		
 		public function get movieClip():MovieClip { return displayObject as MovieClip; }
 		
@@ -137,7 +148,6 @@ package dreamwisp.entity.components
 				containerView.addDisplayObject(value, layer, host.body.x, host.body.y);
 			}
 			_displayObject = value;
-			
 		}
 		
 		public function get displayObjectContainer():DisplayObjectContainer
@@ -148,7 +158,6 @@ package dreamwisp.entity.components
 		public function setContainerView(containerView:ContainerView):void 
 		{
 			this.containerView = containerView;
-			
 		}
 		
 	}

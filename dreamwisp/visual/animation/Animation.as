@@ -1,34 +1,32 @@
-package dreamwisp.visual 
+package dreamwisp.visual.animation 
 {
 	import com.demonsters.debugger.MonsterDebugger;
 	import flash.display.FrameLabel;
 	import flash.display.MovieClip;
 	
 	/**
-	 * Animation provides functionality for animating Flash MovieClips. 
-	 * It obviates the need for embedded frame scripts in Flash Professional.
+	 * Animation provides base functionality for sprite animations.
+	 * This is an abstract class and should not be instantiated.
 	 * @author Brandon
 	 */
 	
 	public class Animation 
 	{
-		private var movieClip:MovieClip;
+		//private var movieClip:MovieClip;
 		
-		private static const PRIORITY_NORMAL:int = 0;
-		private static const PRIORITY_HIGH:int = 1;
-		private var currentPriority:int = PRIORITY_NORMAL; 
-		
-		private var frame:uint = 0;
+		protected var frame:uint = 0;
 		private var targetFrame:uint = 0;
 		private var speed:int = 0;
 		private var callBack:Function = null;
 		
 		/// Locked indicates that any new animation will not be played
 		private var locked:Boolean = false;
+		private var stopped:Boolean = false;
+		private var hadLock:Boolean = false;
 		
-		public function Animation(movieClip:MovieClip, initLabel:String = "") 
+		public function Animation(/*movieClip:MovieClip,*/ initLabel:String = "") 
 		{
-			this.movieClip = movieClip;
+			//this.movieClip = movieClip;
 			if (initLabel != "")
 				setFrame(initLabel);
 		}
@@ -56,8 +54,6 @@ package dreamwisp.visual
 			}
 		}
 		
-		private var stopped:Boolean = false;
-		private var hadLock:Boolean = false;
 		/**
 		 * wasStopped + hadLock indicates the client update() might want to return
 		 * because we aren't locked but we should be - the frame right after a locked stop()
@@ -99,6 +95,7 @@ package dreamwisp.visual
 			if (startLabel == null) startLabel = currentLabel();
 			
 			var numFrames:uint = countFrames(startLabel);
+			MonsterDebugger.trace(this, "num frames: " + numFrames);
 			if (numFrames == 1)
 			{
 				setFrame(startLabel);
@@ -127,9 +124,9 @@ package dreamwisp.visual
 		}
 		
 		/// Returns the frame number of the provided label
-		private function findFrame(label:String):uint 
+		protected function findFrame(label:String):uint 
 		{
-			if (movieClip.totalFrames == 1)
+			/*if (movieClip.totalFrames == 1)
 				return 1;
 			
 			for each (var frameLabel:FrameLabel in movieClip.currentLabels) 
@@ -137,15 +134,16 @@ package dreamwisp.visual
 				if (frameLabel.name == label)
 					return frameLabel.frame;
 			}
+			return null;*/
 			return null;
 		}
 		
 		/**
 		 * Count number of frames in a certain label
 		 */
-		private function countFrames(frameLabel:String):uint
+		protected function countFrames(frameLabel:String):uint
 		{
-			var numFrames:uint = 0;
+			/*var numFrames:uint = 0;
 			const originalFrame:uint = movieClip.currentFrame;
 			movieClip.gotoAndStop(frameLabel);
 			while (movieClip.currentLabel == frameLabel)
@@ -157,28 +155,29 @@ package dreamwisp.visual
 				movieClip.nextFrame();
 			}
 			movieClip.gotoAndStop(originalFrame);
-			return numFrames;
+			return numFrames;*/
+			return null;
 		}
 		
-		private function hasLabel(label:String):Boolean
+		protected function hasLabel(label:String):Boolean
 		{
-			for each (var frameLabel:FrameLabel in movieClip.currentLabels)
+			/*for each (var frameLabel:FrameLabel in movieClip.currentLabels)
 				if (frameLabel.name == label)
 					return true;
+			return false;*/
 			return false;
 		}
 		
-		/// Call to set the movieClip's frame
 		public function render():void 
 		{
-			movieClip.gotoAndStop(frame);
+			//movieClip.gotoAndStop(frame);
 		}
 		
 		/// Whether or not the current animation prevents other animations
-		public function isLocked():Boolean { return locked;  }
+		public function isLocked():Boolean { return locked; }
 		
 		public function currentFrame():uint { return frame; }
-		public function currentLabel():String { return movieClip.currentLabel; }
+		public function currentLabel():String { return null;/*movieClip.currentLabel;*/ }
 		
 	}
 

@@ -7,7 +7,7 @@ package dreamwisp.entity.hosts
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.components.Weapon;
 	import dreamwisp.swift.geom.SwiftRectangle;
-	import dreamwisp.visual.Animation;
+	import dreamwisp.visual.animation.Animation;
 	import dreamwisp.visual.lighting.LightSource;
 	import dreamwisp.entity.EntityManager;
 	import flash.utils.getDefinitionByName;
@@ -30,7 +30,6 @@ package dreamwisp.entity.hosts
 		private var _view:View;
 		private var _lightSource:LightSource;
 		private var _physics:Physics;
-		protected var animation:Animation;
 		
 		private var _entityCreated:Signal;
 		private var _destroyed:Signal;
@@ -138,7 +137,7 @@ package dreamwisp.entity.hosts
 		public function get view():View { return _view; }
 		
 		public function set view(value:View):void { _view = value; }
-							
+		
 		public function get entityCreated():Signal { return _entityCreated; }
 		
 		public function set entityCreated(value:Signal):void { _entityCreated = value; }
@@ -174,6 +173,12 @@ package dreamwisp.entity.hosts
 		public function get gameScreen():GameScreen { return _gameScreen; }
 		
 		public function set gameScreen(value:GameScreen):void { _gameScreen = value; }
+		
+		// the ONLY getter/setter in the entity that we actually need.
+		
+		public function get animation():Animation { return view.animation; }
+		
+		public function set animation(value:Animation):void { view.animation = value; }
 		
 	}
 

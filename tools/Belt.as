@@ -8,6 +8,7 @@
 	import flash.display.IBitmapDrawable;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.display.StageQuality;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
@@ -171,7 +172,7 @@
 			var bitmapData:BitmapData = new BitmapData(displayObject.width, displayObject.height, true, 0x000000);
 			// draw using coordinates with respect to itself; prevents cutoff converting to bitmap
 			var bounds:Rectangle = displayObject.getBounds(displayObject);
-			bitmapData.draw(displayObject, new Matrix(1, 0, 0, 1, -bounds.left, -bounds.top));
+			bitmapData.drawWithQuality(displayObject, new Matrix(1, 0, 0, 1, -bounds.left, -bounds.top), null, null, null, false, StageQuality.BEST);
 			return new Bitmap(bitmapData);
 		}
 		
@@ -182,11 +183,15 @@
 			
 			while (mc.currentFrame < mc.totalFrames)
 			{
+				// note: movieclips in flash pro should have a center registration point
+				// e.g. their x & y are negative and half of the width & height
+				
 				var bounds:Rectangle = mc.getRect(mc);
 				matrix.tx = -bounds.x;
 				matrix.ty = -bounds.y;
-				//sometimes there is clipping.
 				
+				// Math.ceil is necessary to prevent clipping when an MC dimension ends up on fraction of a pixel
+				// e.g. width is 19.95
 				var bitmapData:BitmapData = new BitmapData(Math.ceil(bounds.width), Math.ceil(bounds.height), true, 0);
 				bitmapData.draw(mc, matrix);
 				
@@ -194,14 +199,26 @@
 				fr.bitmapData = bitmapData;
 				fr.x = -matrix.tx;
 				fr.y = -matrix.ty;
-				fr.originalWidth = mc.width;
-				fr.originalHeight = mc.height;
-				fr.label = mc.currentFrameLabel;
+				fr.originalWidth = Math.abs(bounds.x) * 2;
+				fr.originalHeight = Math.abs(bounds.y) * 2;
+				fr.label = mc.currentLabel;
 				
 				frames.push(fr);
 				mc.nextFrame();
 			}
 			return frames;
+		}
+		
+		public static function flipBitmapData(original:BitmapData, x:Number = 1, y:Number = 1):BitmapData 
+		{
+			var flipped:BitmapData = new BitmapData(original.width, original.height, true, 0);
+			var matrix:Matrix
+			if (x != 1)
+				matrix = new Matrix( x, 0, 0, 1, original.width, 0);
+			else if (y != 1)
+				matrix = new Matrix( 1, 0, 0, y, 0, original.height);
+			flipped.draw(original, matrix, null, null, null, true);
+			return flipped;
 		}
 		
 		public static function randomSign():int
