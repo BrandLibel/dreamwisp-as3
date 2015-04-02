@@ -181,7 +181,7 @@
 			var frames:Vector.<Frame> = new Vector.<Frame>;
 			var matrix:Matrix = new Matrix(1, 0, 0, 1);
 			
-			while (mc.currentFrame < mc.totalFrames)
+			for (var i:int = 0; i < mc.totalFrames; i++) 
 			{
 				// note: movieclips in flash pro should have a center registration point
 				// e.g. their x & y are negative and half of the width & height
