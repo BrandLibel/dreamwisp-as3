@@ -139,7 +139,7 @@ package dreamwisp.core.screens
 			
 			if (inputState.wasMouseClicked())
 			{
-				if (selectedButton != null)
+				if (selectedButton != null && selectedButton.hitTestPoint(mX, mY))
 				{
 					confirm();
 				}
