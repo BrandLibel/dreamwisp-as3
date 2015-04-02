@@ -1,8 +1,5 @@
 package dreamwisp.visual.animation 
 {
-	import com.demonsters.debugger.MonsterDebugger;
-	import flash.display.FrameLabel;
-	import flash.display.MovieClip;
 	
 	/**
 	 * Animation provides base functionality for sprite animations.
@@ -95,7 +92,6 @@ package dreamwisp.visual.animation
 			if (startLabel == null) startLabel = currentLabel();
 			
 			var numFrames:uint = countFrames(startLabel);
-			MonsterDebugger.trace(this, "num frames: " + numFrames);
 			if (numFrames == 1)
 			{
 				setFrame(startLabel);

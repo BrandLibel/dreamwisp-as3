@@ -7,9 +7,11 @@ package dreamwisp.entity.hosts
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.components.Weapon;
 	import dreamwisp.swift.geom.SwiftRectangle;
+	import dreamwisp.visual.animation.AnimatedFrames;
 	import dreamwisp.visual.animation.Animation;
 	import dreamwisp.visual.lighting.LightSource;
 	import dreamwisp.entity.EntityManager;
+	import flash.display.Bitmap;
 	import flash.utils.getDefinitionByName;
 	import org.osflash.signals.Signal;
 	import tools.Belt;
@@ -40,6 +42,9 @@ package dreamwisp.entity.hosts
 		public var bounds:SwiftRectangle;
 		private var _entityManager:EntityManager;
 		private var _gameScreen:GameScreen;
+		
+		/// Set this once in Data.prepare() for entity prototypes that use bitmap frames
+		public static var frameSets:Object;
 		
 		public function Entity(prototypeData:Object = null, prototypeID:uint = 0) 
 		{
@@ -82,9 +87,15 @@ package dreamwisp.entity.hosts
 			{
 				var strings:Array = myData.view.split("_");
 				if (strings[0] == "mc")
+				{
 					view = new View(this, Belt.addClassFromLibrary( strings[1], Belt.CLASS_MOVIECLIP ) );
-				//else
-					// "ss" - access spritesheet statically 
+				}
+				else // "ss" - access spritesheet statically 
+				{
+					var bitmap:Bitmap = new Bitmap(frameSets[strings[1]][0].bitmapData);
+					view = new View(this, bitmap);
+					animation = new AnimatedFrames(bitmap, frameSets[strings[1]]);
+				}
 			}
 		}
 		
@@ -96,7 +107,6 @@ package dreamwisp.entity.hosts
 		}
 		
 		public function update():void {
-			
 			//if (physics) physics.update();
 			//if (hasLeftBounds()) leftBounds.dispatch(this);
 		}
