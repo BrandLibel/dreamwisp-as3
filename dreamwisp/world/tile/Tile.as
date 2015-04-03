@@ -23,8 +23,10 @@ package dreamwisp.world.tile
 		
 		internal var point:Point;
 		private var tileRect:Rectangle;
-		private var tileWidth:uint = 1;
-		private var tileHeight:uint = 1;
+		protected var tileWidth:uint = 1;
+		protected var tileHeight:uint = 1;
+		/// Reusable drawing rectangle
+		private var drawRect:Rectangle;
 		
 		public var type:String;
 		///Object containing booleans left, right, up, down determining 
@@ -43,9 +45,16 @@ package dreamwisp.world.tile
 		private var frames:Array;
 		private var spriteSheet:SpriteSheet;
 		
+		/// Only set this in update(), not render(). Offsets determine if adjacent tiles become dirty!
 		protected var xOffset:int = 0;
+		private var prevXOffset:int = 0;
+		/// Only set this in update(), not render(). Offsets determine if adjacent tiles become dirty!
 		protected var yOffset:int = 0;
+		private var prevYOffset:int = 0;
 		protected var alpha:Number = 1;
+		
+		/// Determines whether or not a tile should re-copyPixels() to tilescape canvas
+		protected var isDirty:Boolean = true;
 		
 		/**
 		 * 
@@ -70,6 +79,7 @@ package dreamwisp.world.tile
 			bitmap.bitmapData = new BitmapData(tileWidth, tileHeight, true, 0);
 			view = new View(this, bitmap);
 			
+			drawRect = new Rectangle(0, 0, tileWidth, tileHeight);
 			body = new Body(this, tileWidth, tileHeight);
 			point = new Point();
 			
@@ -121,12 +131,17 @@ package dreamwisp.world.tile
 			bitmap.bitmapData.copyPixels(spriteSheet.getImage(), srcRect, ORIGIN);
 		}
 		
+		/**
+		 * Redraws pixels in bitmapData based on tile's current alpha.
+		 * Optimized method but still slow; avoid calls when possible.
+		 */ 
 		protected function transformPixels():void 
 		{
 			const bitmapData:BitmapData = bitmap.bitmapData;
-			bitmapData.lock();
-			const length:uint = tileRect.width * tileRect.height;
+			const length:uint = tileWidth * tileHeight;
 			const ct:ColorTransform = view.displayObject.transform.colorTransform;
+			
+			bitmapData.lock();
 			
 			for (var i:int = 0; i < length; i++)
 			{
@@ -144,18 +159,62 @@ package dreamwisp.world.tile
 			}
 			
 			bitmapData.unlock();
+			
+			// modification of the body corrupts the soul
+			isDirty = true;
 		}
 		
 		override public function update():void
 		{	
 			isOccupied = false;
+			if (hasOffsetChanged())
+				isDirty = true;
 		}
-
+		
 		override public function render(interpolation:Number):void 
 		{
 			if (isEmpty())
 				return;
 			
+			if (isDirty)
+			{
+				drawRect.x = point.x + prevXOffset;
+				drawRect.y = point.y + prevYOffset;
+				drawRect.width = tileWidth;
+				drawRect.height = tileHeight;
+				tileScape.getCanvas().bitmapData.fillRect(drawRect, 0);
+				
+				// draw order of tiles will get messed up if offsets are not 0, hence this code
+				if (hasOffsetChanged())
+				{
+					const x:Number = point.x + prevXOffset;
+					const y:Number = point.y + prevYOffset;
+					
+					// all that touch this dirty tile must be redrawn
+					var topLeft:Tile 	= tileScape.tileAtPoint(x, 				y				);
+					var topRight:Tile 	= tileScape.tileAtPoint(x + tileWidth,	y				);
+					var botLeft:Tile 	= tileScape.tileAtPoint(x, 				y + tileHeight	);
+					var botRight:Tile 	= tileScape.tileAtPoint(x + tileWidth,	y + tileHeight	);
+					if (topLeft  != this) topLeft.renderSelf (interpolation);
+					if (topRight != this) topRight.renderSelf(interpolation);
+					if (botLeft  != this) botLeft.renderSelf (interpolation);
+					if (botRight != this) botRight.renderSelf(interpolation);
+				}
+				
+				renderSelf(interpolation);
+				
+				prevXOffset = xOffset;
+				prevYOffset = yOffset;
+				
+				// only at the final line of rendering can the soul be cleansed
+				isDirty = false;
+			}
+		}
+		
+		private function renderSelf(interpolation:Number):void 
+		{
+			if (isEmpty())
+				return;
 			const bitmapData:BitmapData = bitmap.bitmapData;
 			// using the same point to avoid object construction & allocation
 			point.x += xOffset;
@@ -163,6 +222,11 @@ package dreamwisp.world.tile
 			tileScape.getCanvas().bitmapData.copyPixels(bitmapData, tileRect, point, null, null, true);			
 			point.x -= xOffset;
 			point.y -= yOffset;
+		}
+		
+		private function hasOffsetChanged():Boolean
+		{
+			return (xOffset != prevXOffset || yOffset != prevYOffset);
 		}
 		
 		private function erase():void

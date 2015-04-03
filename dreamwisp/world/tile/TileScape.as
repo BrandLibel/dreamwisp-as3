@@ -18,18 +18,18 @@ package dreamwisp.world.tile
 	 
 	public class TileScape
 	{
-		/// Rectangle used to copy pixels from tile
-		private var tileRect:Rectangle;
 		private var _tileWidth:uint;
 		private var _tileHeight:uint;
 		/// Reusable Rectangle
-		private const drawRect:Rectangle = new Rectangle();
+		private var drawRect:Rectangle;
 		
 		protected var tileGrid:Vector.<Vector.<Tile>>;
 		
 		private var canvasData:BitmapData;
 		private var canvas:Bitmap;
 		private var rect:Rectangle;
+		
+		private var reusablePoint:Point = new Point(0, 0);
 		
 		/// JSON object containing all tile blueprints
 		protected var tileList:Array;
@@ -41,7 +41,7 @@ package dreamwisp.world.tile
 		
 		private var myBounds:SwiftRectangle;
 		protected var tiles:Object;
-				
+		
 		/**
 		 *
 		 * @param	width the width of the entire scape in pixels.
@@ -54,7 +54,7 @@ package dreamwisp.world.tile
 		{
 			this.tiles = tiles;
 			readTileData(tiles);
-			tileRect = new Rectangle(0, 0, tileWidth, tileHeight);
+			drawRect = new Rectangle(0, 0, tileWidth, tileHeight);
 			
 			canvasData = new BitmapData(width, height, true, 0x00000000);
 			canvas = new Bitmap(canvasData);
@@ -104,9 +104,7 @@ package dreamwisp.world.tile
 		
 		public function render():void
 		{
-			// proper bitmap drawing of tiles involves clearing entire field and redrawing every frame
-			canvas.bitmapData.fillRect(rect, 0);
-			execute( function(tile:Tile):void { tile.render(1); } );
+			execute( function(tile:Tile):void { tile.render(1); } )
 		}
 		
 		/**
@@ -116,7 +114,6 @@ package dreamwisp.world.tile
 		private function build(rows:uint, cols:uint, tileMap:Array):void
 		{
 			tileGrid = new Vector.<Vector.<Tile>>
-			var destPoint:Point = new Point();
 			for (var a:uint = 0; a < rows; a++)
 			{
 				tileGrid.push(new <Tile>[]);
@@ -304,6 +301,11 @@ package dreamwisp.world.tile
 			if (row >= tileGrid.length || col >= tileGrid[0].length)
 				return Tile.NIL;
 			return tileGrid[row][col];
+		}
+		
+		public function tileAtPoint(x:Number, y:Number):Tile
+		{
+			return tileGrid[Math.floor(y / tileHeight)][Math.floor(x / tileWidth)]
 		}
 		
 		/**
