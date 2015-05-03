@@ -116,6 +116,8 @@ package dreamwisp.visual.camera
 			this.boundRect = boundary;
 		}
 		
+		public function getBounds():SwiftRectangle { return boundRect; }
+		
 		public function zoom(value:Number):void 
 		{
 			user.scaleX = value;
@@ -234,25 +236,13 @@ package dreamwisp.visual.camera
 			if (passedUpBound()) center.y = minY;
 		}
 		
-		internal function passedLeftBound():Boolean
-		{
-			return (center.x < minX);
-		}
+		internal function passedLeftBound():Boolean { return center.x < minX; }
 		
-		internal function passedRightBound():Boolean
-		{
-			return (center.x > maxX);
-		}
+		internal function passedRightBound():Boolean { return center.x > maxX; }
 		
-		internal function passedUpBound():Boolean
-		{
-			return (center.y < minY);
-		}
+		internal function passedUpBound():Boolean { return center.y < minY; }
 		
-		internal function passedDownBound():Boolean
-		{
-			return (center.y > maxY);
-		}
+		internal function passedDownBound():Boolean { return center.y > maxY; }
 		
 		/**
 		 * If the target rect is bigger than the stage, allows camera to move.
@@ -260,16 +250,6 @@ package dreamwisp.visual.camera
 		private function isScrollable():Boolean
 		{
 			return (boundRect.width > width() || boundRect.height > height());
-		}
-		
-		internal function centralizeX(value:*):*
-		{
-			return (value + width);
-		}
-		
-		internal function centralizeY(value:*):*
-		{
-			return (value + height);
 		}
 		
 		/// The right most edge that the camera center can be, in pixels.

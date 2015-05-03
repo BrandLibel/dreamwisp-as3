@@ -20,6 +20,8 @@ package dreamwisp.ui
 		public var graphic:DisplayObjectContainer;
 		public var x:Number;
 		public var y:Number;
+		protected var originX:Number = 0;
+		protected var originY:Number = 0;
 		protected var visible:Boolean;
 		protected var dialogueTextField:TextField;
 		protected var dialogueWriter:TypeWriter;
@@ -62,11 +64,24 @@ package dreamwisp.ui
 			}
 		}
 		
+		/**
+		 * Causes the speech bubble to flip if it exceeds stage right bound.
+		 */
+		public function stayWithin(stageWidth:Number, stageHeight:Number):void 
+		{
+			originX = 0;
+			originY = 0;
+			
+			if (x + graphic.width > stageWidth)
+				originX = -graphic.width / 2;
+		}
+		
 		public function render(interpolation:Number):void 
 		{
 			graphic.visible = visible;
-			graphic.x = x;
-			graphic.y = y;
+			graphic.x = originX + x;
+			graphic.y = originY + y;
+			
 			if (state == STATE_HIDDEN) return;
 			dialogueWriter.render();
 		}

@@ -58,9 +58,11 @@ package dreamwisp.ui
 				sprite.graphics.clear();
 				sprite.graphics.lineStyle(lineThickness, lineColor, lineAlpha);
 				sprite.graphics.beginFill(fillColor, fillAlpha);
-				sprite.graphics.drawRect(0, 0, dialogueTextField.textWidth + padding, dialogueTextField.textHeight + padding * 2);
+				sprite.graphics.drawRect(originX, originY, dialogueTextField.textWidth + padding, dialogueTextField.textHeight + padding * 2);
 				sprite.graphics.endFill();
 				
+				dialogueTextField.x = originX + padding / 2;
+				dialogueTextField.y = originY + padding / 2;
 				dialogueTextField.height = dialogueTextField.textHeight + dialogueTextField.getTextFormat().size;
 			}
 			
