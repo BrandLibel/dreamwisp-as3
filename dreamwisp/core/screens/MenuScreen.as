@@ -146,6 +146,15 @@ package dreamwisp.core.screens
 			}
 		}
 		
+		/**
+		 * Returns a button with the specified btnCode
+		 * @param	btnCode a string in "B" + N format, where N is a integer >= 1
+		 */
+		public function getButton(btnCode:String):MenuButton
+		{
+			return buttons[uint(btnCode.substr(1)) - 1];
+		}
+		
 		protected function select(button:MenuButton):void 
 		{
 			if (selectedButton != null)
