@@ -1,16 +1,13 @@
 package dreamwisp.core.screens 
 {
-	import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.core.Game;
 	import dreamwisp.core.GameScreen;
 	import dreamwisp.input.InputState;
-	import dreamwisp.input.KeyMap;
 	import dreamwisp.visual.ContainerView;
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
 	import flash.display.SimpleButton;
-	import flash.events.Event;
-	import flash.ui.Keyboard;
 	import org.osflash.signals.Signal;
 	
 	/**
@@ -19,23 +16,23 @@ package dreamwisp.core.screens
 	 */
 	public class MenuScreen extends GameScreen 
 	{
-		protected var mc:MovieClip;
+		protected var container:DisplayObjectContainer;
 		protected var buttons:Vector.<MenuButton>;
 		protected var selectedButton:MenuButton;
 		
 		public var buttonPressed:Signal;
 		
-		public function MenuScreen(game:Game, mc:MovieClip) 
+		public function MenuScreen(game:Game, container:DisplayObjectContainer) 
 		{
 			super(game);
-			this.mc = mc;
+			this.container = container;
 			detectButtons();
 			
 			buttonPressed = new Signal(MenuButton);
 			buttonPressed.add(handleButtonPress);
 			
 			view = new ContainerView();
-			view.addDisplayObject(mc);
+			view.addDisplayObject(container);
 		}
 		
 		override public function update():void 
@@ -69,10 +66,10 @@ package dreamwisp.core.screens
 			buttons = new Vector.<MenuButton>();
 			var btnNum:uint = 1;
 			var button:MenuButton;
-			while (mc.getChildByName("B" + btnNum) != null)
+			while (container.getChildByName("B" + btnNum) != null)
 			{
 				const btnCode:String = "B" + btnNum; 
-				const graphic:DisplayObject = mc.getChildByName(btnCode);
+				const graphic:DisplayObject = container.getChildByName(btnCode);
 				
 				button = makeButton(graphic, btnCode, btnNum);
 				addDetectedButton(button);
@@ -191,6 +188,8 @@ package dreamwisp.core.screens
 		{
 			return buttons.indexOf( selectedButton );
 		}
+		
+		public function get mc():MovieClip { return container as MovieClip; }
 		
 	}
 

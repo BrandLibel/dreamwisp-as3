@@ -166,6 +166,18 @@
 			}
 		}
 		
+		/// Transfer all children from a simple MC into a Sprite
+		public static function mcToSprite(mc:MovieClip):Sprite
+		{
+			var sprite:Sprite = new Sprite();
+			var numChildren:int = mc.numChildren;
+			for (var i:int = 0; i < numChildren; i++) 
+			{
+				sprite.addChild(mc.getChildAt(0));
+			}
+			return sprite;
+		}
+		
 		public static function convertToBitmap(displayObject:DisplayObject):Bitmap
 		{
 			MonsterDebugger.trace(displayObject, displayObject.width + "x" + displayObject.height);
