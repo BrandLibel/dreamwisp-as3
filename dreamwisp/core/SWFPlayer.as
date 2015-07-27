@@ -69,10 +69,10 @@ package dreamwisp.core
 			}
 		}
 		
-		public function add(swf:ByteArray, url:String = "", scale:Number = 1):void 
+		public function add(swf:ByteArray, url:String = "", scale:Number = 1, stageColor:uint = 0x000000):void 
 		{
 			pendingSWFs.push(swf);
-			swfValues.push( {"url": url, "scale": scale } );
+			swfValues.push( {"url": url, "scale": scale, "stageColor": stageColor } );
 		}
 		
 		private function finishLoad(e:Event):void 
@@ -84,6 +84,7 @@ package dreamwisp.core
 			loader.y = (parent.stage.stageHeight - loader.height) / 2;
 			loader.scaleX = values.scale;
 			loader.scaleY = values.scale;
+			parent.stage.color = values.stageColor;
 			endFrame = MovieClip(MovieClip(loader.content).getChildAt(0)).totalFrames;
 		}
 		
