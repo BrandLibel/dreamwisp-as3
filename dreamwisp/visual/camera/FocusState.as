@@ -42,7 +42,7 @@ package dreamwisp.visual.camera
 			{
 				focus = nearestPoint;
 				const innerRadius:Number = nearestPoint.innerRadius;
-				var distToPoint:Number = camera.focusBody.distanceTo(focus.x, focus.y);
+				var distToPoint:Number = camera.findDistanceOfPoint(nearestPoint);//Math.abs(camera.focusBody.x - focus.x); //camera.focusBody.distanceTo(focus.x, focus.y);
 				
 				if (distToPoint > innerRadius)
 				{
@@ -54,8 +54,8 @@ package dreamwisp.visual.camera
 					var distY:Number = focus.y - camera.focusBody.y;
 					
 					focus = new SwiftPoint(camera.focusBody.x, camera.focusBody.y);
-					focus.x += distX * interp;
-					focus.y += distY * interp;
+					if (nearestPoint.allowHorizontal) focus.x += distX * interp;
+					if (nearestPoint.allowVertical) focus.y += distY * interp;
 				}
 			}
 			else

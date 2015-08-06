@@ -156,6 +156,20 @@ package dreamwisp.visual.camera
 			this.interestPoints = interestPoints;
 		}
 		
+		/**
+		 * Find the distance of the provided InterestPoint
+		 * @param	point an InterestPoint with 
+		 * @return	a positive Number
+		 */
+		internal function findDistanceOfPoint(point:InterestPoint):Number
+		{
+			if (point.allowVertical && !point.allowHorizontal)
+				return Math.abs(focusBody.y - point.y);
+			else if (!point.allowVertical && point.allowHorizontal)
+				return Math.abs(focusBody.x - point.x);
+			return focusBody.distanceTo(point.x, point.y);
+		}
+		
 		internal function findNearestPoint():InterestPoint
 		{
 			if (interestPoints == null || interestPoints.length == 0) return null;
@@ -163,7 +177,7 @@ package dreamwisp.visual.camera
 			var lowest:Number = uint.MAX_VALUE;
 			for each (var point:InterestPoint in interestPoints) 
 			{
-				var dist:Number = focusBody.distanceTo(point.x, point.y);
+				var dist:Number = findDistanceOfPoint(point);
 				
 				if (nearest == null || dist < lowest)
 				{
