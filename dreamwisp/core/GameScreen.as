@@ -25,9 +25,7 @@ package dreamwisp.core {
 		public var isConcurrent:Boolean = false;
 		
 		public var game:Game;
-				
 		protected var paused:Boolean = false;
-	
 		public var view:ContainerView;
 		
 		protected var keyMap:KeyMap;
@@ -63,13 +61,11 @@ package dreamwisp.core {
 			
 		}
 		
-		public function pause():void {
-			paused = true;
-		}
+		public function pause():void { paused = true; }
 		
-		public function resume():void {
-			paused = false;
-		}
+		public function resume():void { paused = false; }
+		
+		public function isPaused():Boolean { return paused; }
 		
 		public function handleInput(inputState:InputState):void {
 			// if this screen personally handles key input, let it
