@@ -12,6 +12,7 @@ package dreamwisp.core.screens
 	public class MenuButton 
 	{
 		private var button:SimpleButton;
+		private var isOriginal:Boolean;
 		public var btnCode:String;
 		public var btnNum:uint;
 		protected var hasLock:Boolean = false;
@@ -37,6 +38,7 @@ package dreamwisp.core.screens
 		
 		public function select():void 
 		{
+			isOriginal = !isOriginal;
 			const upState:DisplayObject = button.upState;
 			button.upState = button.overState;
 			button.overState = upState;
@@ -72,6 +74,8 @@ package dreamwisp.core.screens
 			else
 				lock();
 		}
+		
+		public function isOriginalState():Boolean { return isOriginal; }
 		
 		public function isLocked():Boolean { return hasLock; }
 		
