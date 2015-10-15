@@ -1,6 +1,6 @@
 package dreamwisp.entity.components
 {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.hosts.Entity;
 	
 	public class Physics

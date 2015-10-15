@@ -1,6 +1,6 @@
 package dreamwisp.visual.lighting {
 	
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.platformer.PlatformPhysics;
 	import dreamwisp.entity.hosts.Entity;

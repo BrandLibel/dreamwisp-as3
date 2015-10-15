@@ -1,6 +1,6 @@
 package dreamwisp.visual.camera {
 	
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	
 	/**
 	 * ...
@@ -20,7 +20,7 @@ package dreamwisp.visual.camera {
 			for each (var node:Object in nodes) {
 				// replacing ref name with the value
 				if (this.hasOwnProperty(node.type)) {
-					MonsterDebugger.trace(this, "PATH HAS A TYPE CALLED: " + node.type);
+					//MonsterDebugger.trace(this, "PATH HAS A TYPE CALLED: " + node.type);
 					node.type = this[node.type];
 				}
 				path.push( new CameraPathNode(node));
@@ -32,11 +32,11 @@ package dreamwisp.visual.camera {
 		}
 		
 		internal function nextNode():void {
-			MonsterDebugger.trace(this, "moved to next node", "", "", 0x00FF00);
+			//MonsterDebugger.trace(this, "moved to next node", "", "", 0x00FF00);
 			
 			// removes first element in the path
 			path.shift();
-			MonsterDebugger.trace(this, node, "", "", 0x00FF00);
+			//MonsterDebugger.trace(this, node, "", "", 0x00FF00);
 		}
 		
 		internal function get pathStart():CameraPathNode {

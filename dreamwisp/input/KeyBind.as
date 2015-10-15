@@ -1,6 +1,6 @@
 package dreamwisp.input
 {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import org.osflash.signals.Signal;
 	
 	/**

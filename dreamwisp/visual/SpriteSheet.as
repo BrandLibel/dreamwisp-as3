@@ -1,6 +1,6 @@
 package dreamwisp.visual 
 {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import flash.display.BitmapData;
 	import flash.utils.Dictionary;
 	

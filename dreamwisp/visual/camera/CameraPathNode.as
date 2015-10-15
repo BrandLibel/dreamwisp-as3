@@ -1,5 +1,5 @@
 package dreamwisp.visual.camera {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	/**
 	 * ...
 	 * @author Brandon

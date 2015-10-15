@@ -1,6 +1,6 @@
 package dreamwisp.entity.components.platformer
 {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.hosts.Entity;
 	
 	/**
@@ -34,7 +34,7 @@ package dreamwisp.entity.components.platformer
 			}
 			if (platformPhysics.centerTile().type != "ladder")
 			{
-				MonsterDebugger.trace(this, "leaving ladder");
+				//MonsterDebugger.trace(this, "leaving ladder");
 				platformPhysics.changeState("groundState");
 			}
 			host.physics.velocityY = -climbSpeed;
@@ -56,7 +56,7 @@ package dreamwisp.entity.components.platformer
 		override public function collideBottom():void
 		{
 			// reaching bottom of the ladder, transition to ground state
-			MonsterDebugger.trace(this, "hit ground from ladder");
+			//MonsterDebugger.trace(this, "hit ground from ladder");
 			platformPhysics.changeState("groundState");
 		
 		}

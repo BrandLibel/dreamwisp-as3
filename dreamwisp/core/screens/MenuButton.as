@@ -12,7 +12,7 @@ package dreamwisp.core.screens
 	public class MenuButton 
 	{
 		private var button:SimpleButton;
-		private var isOriginal:Boolean;
+		private var isOriginal:Boolean = true;
 		public var btnCode:String;
 		public var btnNum:uint;
 		protected var hasLock:Boolean = false;

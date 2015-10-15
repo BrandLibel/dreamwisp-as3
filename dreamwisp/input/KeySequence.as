@@ -1,6 +1,6 @@
 package dreamwisp.input {
 	
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	
 	/**
 	 * KeySequence handles a list of KeyBinds that execute an action
@@ -105,7 +105,7 @@ package dreamwisp.input {
 			if (!keys[progress+1]) {
 				action.call();
 				reset();
-				MonsterDebugger.trace(this, "KEY SEQUENCE COMPLETED!");
+				//MonsterDebugger.trace(this, "KEY SEQUENCE COMPLETED!");
 			}
 		}
 		
@@ -118,7 +118,7 @@ package dreamwisp.input {
 				// last match in the combo
 				action.call();
 				reset();
-				MonsterDebugger.trace(this, "KEY SEQUENCE COMPLETED!");
+				//MonsterDebugger.trace(this, "KEY SEQUENCE COMPLETED!");
 			}
 		}
 		

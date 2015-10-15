@@ -1,6 +1,6 @@
 package dreamwisp.entity.components.platformer
 {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.world.tile.Tile;
 	

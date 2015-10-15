@@ -1,6 +1,6 @@
 ﻿package tools
 {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.visual.Frame;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -180,7 +180,7 @@
 		
 		public static function convertToBitmap(displayObject:DisplayObject):Bitmap
 		{
-			MonsterDebugger.trace(displayObject, displayObject.width + "x" + displayObject.height);
+			//MonsterDebugger.trace(displayObject, displayObject.width + "x" + displayObject.height);
 			var bitmapData:BitmapData = new BitmapData(displayObject.width, displayObject.height, true, 0x000000);
 			// draw using coordinates with respect to itself; prevents cutoff converting to bitmap
 			var bounds:Rectangle = displayObject.getBounds(displayObject);

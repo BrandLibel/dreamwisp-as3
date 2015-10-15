@@ -1,6 +1,6 @@
 package dreamwisp.entity.components.platformer 
 {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.TileBasedPhysics;
 	import dreamwisp.entity.hosts.Entity;

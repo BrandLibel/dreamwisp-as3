@@ -1,6 +1,6 @@
 package dreamwisp.visual.camera
 {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.hosts.Entity;
@@ -83,7 +83,7 @@ package dreamwisp.visual.camera
 			{
 				offsetX = Math.random() * shakeSeverity;
 				offsetY = Math.random() * shakeSeverity;
-				MonsterDebugger.trace(this, "shaking: " + shakeSeverity + "||" + offsetX + "/" + offsetY);
+				//MonsterDebugger.trace(this, "shaking: " + shakeSeverity + "||" + offsetX + "/" + offsetY);
 				shakeSeverity--;
 				if (shakeSeverity == 0)
 				{
@@ -197,7 +197,7 @@ package dreamwisp.visual.camera
 		{
 			cameraPath = new CameraPath(path);
 			changeState(pathState);
-			MonsterDebugger.trace(this, cameraPath);
+			//MonsterDebugger.trace(this, cameraPath);
 		}
 		
 		public function slide(x:Number, y:Number):void 

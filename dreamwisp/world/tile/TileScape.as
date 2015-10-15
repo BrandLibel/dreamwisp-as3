@@ -1,6 +1,6 @@
 package dreamwisp.world.tile
 {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.core.GameScreen;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.SpriteSheet;

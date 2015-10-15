@@ -1,6 +1,6 @@
 package dreamwisp.data
 {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import flash.net.SharedObject;
 	
 	/**

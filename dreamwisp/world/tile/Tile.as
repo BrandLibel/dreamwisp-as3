@@ -1,6 +1,6 @@
 package dreamwisp.world.tile
 {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
 	import dreamwisp.entity.hosts.Entity;

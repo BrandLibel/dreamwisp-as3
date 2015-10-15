@@ -1,6 +1,6 @@
 package dreamwisp.entity.components
 {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.visual.animation.AnimatedFrames;
 	import dreamwisp.visual.animation.Animation;
 	import dreamwisp.visual.camera.Camera;

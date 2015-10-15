@@ -1,5 +1,5 @@
 package dreamwisp.visual.camera {
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
 	import flash.geom.Point;
 	import tools.Belt;
@@ -36,11 +36,11 @@ package dreamwisp.visual.camera {
 			else if (path.type == path.NODE_MOVE) {
 				center.x += camera.velocityX;
 				center.y += camera.velocityY;
-				MonsterDebugger.trace(this, center.y +"/" + path.y, "", "y pos");
-				MonsterDebugger.trace(this, center.x +"/"+ path.x,"","x pos");
+				//MonsterDebugger.trace(this, center.y +"/" + path.y, "", "y pos");
+				//MonsterDebugger.trace(this, center.x +"/"+ path.x,"","x pos");
 				if (center.y == path.y || (center.y > path.y && camera.velocityY > 0) || (center.y < path.y && camera.velocityY < 0)) {
 					// stop y movement upon reaching OR passing y destination (determined with velocity dir)
-					MonsterDebugger.trace(this, "stopping y: " + center.y);
+					//MonsterDebugger.trace(this, "stopping y: " + center.y);
 					camera.velocityY = 0;
 				}
 				if (center.x == path.x || (center.x > path.x && camera.velocityX > 0) || (center.x < path.x && camera.velocityX < 0)) {
@@ -54,7 +54,7 @@ package dreamwisp.visual.camera {
 				
 				// upon reaching the edges, consider the node reached, move to the next node
 				if (camera.passedRightBound() || camera.passedLeftBound() || camera.passedUpBound() || camera.passedDownBound()) {
-					MonsterDebugger.trace(this, "next node b/c out of bounds", "", "", 0xFF8000);
+					//MonsterDebugger.trace(this, "next node b/c out of bounds", "", "", 0xFF8000);
 					exitNode();
 				}
 			}
@@ -68,7 +68,7 @@ package dreamwisp.visual.camera {
 				goToNode();
 			} else {
 				// no more nodes, terminate the path
-				MonsterDebugger.trace(this, "path was terminated");
+				//MonsterDebugger.trace(this, "path was terminated");
 				camera.velocityX = 0;
 				camera.velocityX = 0;
 				camera.changeToLastState();
