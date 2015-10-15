@@ -137,6 +137,7 @@
 			return newClass;
 		}
 		
+		/// Round a number to a certain amount of decimal places
 		public static function toFixed(number:Number, decPlaces:uint):Number
 		{
 			var precision:Number = Math.pow(10, decPlaces);
