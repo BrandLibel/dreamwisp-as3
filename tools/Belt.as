@@ -167,6 +167,16 @@
 			}
 		}
 		
+		public static function scaleFromCenter(displayObject:DisplayObject, sX:Number, sY:Number):void 
+		{
+			var prevW:Number = displayObject.width;
+			var prevH:Number = displayObject.height;
+			displayObject.scaleX = sX;
+			displayObject.scaleY = sY;
+			displayObject.x += (prevW - displayObject.width) / 2;
+			displayObject.y += (prevH - displayObject.height) / 2;
+		}
+		
 		/// Transfer all children from a simple MC into a Sprite
 		public static function mcToSprite(mc:MovieClip):Sprite
 		{

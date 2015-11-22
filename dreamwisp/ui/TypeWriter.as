@@ -91,5 +91,10 @@ package dreamwisp.ui
 			this.transferSpeed = transferSpeed;
 		}
 		
+		public function isFinished():Boolean
+		{
+			return loadedText.length == 0;
+		}
+		
 	}
 }
