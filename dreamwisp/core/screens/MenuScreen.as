@@ -102,14 +102,19 @@ package dreamwisp.core.screens
 			var button:MenuButton = null;
 			var btn:MenuButton;
 			
-			if (!inputState.isTouch() && inputState.isMouseMoving())
+			// Removed the check for isMoving since it prevents clicking a button
+			// after the first time without moving.
+			if (!inputState.isTouch() /*&& inputState.isMouseMoving()*/)
 			{
 				for each (btn in buttons) 
 				{
 					if (btn.hitTestPoint(mX, mY))
 					{
 						button = btn;
-						if (inputState.isMousePressed() || inputState.wasMouseClicked()) break;
+						if (inputState.isMousePressed() || inputState.wasMouseClicked())
+						{
+							break;
+						}
 						select(button);
 						break;
 					}

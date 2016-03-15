@@ -1,6 +1,7 @@
 package dreamwisp.audio 
 {
 	//import com.demonsters.debugger.MonsterDebugger;
+	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.media.Sound;
 	import flash.media.SoundChannel;
@@ -38,7 +39,15 @@ package dreamwisp.audio
 		internal function play():void 
 		{
 			volume = startVolume;
-			channel = sound.play(prevPosition, int.MAX_VALUE, transform);
+			channel = sound.play(prevPosition, 0, transform);
+			channel.addEventListener(Event.SOUND_COMPLETE, onSoundComplete);
+		}
+		
+		private function onSoundComplete(e:Event):void 
+		{
+			prevPosition = 0;
+			channel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
+			play();
 		}
 		
 		/**
@@ -72,12 +81,14 @@ package dreamwisp.audio
 			timer.stop();
 			timer.removeEventListener(TimerEvent.TIMER, fadeTick);
 			timer = null;
+			channel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
 		}
 		
 		internal function stop():void 
 		{
 			prevPosition = channel.position;
 			channel.stop();
+			channel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
 			if (onFinishFade != null) onFinishFade.call();
 		}
 		
