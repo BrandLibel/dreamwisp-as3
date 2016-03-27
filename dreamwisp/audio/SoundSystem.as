@@ -1,6 +1,7 @@
 package dreamwisp.audio 
 {
 	//import com.demonsters.debugger.MonsterDebugger;
+	import flash.events.Event;
 	import flash.media.Sound;
 	import flash.media.SoundChannel;
 	import flash.media.SoundMixer;
@@ -34,12 +35,16 @@ package dreamwisp.audio
 			
 		}
 		
-		public static function play(sound:Sound, volume:Number = 1):void 
+		public static function play(sound:Sound, volume:Number = 1, onComplete:Function = null):void 
 		{
 			if (mutedSound) return;
 			
 			transform.volume = volume * SoundSystem.volume;
 			channel = sound.play(0, 0, transform);
+			
+			if (onComplete == null) return;
+			channel.removeEventListener(Event.SOUND_COMPLETE, onComplete);
+			channel.addEventListener(Event.SOUND_COMPLETE, onComplete);
 		}
 		
 		public static function playMusic(music:Sound, volume:Number = 1, fadeTime:Number = DEFAULT_FADE_TIME):void 
