@@ -57,12 +57,15 @@ package dreamwisp.visual
 		}
 		
 		/**
-		 * Attaches a component that ignores Camera scrolling 
+		 * Adds a graphic that ignores Camera scrolling 
 		 * and sits below all other layers in the Container.
+		 * Calling this will replace any previously set background.
 		 * @param	displayObject
 		 */
-		public function addBackground(displayObject:DisplayObject):void 
+		public function setBackground(displayObject:DisplayObject):void 
 		{
+			if (background.numChildren > 0)
+				background.removeChildAt(0);
 			background.addChild(displayObject);
 		}
 		
