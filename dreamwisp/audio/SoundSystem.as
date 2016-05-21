@@ -51,7 +51,7 @@ package dreamwisp.audio
 		{
 			if (currentMusic == null)
 				setCurrentMusic(new Music(volume, music));
-			else if (music != currentMusic.sound)
+			else //if (music != currentMusic.sound) // Commented because when rapidly switching from Track 1 to Track 2 to Track 1, the final result is Track 2 when Track 1 should be playing.
 			{
 				pendingMusic = new Music(volume, music);
 				currentMusic.fadeOut(fadeTime, playNextMusic);

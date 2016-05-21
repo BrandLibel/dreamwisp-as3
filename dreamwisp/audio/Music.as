@@ -81,7 +81,8 @@ package dreamwisp.audio
 			timer.stop();
 			timer.removeEventListener(TimerEvent.TIMER, fadeTick);
 			timer = null;
-			channel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
+			if (channel != null)
+				channel.removeEventListener(Event.SOUND_COMPLETE, onSoundComplete);
 		}
 		
 		internal function stop():void 
