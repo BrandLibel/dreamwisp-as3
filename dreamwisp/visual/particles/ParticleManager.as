@@ -79,8 +79,8 @@ package dreamwisp.visual.particles
 			
 			particle.x = x;
 			particle.y = y;
-			particle.velocityX = velX;
-			particle.velocityY = velY;
+			particle.velocityX = particle.origVelX = velX;
+			particle.velocityY = particle.origVelY = velY;
 			particle.duration = duration;
 			particle.scale = scale;
 			particle.color = color;
@@ -138,10 +138,14 @@ package dreamwisp.visual.particles
 			p.point.x = p.x /*+ Math.random() * 3 * ParticleManager.randomSign()*/;
 			p.point.y = p.y /*+ Math.random() * 3 * ParticleManager.randomSign()*/;
 			
-			if (Math.abs(p.velocityX) < 0.1)
-				p.velocityX = 0.1;
-			if (Math.abs(p.velocityY) < 0.1)
-				p.velocityY = 0.1;
+			if (Math.abs(p.velocityX) < 1)
+			{				
+				p.velocityX = 1 * (p.origVelX / Math.abs(p.origVelX));
+			}
+			if (Math.abs(p.velocityY) < 1)
+			{				
+				p.velocityY = 1 * (p.origVelY / Math.abs(p.origVelY));;
+			}
 		}
 		
 		public static function moveGravity(p:Particle):void 

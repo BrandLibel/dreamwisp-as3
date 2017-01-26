@@ -28,6 +28,8 @@ package dreamwisp.visual.particles
 
 		internal var velocityX:Number;
 		internal var velocityY:Number;
+		internal var origVelX:Number;
+		internal var origVelY:Number;
 		internal var friction:Number = 0.97;
 		internal var rotationSpeed:Number;
 		
