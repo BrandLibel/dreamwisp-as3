@@ -178,13 +178,16 @@
 		}
 		
 		/// Transfer all children from a simple MC into a Sprite
-		public static function mcToSprite(mc:MovieClip):Sprite
+		public static function mcToSprite(mc:MovieClip, xDistrMultiplier:Number = 1, yDistrMultiplier:Number = 1):Sprite
 		{
 			var sprite:Sprite = new Sprite();
 			var numChildren:int = mc.numChildren;
 			for (var i:int = 0; i < numChildren; i++) 
 			{
-				sprite.addChild(mc.getChildAt(0));
+				var child:DisplayObject = mc.getChildAt(0);
+				child.x = child.x * xDistrMultiplier;
+				child.y = child.y * yDistrMultiplier;
+				sprite.addChild(child);
 			}
 			return sprite;
 		}
