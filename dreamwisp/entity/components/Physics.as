@@ -2,6 +2,7 @@ package dreamwisp.entity.components
 {
 	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.hosts.Entity;
+	import tools.Belt;
 	
 	public class Physics
 	{
@@ -88,6 +89,35 @@ package dreamwisp.entity.components
 		{
 			velocityX += Math.sin(-host.body.angle) * power;
 			velocityY += Math.cos(-host.body.angle) * power;
+		}
+		
+		/**
+		 * Applies an acceleration in the direction of a target point.
+		 * @param targetX The x-coordinate of the point to approach
+		 * @param targetY The y-coordinate of the point to approach
+		 * @param power The amount of power to apply.
+		 */
+		public function thrustToPoint(targetX:int, targetY:int, power:Number):void{
+			if (host.body.touchesPoint(targetX, targetY))
+				return;
+			trace("approaching " + targetX + ", " + targetY);
+
+			var deltaX:Number = targetX - host.body.x;
+			var directionSign:int = Belt.getSignOf(deltaX);
+			var deltaY:Number = targetY - host.body.y;
+
+			// avoid zero divide by zero error
+			if (deltaX == 0 && deltaY == 0)
+				return;
+
+			var angleInRadians:Number = Math.atan(deltaY / deltaX);
+			trace("angle in radians: " + angleInRadians);
+			trace("angle in degrees: " + angleInRadians * (360/Math.PI));
+			//trace("TRACE: angle cos " + Math.cos(angleInRadians));
+			//trace("TRACE: angle sin " + Math.sin(angleInRadians));
+			velocityX += Math.cos(angleInRadians) * power * directionSign;
+			velocityY += Math.sin(angleInRadians) * power * directionSign;
+			trace("speeds " + velocityX + ", " + velocityY);
 		}
 		
 		public function isMoving():Boolean
