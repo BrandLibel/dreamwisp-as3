@@ -11,7 +11,7 @@ package dreamwisp.entity.components {
 	public class Health {
 		
 		private var host:Entity;
-		public var hits:uint = 0;
+		public var hits:int = 0;
 		
 		public var hurt:Signal;
 		public var died:Signal;

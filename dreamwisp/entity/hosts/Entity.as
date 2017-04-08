@@ -99,6 +99,12 @@ package dreamwisp.entity.hosts
 			}
 		}
 		
+		/// Call this after Entity was instantiated and added to the EntityManager.
+		public function initAfterAttach():void 
+		{
+			
+		}
+		
 		/**
 		 * Simple destruction of this Entity object.
 		 */
