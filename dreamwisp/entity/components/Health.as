@@ -23,15 +23,20 @@ package dreamwisp.entity.components {
 			died = new Signal(Entity);
 		}
 		
-		public function hit(damage:Number):void {
+		public function hit(damage:Number):void 
+		{
+			if (damage > 0) hurt.dispatch(host);
+			
 			hits -= damage;
 			if (hits <= 0) {
 				die();
 			}
 		}
 		
-		public function die():void {
-			host.destroyed.dispatch(host);
+		public function die():void 
+		{
+			died.dispatch(host);
+			//host.destroyed.dispatch(host);
 		}
 		
 	}
