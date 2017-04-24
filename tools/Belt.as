@@ -25,6 +25,12 @@
 		
 		}
 		
+		public static function randomNumber(bound1:Number, bound2:Number):Number{
+			var min:Number = (bound1 < bound2) ? bound1 : bound2;
+			var max:Number = (bound1 > bound2) ? bound1 : bound2;
+			return (Math.random() * (max - min)) + min;
+		}
+		
 		public static function valueIsBetween(value:Number, limit1:Number, limit2:Number, inclusive:Boolean = true):Boolean
 		{
 			var min:Number;
