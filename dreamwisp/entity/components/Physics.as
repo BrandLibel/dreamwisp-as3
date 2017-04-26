@@ -98,8 +98,6 @@ package dreamwisp.entity.components
 		 * @param power The amount of power to apply.
 		 */
 		public function thrustToPoint(targetX:int, targetY:int, power:Number):void{
-			if (host.body.touchesPoint(targetX, targetY))
-				return;
 			trace("approaching " + targetX + ", " + targetY);
 
 			var deltaX:Number = targetX - host.body.x;
