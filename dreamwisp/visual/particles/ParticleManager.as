@@ -2,6 +2,7 @@ package dreamwisp.visual.particles
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
 	/**
@@ -127,6 +128,7 @@ package dreamwisp.visual.particles
 			list.setP(index2, temp);
 		}
 		
+		/// Movement in whole-pixels 
 		public static function moveStandard(p:Particle):void 
 		{
 			p.x += p.velocityX;
@@ -145,6 +147,27 @@ package dreamwisp.visual.particles
 			{				
 				p.velocityY = 1 * (p.origVelY / Math.abs(p.origVelY));;
 			}
+		}
+		
+		/// Movement allowing fraction of a pixel
+		public static function movePrecise(p:Particle):void 
+		{
+			p.x += p.velocityX;
+			p.y += p.velocityY;
+			p.velocityX *= p.friction;
+			p.velocityY *= p.friction;
+			
+			p.point.x = p.x /*+ Math.random() * 3 * ParticleManager.randomSign()*/;
+			p.point.y = p.y /*+ Math.random() * 3 * ParticleManager.randomSign()*/;
+			
+			/*if (Math.abs(p.velocityX) < 1)
+			{				
+				p.velocityX = 1 * (p.origVelX / Math.abs(p.origVelX));
+			}
+			if (Math.abs(p.velocityY) < 1)
+			{				
+				p.velocityY = 1 * (p.origVelY / Math.abs(p.origVelY));;
+			}*/
 		}
 		
 		public static function moveGravity(p:Particle):void 
@@ -168,12 +191,37 @@ package dreamwisp.visual.particles
 			
 		}
 		
+		/// Dumb resize changes dimensions of rect to draw, 
+		/// so this only works properly only for rect-shaped particles
 		public static function sizeShrink(p:Particle):void 
 		{
-			// scale down by contracting rect dimensions, works only for rect particles
 			p.rect.width = Math.round(p.rect.width * p.scale);
 			p.rect.height = Math.round(p.rect.height * p.scale);
 			p.scale = p.percentLife;
+		}
+		
+		/// More expensive
+		public static function sizeShrinkAny(p:Particle):void 
+		{
+			p.rect.width = Math.round(p.rect.width * p.scale);
+			p.rect.height = Math.round(p.rect.height * p.scale);
+			p.scale = p.percentLife;
+			
+			var bigBMD:BitmapData = p.bitmap.bitmapData;
+			var matrix:Matrix = new Matrix();
+			matrix.scale(p.scale, p.scale);
+
+			var width:Number = bigBMD.width * p.scale;
+			var height:Number = bigBMD.height * p.scale;
+			if (width == 0)  width = 1;
+			if (height == 0) height = 1;
+			
+			var smallBMD:BitmapData = new BitmapData(width, height, true, 0x000000);
+			smallBMD.draw(bigBMD, matrix, null, null, null, true);
+			
+			p.bitmap.bitmapData.copyPixels(smallBMD, p.rect, p.point);
+
+			//var bitmap:Bitmap = new Bitmap(smallBMD, PixelSnapping.NEVER, true);
 		}
 		
 		public static function colorStandard(p:Particle):void 
