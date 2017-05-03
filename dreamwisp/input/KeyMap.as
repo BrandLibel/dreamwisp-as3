@@ -185,7 +185,7 @@ package dreamwisp.input {
 		 * Mimics key event behavior by reading the key states from an inputState.
 		 * @param	inputState
 		 */
-		public function readInput(inputState:InputState):void {
+		public function readInput(inputState:IInputState):void {
 			for each (var keyBind:KeyBind in bindings) 
 			{
 				for each (var keyCode:uint in keyBind.getKeyCodes()) 

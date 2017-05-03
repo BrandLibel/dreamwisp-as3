@@ -4,7 +4,7 @@ package dreamwisp.core {
 	import dreamwisp.core.ScreenManager;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.View;
-	import dreamwisp.input.InputState;
+	import dreamwisp.input.IInputState;
 	import dreamwisp.input.KeyMap;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.camera.Camera;
@@ -67,7 +67,7 @@ package dreamwisp.core {
 		
 		public function isPaused():Boolean { return paused; }
 		
-		public function handleInput(inputState:InputState):void {
+		public function handleInput(inputState:IInputState):void {
 			// if this screen personally handles key input, let it
 			if (keyMap)
 				keyMap.readInput(inputState);

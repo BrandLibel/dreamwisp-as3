@@ -2,7 +2,7 @@ package dreamwisp.core.screens
 {
 	import dreamwisp.core.Game;
 	import dreamwisp.core.GameScreen;
-	import dreamwisp.input.InputState;
+	import dreamwisp.input.IInputState;
 	import dreamwisp.visual.ContainerView;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -93,7 +93,7 @@ package dreamwisp.core.screens
 			buttons.push(button);
 		}
 		
-		override public function handleInput(inputState:InputState):void 
+		override public function handleInput(inputState:IInputState):void 
 		{
 			super.handleInput(inputState);
 			

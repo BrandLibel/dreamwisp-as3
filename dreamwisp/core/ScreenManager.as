@@ -1,6 +1,6 @@
 package dreamwisp.core {
 	
-	import dreamwisp.input.InputState;
+	import dreamwisp.input.IInputState;
 	
 	/**
 	 * The ScreenManager is a core class that allows multiple GameScreens
@@ -21,7 +21,7 @@ package dreamwisp.core {
 		/// Buffer list that allows screens to fully transition off before adding new ones.
 		private var waitList:Vector.<GameScreen> = new Vector.<GameScreen>;
 		private var game:Game;
-				
+
 		public function ScreenManager(game:Game) {
 			this.game = game;
 		}
@@ -30,7 +30,7 @@ package dreamwisp.core {
 		//		When transitioning, only the content would transition and the background would
 		//		remain in place. 
 		
-		public function update(inputState:InputState):void {
+		public function update(inputState:IInputState):void {
 			// item on the wait list already exists in master list and is holding up the line
 			// process it immediately so it is removed
 			if (waitList.length > 0 && top == waitList[0])

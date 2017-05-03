@@ -4,7 +4,7 @@ package dreamwisp.entity
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.entity.hosts.IEntityFactory;
 	import dreamwisp.entity.hosts.IPlayerControllable;
-	import dreamwisp.input.InputState;
+	import dreamwisp.input.IInputState;
 	import org.osflash.signals.Signal;
 	import tools.Belt;
 	
@@ -40,7 +40,7 @@ package dreamwisp.entity
 		 * Distributes input state to all IPlayerControlled - entitys that can recieve input
 		 * @param	inputState
 		 */
-		public function handleInput(inputState:InputState):void
+		public function handleInput(inputState:IInputState):void
 		{
 			for each (var entity:IPlayerControllable in controllableEntitys)
 				entity.handleInput(inputState);

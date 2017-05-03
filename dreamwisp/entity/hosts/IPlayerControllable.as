@@ -1,6 +1,6 @@
 package dreamwisp.entity.hosts {
 	
-	import dreamwisp.input.InputState;
+	import dreamwisp.input.IInputState;
 	
 	/**
 	 * The IPlayer interface defines functionality for
@@ -10,7 +10,7 @@ package dreamwisp.entity.hosts {
 	
 	public interface IPlayerControllable extends IEntity {
 		
-		function handleInput(inputState:InputState):void;
+		function handleInput(inputState:IInputState):void;
 		
 	}
 	

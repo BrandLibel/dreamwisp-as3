@@ -1,10 +1,11 @@
 package dreamwisp.input
 {
-	import flash.display.Stage;
-	import flash.events.KeyboardEvent;
-	import flash.events.MouseEvent;
-	import flash.system.Capabilities;
-	import flash.system.TouchscreenType;
+	import starling.display.Stage;
+	import starling.events.KeyboardEvent;
+	import starling.events.Touch;
+	import starling.events.TouchEvent;
+	import starling.events.TouchPhase;
+	import starling.utils.SystemUtil;
 	
 	/**
 	 * InputState is a poll based input system for Adobe Flash and AIR.
@@ -13,7 +14,7 @@ package dreamwisp.input
 	 * @author Brandon
 	 */
 	
-	public class InputState implements IInputState
+	public class InputStateS implements IInputState
 	{
 		private static const TOTAL_KEYCODES:uint = 222;
 		
@@ -38,12 +39,12 @@ package dreamwisp.input
 		private var prevMouseX:int;
 		private var prevMouseY:int;
 		private var wasClicked:Boolean;
+		private var stage:Stage;
 		
-		public function InputState(stage:Stage)
+		public function InputStateS(stage:Stage)
 		{
-			stage.addEventListener(MouseEvent.MOUSE_DOWN, registerMouse);
-			stage.addEventListener(MouseEvent.MOUSE_UP, registerMouse);
-			stage.addEventListener(MouseEvent.MOUSE_MOVE, registerMouse);
+			this.stage = stage;
+			stage.addEventListener(TouchEvent.TOUCH, registerMouse);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, registerKeyboard);
 			stage.addEventListener(KeyboardEvent.KEY_UP, registerKeyboard);
 		}
@@ -133,14 +134,19 @@ package dreamwisp.input
 			return (_mouseX != prevMouseX || _mouseY != prevMouseY);
 		}
 		
-		private function registerMouse(e:MouseEvent):void
+		private function registerMouse(e:TouchEvent):void
 		{
-			_mouseX = e.stageX;
-			_mouseY = e.stageY;
+			var touch:Touch = e.getTouch(stage);
+			if (touch == null) return;
+			_mouseX = touch.globalX;
+			_mouseY = touch.globalY;
 			
-			if (e.type == MouseEvent.MOUSE_DOWN)
+			trace("touched phase " + touch.phase);
+			
+			if (touch.phase == TouchPhase.BEGAN){
 				mousePressed = true;
-			else if (e.type == MouseEvent.MOUSE_UP)
+			}
+			else if (touch.phase == TouchPhase.ENDED)
 			{
 				mousePressed = false;
 				wasClicked = true;
@@ -149,7 +155,7 @@ package dreamwisp.input
 		
 		public function isTouch():Boolean
 		{
-			return Capabilities.touchscreenType == TouchscreenType.FINGER;
+			return  SystemUtil.platform == "IOS" || SystemUtil.platform == "AND";
 		}
 		
 		public function get mouseX():int { return _mouseX; }
