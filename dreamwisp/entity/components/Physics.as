@@ -109,8 +109,11 @@ package dreamwisp.entity.components
 				return;
 
 			var angleInRadians:Number = Math.atan(deltaY / deltaX);
+			
+			host.body.angle = angleInRadians * (180 / Math.PI);
+			
 			trace("angle in radians: " + angleInRadians);
-			trace("angle in degrees: " + angleInRadians * (360/Math.PI));
+			trace("angle in degrees: " + angleInRadians * (180/Math.PI));
 			//trace("TRACE: angle cos " + Math.cos(angleInRadians));
 			//trace("TRACE: angle sin " + Math.sin(angleInRadians));
 			velocityX += Math.cos(angleInRadians) * power * directionSign;

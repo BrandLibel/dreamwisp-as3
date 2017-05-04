@@ -39,9 +39,11 @@ package dreamwisp.entity.components
 		/// Layer for if this View gets added into a ContainerView
 		private var _layer:uint;
 		private var containerView:ContainerViewS;
+		private var isCentered:Boolean;
 		
-		public function ViewS(entity:Entity, displayObject:DisplayObject)
+		public function ViewS(entity:Entity, displayObject:DisplayObject, isCentered:Boolean = false)
 		{
+			this.isCentered = isCentered;
 			host = entity;
 			this.displayObject = displayObject;
 			//colorTransform = displayObject.transform.colorTransform;
@@ -59,7 +61,14 @@ package dreamwisp.entity.components
 				displayObject.x = host.body.x + offsetX;
 				displayObject.y = host.body.y + offsetY;
 			}
-            //displayObject.rotation = host.body.angle * rotAngle;
+			
+            //displayObject.rotation = host.body.angle;
+			
+			if (isCentered)
+			{
+				displayObject.x += host.body.width / 2;
+				displayObject.y += host.body.height / 2;
+			}
 			
 			if (animation != null && animation is AnimatedFrames)
 			{
