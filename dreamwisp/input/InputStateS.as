@@ -136,7 +136,24 @@ package dreamwisp.input
 		
 		private function registerMouse(e:TouchEvent):void
 		{
-			var touch:Touch = e.getTouch(stage);
+			var touch:Touch = null;
+			if (SystemUtil.platform == "IOS" || SystemUtil.platform == "AND")
+			{
+				var touches:Vector.<Touch> = e.getTouches(stage);
+				for each (var item:Touch in touches) 
+				{
+					if (item == null) continue;
+					
+					touch = item;
+					
+					if (touch.phase == TouchPhase.BEGAN) break;
+				}
+			}
+			else
+			{
+				touch = e.getTouch(stage);
+			}
+			
 			if (touch == null) return;
 			_mouseX = touch.globalX;
 			_mouseY = touch.globalY;

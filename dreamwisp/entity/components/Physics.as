@@ -12,6 +12,7 @@ package dreamwisp.entity.components
 		
 		public var velocityX:Number = 0;
 		public var velocityY:Number = 0;
+		public var friction:Number = 0.6;
 		public var accelerationX:Number = 0;
 		public var accelerationY:Number = 0;
 		public var externalAccelerationX:Number = 0;
@@ -19,11 +20,12 @@ package dreamwisp.entity.components
 		public var maxSpeedX:Number;
 		public var maxSpeedY:Number;
 		
-		public function Physics(entity:Entity, maxSpeedX:Number = DEFAULT_MAX_SPEED, maxSpeedY:Number = DEFAULT_MAX_SPEED)
+		public function Physics(entity:Entity, maxSpeedX:Number = DEFAULT_MAX_SPEED, maxSpeedY:Number = DEFAULT_MAX_SPEED, friction:Number = 1)
 		{
 			host = entity;
 			this.maxSpeedX = maxSpeedX;
 			this.maxSpeedY = maxSpeedY;
+			this.friction = friction;
 		}
 		
 		public function moveLeft():void 
@@ -66,6 +68,7 @@ package dreamwisp.entity.components
 			}
 			velocityX += externalAccelerationX;
 			host.body.x += velocityX;
+			velocityX *= friction;
 		}
 		
 		/**
@@ -83,6 +86,7 @@ package dreamwisp.entity.components
 			}
 			velocityY += externalAccelerationY;			
 			host.body.y += velocityY;
+			velocityY *= friction;
 		}
 		
 		public function thrust(power:Number):void
@@ -98,7 +102,7 @@ package dreamwisp.entity.components
 		 * @param power The amount of power to apply.
 		 */
 		public function thrustToPoint(targetX:int, targetY:int, power:Number):void{
-			trace("approaching " + targetX + ", " + targetY);
+			//trace("approaching " + targetX + ", " + targetY);
 
 			var deltaX:Number = targetX - host.body.x;
 			var directionSign:int = Belt.getSignOf(deltaX);
@@ -112,13 +116,37 @@ package dreamwisp.entity.components
 			
 			host.body.angle = angleInRadians * (180 / Math.PI);
 			
-			trace("angle in radians: " + angleInRadians);
-			trace("angle in degrees: " + angleInRadians * (180/Math.PI));
+			//trace("angle in radians: " + angleInRadians);
+			//trace("angle in degrees: " + angleInRadians * (180/Math.PI));
 			//trace("TRACE: angle cos " + Math.cos(angleInRadians));
 			//trace("TRACE: angle sin " + Math.sin(angleInRadians));
 			velocityX += Math.cos(angleInRadians) * power * directionSign;
 			velocityY += Math.sin(angleInRadians) * power * directionSign;
-			trace("speeds " + velocityX + ", " + velocityY);
+			//trace("speeds " + velocityX + ", " + velocityY);
+		}
+		
+		public function accelerateToPoint(targetX:int, targetY:int, acceleration:Number):void{
+			//trace("approaching " + targetX + ", " + targetY);
+
+			var deltaX:Number = targetX - host.body.x;
+			var directionSign:int = Belt.getSignOf(deltaX);
+			var deltaY:Number = targetY - host.body.y;
+
+			// avoid zero divide by zero error
+			if (deltaX == 0 && deltaY == 0)
+				return;
+
+			var angleInRadians:Number = Math.atan(deltaY / deltaX);
+			
+			host.body.angle = angleInRadians * (180 / Math.PI);
+			
+			//trace("angle in radians: " + angleInRadians);
+			//trace("angle in degrees: " + angleInRadians * (180/Math.PI));
+			//trace("TRACE: angle cos " + Math.cos(angleInRadians));
+			//trace("TRACE: angle sin " + Math.sin(angleInRadians));
+			accelerationX = Math.cos(angleInRadians) * acceleration * directionSign;
+			accelerationY = Math.sin(angleInRadians) * acceleration * directionSign;
+			//trace("speeds " + velocityX + ", " + velocityY);
 		}
 		
 		public function isMoving():Boolean

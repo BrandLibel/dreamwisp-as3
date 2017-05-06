@@ -1,4 +1,4 @@
-package dreamwisp.entity.components.platformer 
+﻿package dreamwisp.entity.components.platformer 
 {
 	//import com.demonsters.debugger.MonsterDebugger;
 	import dreamwisp.entity.components.Body;
@@ -27,7 +27,6 @@ package dreamwisp.entity.components.platformer
 		public var isWalking:Boolean;
 		public var maxWalkSpeed:uint;
 		public var walkAcceleration:Number;
-		public var friction:Number = 0.6;
 		
 		public var jumpPower:Number;
 		public var gravity:Number = 1.3;
