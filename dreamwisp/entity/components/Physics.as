@@ -113,8 +113,12 @@ package dreamwisp.entity.components
 				return;
 
 			var angleInRadians:Number = Math.atan(deltaY / deltaX);
+			// Use atan2 here instead to get a range of -180 to 180, 
+			// which would work properly for all quadrants, not just Quadrant 1 and 4
+			// https://stackoverflow.com/questions/283406/what-is-the-difference-between-atan-and-atan2-in-c
+			var angleInRadsToRotate:Number = Math.atan2(deltaY, deltaX);
 			
-			host.body.angle = angleInRadians * (180 / Math.PI);
+			host.body.angle = (angleInRadsToRotate * (180 / Math.PI));
 			
 			//trace("angle in radians: " + angleInRadians);
 			//trace("angle in degrees: " + angleInRadians * (180/Math.PI));
@@ -137,8 +141,9 @@ package dreamwisp.entity.components
 				return;
 
 			var angleInRadians:Number = Math.atan(deltaY / deltaX);
+			var angleInRadsToRotate:Number = Math.atan2(deltaY, deltaX);
 			
-			host.body.angle = angleInRadians * (180 / Math.PI);
+			host.body.angle = (angleInRadsToRotate * (180 / Math.PI));
 			
 			//trace("angle in radians: " + angleInRadians);
 			//trace("angle in degrees: " + angleInRadians * (180/Math.PI));

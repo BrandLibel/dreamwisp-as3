@@ -7,6 +7,7 @@ package dreamwisp.entity.components
 	import dreamwisp.visual.camera.Camera;
 	import dreamwisp.entity.hosts.Entity;
 	import dreamwisp.visual.Frame;
+	import flash.geom.Point;
 	import starling.display.DisplayObject;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.MovieClip;
@@ -44,6 +45,12 @@ package dreamwisp.entity.components
 		public function ViewS(entity:Entity, displayObject:DisplayObject, isCentered:Boolean = false)
 		{
 			this.isCentered = isCentered;
+			if (isCentered)
+			{
+				displayObject.pivotX = displayObject.width / 2;
+				displayObject.pivotY = displayObject.height / 2;
+			}
+			
 			host = entity;
 			this.displayObject = displayObject;
 			//colorTransform = displayObject.transform.colorTransform;
@@ -66,8 +73,8 @@ package dreamwisp.entity.components
 			
 			if (isCentered)
 			{
-				displayObject.x += host.body.width / 2;
-				displayObject.y += host.body.height / 2;
+				//displayObject.x += host.body.width / 2;
+				//displayObject.y += host.body.height / 2;
 			}
 			
 			if (animation != null && animation is AnimatedFrames)
@@ -77,6 +84,16 @@ package dreamwisp.entity.components
 				displayObject.y += /*(host.body.height / 2) +*/ frame.y;
 				if (displayObject.scaleX == -1) displayObject.x += frame.originalWidth;
 			}
+		}
+		
+		public function centerX():Number 
+		{
+			return displayObject.x + displayObject.width / 2;
+		}
+		
+		public function centerY():Number 
+		{
+			return displayObject.y + displayObject.height / 2;
 		}
 		
 		public function applyTint(r:Number, g:Number, b:Number, displayObject:DisplayObject = null):void 

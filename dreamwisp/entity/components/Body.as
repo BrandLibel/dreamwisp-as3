@@ -19,7 +19,7 @@ package dreamwisp.entity.components {
 		public var y:Number = 0;
 		public var width:uint;
 		public var height:uint;
-		public var angle:Number;
+		public var angle:Number = 0;
 		
 		private var swiftRectangle:SwiftRectangle;
 		
