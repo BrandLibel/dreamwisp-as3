@@ -147,7 +147,8 @@ package dreamwisp.entity
 				if (entity.id == id)
 					return entity;
 			}
-			throw new Error("No entity found by requested ID: " + id);
+			return null;
+			//throw new Error("No entity found by requested ID: " + id);
 		}
 		
 		private function onEntityDestroyed(entity:Entity):void
