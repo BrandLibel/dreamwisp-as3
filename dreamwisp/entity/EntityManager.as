@@ -28,7 +28,7 @@ package dreamwisp.entity
 		
 		private var markedForPurge:Boolean = false;
 		
-		public function EntityManager(factory:IEntityFactory)
+		public function EntityManager(factory:IEntityFactory = null)
 		{
 			this.factory = factory;
 			// defining signals
@@ -72,6 +72,8 @@ package dreamwisp.entity
 		
 		public function spawnEntity(prototypeID:uint):Entity
 		{
+			if (factory == null) throw new Error("Tried to spawn entity with prototype ID without giving entityManager a factory");
+			
 			var entity:Entity = factory.createEntity(prototypeID);
 			addEntity(entity);
 			return entity;
