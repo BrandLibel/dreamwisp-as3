@@ -9,7 +9,7 @@ package dreamwisp.undo
 		protected var target:Object;
 		protected var changes:Object;
 		
-		public function EditAction(target:Object, changes:Object) 
+		public function EditAction(target:Object, changes:Object = null) 
 		{
 			this.changes = changes;
 			this.target = target;
@@ -21,6 +21,11 @@ package dreamwisp.undo
 		}
 		
 		public function redo():void 
+		{
+			throw new Error("This needs to be overriden with a real method!");
+		}
+		
+		public function calculate(initState:Object, endState:Object):void 
 		{
 			throw new Error("This needs to be overriden with a real method!");
 		}

@@ -9,6 +9,9 @@ package dreamwisp.undo
 		private var history:Vector.<EditAction> = new Vector.<EditAction>();
 		private var future:Vector.<EditAction> = new Vector.<EditAction>();
 		
+		/// There can be only one.
+		private var initState:Object;
+		
 		public function UndoManager() 
 		{
 			
@@ -20,14 +23,25 @@ package dreamwisp.undo
 			future.splice(0, future.length);
 		}
 		
+		public function start(initState:Object):void 
+		{
+			this.initState = initState;
+		}
+		
+		public function finalize(action:EditAction, endState:Object):void 
+		{
+			action.calculate(initState, endState);
+			log(action);
+		}
+		
 		public function canUndo():Boolean
 		{
-			return index > 0;
+			return history.length > 0;
 		}
 		
 		public function canRedo():Boolean
 		{
-			return index < history.length - 1;
+			return future.length > 0;
 		}
 		
 		public function undo():void 

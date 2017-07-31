@@ -7,9 +7,9 @@ package dreamwisp.undo
 	public class MoveAction extends EditAction 
 	{
 		
-		public function MoveAction(target:Object, changes:Object) 
+		public function MoveAction(target:Object) 
 		{
-			super(target, changes);
+			super(target);
 		}
 		
 		override public function undo():void 
@@ -25,6 +25,15 @@ package dreamwisp.undo
 			for (var name:String in changes)
 			{
 				target[name] += changes[name];
+			}
+		}
+		
+		override public function calculate(initState:Object, endState:Object):void 
+		{
+			if (changes == null) changes = new Object();
+			for (var name:String in endState)
+			{
+				changes[name] = endState[name] - initState[name];
 			}
 		}
 		
