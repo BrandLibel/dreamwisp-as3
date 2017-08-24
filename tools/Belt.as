@@ -183,6 +183,17 @@
 			displayObject.y += (prevH - displayObject.height) / 2;
 		}
 		
+		public static function scaleToWidth(sprite:*, value:Number):void {
+			var multiplier = value / sprite.width;
+			sprite.width = value;
+			sprite.height = multiplier * sprite.height;
+		}
+		public static function scaleToHeight(sprite:*, value:Number):void {
+			var multiplier = value / sprite.height;
+			sprite.height = value;
+			sprite.width = multiplier * sprite.width;
+		}
+		
 		/// Transfer all children from a simple MC into a Sprite
 		public static function mcToSprite(mc:MovieClip, xDistrMultiplier:Number = 1, yDistrMultiplier:Number = 1):Sprite
 		{
@@ -428,6 +439,33 @@
 			argb += (newAlpha << 24);
 			return argb;
 		}
+		
+		public static function cmykToRGB( C:Number, M:Number, Y:Number, K:Number):uint
+		{
+			var Rnum:Number = 0.0;
+			var Gnum:Number = 0.0;
+			var Bnum:Number = 0.0;
+
+			Rnum = 255 * (1 - C) * (1 - K);
+			Gnum = 255 * (1 - M) * (1 - K);
+			Bnum = 255 * (1 - Y) * (1 - K);
+
+			var R:uint = Math.round(Rnum);
+			var G:uint = Math.round(Gnum);
+			var B:uint = Math.round(Bnum);
+			
+			return combineRGB(R, G, B);
+		}
+		
+		/**
+		 * 
+		 * @param	stringHash For example, #ffffff
+		 */
+		public static function stringHashToRGB(stringHash:String):uint
+		{
+			return uint("0x" + stringHash.slice(1));
+		}
+
 		
 		/**
 		 * Applies a color transformation to the provided displayObject

@@ -4,10 +4,10 @@ package dreamwisp.undo
 	 * ...
 	 * @author 
 	 */
-	public class MoveAction extends EditAction 
+	public class RotateAction extends EditAction 
 	{
 		
-		public function MoveAction(target:Object) 
+		public function RotateAction(target:Object) 
 		{
 			super(target);
 		}

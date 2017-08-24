@@ -25,7 +25,13 @@ package dreamwisp.undo
 			throw new Error("This needs to be overriden with a real method!");
 		}
 		
-		public function calculate(initState:Object, endState:Object):void 
+		/**
+		 * Determines the changes between a start and end state.
+		 * @param	initState
+		 * @param	endState
+		 * @return True if there is a difference between start/end, false if difference is 0
+		 */
+		public function calculate(initState:Object, endState:Object):Boolean 
 		{
 			throw new Error("This needs to be overriden with a real method!");
 		}

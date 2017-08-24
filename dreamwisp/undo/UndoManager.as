@@ -30,8 +30,14 @@ package dreamwisp.undo
 		
 		public function finalize(action:EditAction, endState:Object):void 
 		{
-			action.calculate(initState, endState);
-			log(action);
+			if (!initState) return;
+			
+			if (action.calculate(initState, endState))
+			{
+				log(action);
+			}
+			
+			initState = null;
 		}
 		
 		public function canUndo():Boolean
