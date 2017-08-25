@@ -184,12 +184,12 @@
 		}
 		
 		public static function scaleToWidth(sprite:*, value:Number):void {
-			var multiplier = value / sprite.width;
+			var multiplier:Number = value / sprite.width;
 			sprite.width = value;
 			sprite.height = multiplier * sprite.height;
 		}
 		public static function scaleToHeight(sprite:*, value:Number):void {
-			var multiplier = value / sprite.height;
+			var multiplier:Number = value / sprite.height;
 			sprite.height = value;
 			sprite.width = multiplier * sprite.width;
 		}
