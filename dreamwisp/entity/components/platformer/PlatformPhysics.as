@@ -20,6 +20,7 @@
 		public static const COLLIDE_DIR_UP:uint = 1;
 		public static const COLLIDE_DIR_RIGHT:uint = 2;
 		public static const COLLIDE_DIR_DOWN:uint = 3;
+		private static const WALKING_FRICTION:Number = 0.6;
 		
 		private var entity:Entity;
 		private var body:Body;
@@ -132,7 +133,7 @@
 			if (!isWalking)
 			{
 				accelerationX = 0;
-				velocityX *= (friction);
+				velocityX *= (WALKING_FRICTION);
 				if (Math.abs(velocityX) < maxWalkSpeed * 0.1)
 					velocityX = 0;
 			}

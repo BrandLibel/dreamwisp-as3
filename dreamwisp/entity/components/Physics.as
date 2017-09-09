@@ -12,7 +12,7 @@ package dreamwisp.entity.components
 		
 		public var velocityX:Number = 0;
 		public var velocityY:Number = 0;
-		public var friction:Number = 0.6;
+		public var friction:Number = 1;//= 0.6;
 		public var accelerationX:Number = 0;
 		public var accelerationY:Number = 0;
 		public var externalAccelerationX:Number = 0;
