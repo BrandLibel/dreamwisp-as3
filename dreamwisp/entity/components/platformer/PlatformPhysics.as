@@ -21,6 +21,7 @@
 		public static const COLLIDE_DIR_RIGHT:uint = 2;
 		public static const COLLIDE_DIR_DOWN:uint = 3;
 		private static const WALKING_FRICTION:Number = 0.6;
+		private var walkingFriction:Number = WALKING_FRICTION;
 		
 		private var entity:Entity;
 		private var body:Body;
@@ -126,14 +127,16 @@
 		
 		override public function update():void 
 		{
+			walkingFriction = 1;
 			super.update();
 			collideSlope();
+			walkingFriction = WALKING_FRICTION;
 			
 			// apply friction when stopped moving
 			if (!isWalking)
 			{
 				accelerationX = 0;
-				velocityX *= (WALKING_FRICTION);
+				velocityX *= (getFrictionX());
 				if (Math.abs(velocityX) < maxWalkSpeed * 0.1)
 					velocityX = 0;
 			}
@@ -655,6 +658,16 @@
 				return leftFoot;
 			else
 				return rightFoot;
+		}
+		
+		override protected function getFrictionX():Number
+		{
+			return walkingFriction;
+		}
+		
+		override protected function getFrictionY():Number
+		{
+			return 1;
 		}
 		
 	}

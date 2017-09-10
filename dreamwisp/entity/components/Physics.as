@@ -68,7 +68,7 @@ package dreamwisp.entity.components
 			}
 			velocityX += externalAccelerationX;
 			host.body.x += velocityX;
-			velocityX *= friction;
+			velocityX *= getFrictionX();
 		}
 		
 		/**
@@ -86,7 +86,7 @@ package dreamwisp.entity.components
 			}
 			velocityY += externalAccelerationY;			
 			host.body.y += velocityY;
-			velocityY *= friction;
+			velocityY *= getFrictionY();
 		}
 		
 		public function thrust(power:Number):void
@@ -158,7 +158,17 @@ package dreamwisp.entity.components
 		{
 			return (velocityX != 0 || velocityY != 0);
 		}
-	
+		
+		protected function getFrictionX():Number
+		{
+			return friction;
+		}
+		
+		protected function getFrictionY():Number
+		{
+			return friction;
+		}
+		
 	}
 
 }

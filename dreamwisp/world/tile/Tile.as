@@ -120,6 +120,14 @@ package dreamwisp.world.tile
 			setStartPixels();
 		}
 		
+		public function setSolidDirections(solidFrom:Object):void 
+		{
+			solid.up = solidFrom.up;
+			solid.left = solidFrom.left;
+			solid.down = solidFrom.down;
+			solid.right = solidFrom.right;
+		}
+		
 		protected function setStartPixels():void 
 		{
 			const bitmapData:BitmapData = bitmap.bitmapData;
