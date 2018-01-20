@@ -19,6 +19,8 @@ package dreamwisp.entity.components {
 		public var y:Number = 0;
 		public var width:uint;
 		public var height:uint;
+		
+		/// In radians
 		public var angle:Number = 0;
 		
 		private var swiftRectangle:SwiftRectangle;
@@ -115,6 +117,32 @@ package dreamwisp.entity.components {
 			//return new Point( (globalX + width / 2) , (globalY + height / 2) );
 			return new SwiftPoint( (globalX + width / 2) , (globalY + height / 2) );
 		}
+		
+		/**
+		 * 
+		 * @param	originalX
+		 * @param	originalY
+		 * @param	rotation In radians
+		 * @return
+		 */
+		public function getRotatedPoint(x:Number, y:Number, rotation:Number = NaN):Point 
+		{  
+			if (isNaN(rotation)) rotation = angle;
+			//rotation *= (Math.PI / 180); // this converts to radians
+			
+			// subtract midpoints, and add it in the end again?
+			var xM:Number = this.x; //+ this.width / 2;
+			var yM:Number = this.y; //+ this.height / 2;
+			x -= xM;
+			y -= yM;
+			
+            var p:Point = new Point(x * Math.cos(rotation) - y * Math.sin(rotation), x * Math.sin(rotation) + y * Math.cos(rotation));
+			//var p:Point = new Point(x * Math.cos(rotation) + y * Math.sin(rotation), -x * Math.sin(rotation) + y * Math.cos(rotation));
+			//var p:Point = new Point(originalX * Math.cos(rotation) + originalY * Math.sin(rotation), originalY * Math.cos(rotation) - originalX * Math.sin(rotation)  );  
+            p.x += xM; //+ Math.round(p.x * 100) / 100;
+            p.y += yM; // Math.round(p.y * 100) / 100;
+            return p;
+        }
 		
 		//public function get width():uint { return _width; }
 		//

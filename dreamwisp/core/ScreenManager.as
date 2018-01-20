@@ -97,6 +97,11 @@ package dreamwisp.core {
 			}
 		}
 		
+		/**
+		 * Prepare a screen to come up in the next tick.
+		 * Delay can be bypassed by calling activateScreen() afterwards.
+		 * @param	screen
+		 */
 		public function pendScreen(screen:GameScreen):void {
 			screen.screenManager = this;
 			waitList.push( screen );
@@ -123,7 +128,7 @@ package dreamwisp.core {
 		/**
 		 * Moves the first screen in the waiting list to the active list.
 		 */
-		private function activateScreen():void {
+		public function activateScreen():void {
 			if (waitList.length == 0) return;
 			var screen:GameScreen = waitList.shift();
 			

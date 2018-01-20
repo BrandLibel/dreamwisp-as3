@@ -3,9 +3,10 @@ package dreamwisp.entity.hosts
 	import dreamwisp.core.GameScreen;
 	import dreamwisp.entity.components.Body;
 	import dreamwisp.entity.components.Health;
+	import dreamwisp.entity.components.IView;
 	import dreamwisp.entity.components.Physics;
 	import dreamwisp.entity.components.View;
-	import dreamwisp.entity.components.ViewS;
+	//import dreamwisp.entity.components.ViewS;
 	import dreamwisp.entity.components.Weapon;
 	import dreamwisp.swift.geom.SwiftRectangle;
 	import dreamwisp.visual.animation.AnimatedFrames;
@@ -31,7 +32,7 @@ package dreamwisp.entity.hosts
 		private var _health:Health;
 		private var _weapon:Weapon;
 		private var _view:View;
-		private var _viewS:ViewS;
+		//private var _viewS:IView;
 		private var _lightSource:LightSource;
 		private var _physics:Physics;
 		
@@ -112,7 +113,7 @@ package dreamwisp.entity.hosts
 		 */
 		public function destroy():void 
 		{
-			if (viewS) viewS.displayObject.dispose();
+			//if (viewS) viewS.displayObject.dispose();
 			destroyed.dispatch(this);
 		}
 		
@@ -123,7 +124,7 @@ package dreamwisp.entity.hosts
 		
 		public function render(interpolation:Number):void {
 			if (view) view.render(interpolation);
-			if (viewS) viewS.render(interpolation);
+			//if (viewS) viewS.render(interpolation);
 			if (lightSource) lightSource.render();
 		}
 		
@@ -201,9 +202,9 @@ package dreamwisp.entity.hosts
 		
 		public function set animation(value:Animation):void { view.animation = value; }
 		
-		public function get viewS():ViewS { return _viewS; }
+		//public function get viewS():IView { return _viewS; }
 		
-		public function set viewS(value:ViewS):void { _viewS = value; }
+		//public function set viewS(value:IView):void { _viewS = value; }
 		
 	}
 

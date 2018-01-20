@@ -27,11 +27,11 @@ package dreamwisp.entity.components
 		private var host:Entity;
 		
 		private var _displayObject:DisplayObject;
-		protected const rotAngle:Number = (180 / Math.PI);
-		public var offsetX:Number = 0;
-		public var offsetY:Number = 0;
+		private const _rotAngle:Number = (180 / Math.PI);
+		private var _offsetX:Number = 0;
+		private var _offsetY:Number = 0;
 		
-		public var animation:Animation;
+		private var _animation:Animation;
 		
 		// color transformation tools
 		private var currentTint:Array = [1, 1, 1];
@@ -182,6 +182,20 @@ package dreamwisp.entity.components
 		{
 			return _displayObject as DisplayObjectContainer;
 		}
+		
+		public function get offsetX():Number { return _offsetX; }
+		
+		public function set offsetX(value:Number):void { _offsetX = value; }
+		
+		public function get offsetY():Number { return _offsetY; }
+		
+		public function set offsetY(value:Number):void { _offsetY = value; }
+		
+		public function get animation():Animation { return _animation; }
+		
+		public function set animation(value:Animation):void { _animation = value; }
+		
+		public function get rotAngle():Number { return _rotAngle; }
 		
 		public function setContainerView(containerView:ContainerViewS):void 
 		{

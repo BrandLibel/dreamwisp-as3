@@ -8,10 +8,12 @@ package dreamwisp.undo
 	{
 		private var initState:Object;
 		private var endState:Object;
+		private var afterAction:Function;
 		
-		public function SetAction(target:Object) 
+		public function SetAction(target:Object, afterAction:Function = null) 
 		{
 			super(target);
+			this.afterAction = afterAction;
 		}
 		
 		override public function undo():void 
@@ -20,6 +22,7 @@ package dreamwisp.undo
 			{
 				target[name] = initState[name];
 			}
+			if (afterAction) afterAction.call();
 		}
 		
 		override public function redo():void 
@@ -28,6 +31,7 @@ package dreamwisp.undo
 			{
 				target[name] = endState[name];
 			}
+			if (afterAction) afterAction.call();
 		}
 		
 		override public function calculate(initState:Object, endState:Object):Boolean 

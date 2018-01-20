@@ -12,6 +12,8 @@ package dreamwisp.entity.components
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.geom.ColorTransform;
+	import flash.geom.Matrix;
+	import flash.geom.Rectangle;
 	import tools.Belt;
 	
 	/**
@@ -24,11 +26,11 @@ package dreamwisp.entity.components
 		private var host:Entity;
 		
 		private var _displayObject:DisplayObject;
-		protected const rotAngle:Number = (180 / Math.PI);
-		public var offsetX:Number = 0;
-		public var offsetY:Number = 0;
+		private const _rotAngle:Number = (180 / Math.PI);
+		private var _offsetX:Number = 0;
+		private var _offsetY:Number = 0;
 		
-		public var animation:Animation;
+		private var _animation:Animation;
 		
 		// color transformation tools
 		private var currentTint:Array = [1, 1, 1];
@@ -58,6 +60,7 @@ package dreamwisp.entity.components
 				displayObject.y = host.body.y + offsetY;
 			}
             displayObject.rotation = host.body.angle * rotAngle;
+			//rotateAroundCenter(displayObject, displayObject.rotation - (host.body.angle * rotAngle));
 			
 			if (animation != null && animation is AnimatedFrames)
 			{
@@ -66,6 +69,22 @@ package dreamwisp.entity.components
 				displayObject.y += /*(host.body.height / 2) +*/ frame.y;
 				if (displayObject.scaleX == -1) displayObject.x += frame.originalWidth;
 			}
+		}
+		
+		private function rotateAroundCenter(object:DisplayObject, angleDegrees:Number):void {
+			if (object.rotation == angleDegrees) {
+				return;
+			}
+
+			var matrix:Matrix = object.transform.matrix;
+			var rect:Rectangle = object.getBounds(object.parent);
+
+			matrix.translate(-(rect.left + (rect.width / 2)), -(rect.top + (rect.height / 2)));
+			matrix.rotate((angleDegrees / 180) * Math.PI);
+			matrix.translate(rect.left + (rect.width / 2), rect.top + (rect.height / 2));
+			object.transform.matrix = matrix;
+
+			object.rotation = Math.round(object.rotation);
 		}
 		
 		public function applyTint(r:Number, g:Number, b:Number, displayObject:DisplayObject = null):void 
@@ -154,6 +173,20 @@ package dreamwisp.entity.components
 		{
 			return _displayObject as DisplayObjectContainer;
 		}
+		
+		public function get offsetX():Number { return _offsetX; }
+		
+		public function set offsetX(value:Number):void { _offsetX = value; }
+		
+		public function get offsetY():Number { return _offsetY; }
+		
+		public function set offsetY(value:Number):void { _offsetY = value; }
+		
+		public function get animation():Animation { return _animation; }
+		
+		public function set animation(value:Animation):void { _animation = value; }
+		
+		public function get rotAngle():Number { return _rotAngle; }
 		
 		public function setContainerView(containerView:ContainerView):void 
 		{

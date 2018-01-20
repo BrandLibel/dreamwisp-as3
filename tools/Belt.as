@@ -11,6 +11,7 @@
 	import flash.display.StageQuality;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.ui.Keyboard;
 	import flash.utils.describeType;
@@ -88,6 +89,33 @@
 			var dy:int = Obj1.y - Obj2.y;
 			return Math.abs(Math.sqrt(dx * dx + dy * dy));
 		}
+		
+		/**
+		 * 
+		 * @param	x
+		 * @param	y
+		 * @param	xM
+		 * @param	yM
+		 * @param	rotation Should be in radians
+		 * @return
+		 */
+		public static function getRotatedPoint(x:Number, y:Number, xM:Number, yM:Number, rotation:Number):Point 
+		{  
+			//rotation *= (Math.PI / 180); // this converts to radians
+			
+			// subtract midpoints, and add it in the end again?
+			//var xM:Number = this.x; //+ this.width / 2;
+			//var yM:Number = this.y; //+ this.height / 2;
+			x -= xM;
+			y -= yM;
+			
+            var p:Point = new Point(x * Math.cos(rotation) - y * Math.sin(rotation), x * Math.sin(rotation) + y * Math.cos(rotation));
+			//var p:Point = new Point(x * Math.cos(rotation) + y * Math.sin(rotation), -x * Math.sin(rotation) + y * Math.cos(rotation));
+			//var p:Point = new Point(originalX * Math.cos(rotation) + originalY * Math.sin(rotation), originalY * Math.cos(rotation) - originalX * Math.sin(rotation)  );  
+            p.x += xM; //+ Math.round(p.x * 100) / 100;
+            p.y += yM; // Math.round(p.y * 100) / 100;
+            return p;
+        }
 		
 		public static function getSignOf(number:Number):int
 		{
@@ -183,12 +211,16 @@
 			displayObject.y += (prevH - displayObject.height) / 2;
 		}
 		
-		public static function scaleToWidth(sprite:*, value:Number):void {
+		public static function scaleToWidth(sprite:*, value:Number):void 
+		{
+			value = Math.max(value, 1);
 			var multiplier:Number = value / sprite.width;
 			sprite.width = value;
 			sprite.height = multiplier * sprite.height;
 		}
-		public static function scaleToHeight(sprite:*, value:Number):void {
+		public static function scaleToHeight(sprite:*, value:Number):void 
+		{
+			value = Math.max(value, 1);
 			var multiplier:Number = value / sprite.height;
 			sprite.height = value;
 			sprite.width = multiplier * sprite.width;
