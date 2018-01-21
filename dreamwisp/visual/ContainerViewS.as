@@ -1,6 +1,7 @@
 package dreamwisp.visual
 {
 	import dreamwisp.entity.hosts.Entity;
+	import dreamwisp.entity.hosts.EntityS;
 	import dreamwisp.visual.lighting.LightSource;
 	import starling.display.DisplayObject;
 	import starling.display.DisplayObjectContainer;
@@ -124,7 +125,7 @@ package dreamwisp.visual
 		 * @param	entity
 		 * @param	targetLayer
 		 */
-		public function addEntity(entity:Entity):void
+		public function addEntity(entity:EntityS):void
 		{
 			if (!entity.viewS)
 				throw new Error("ContainerView: The entity you are trying to add has no view.");
@@ -182,7 +183,7 @@ package dreamwisp.visual
 			}
 		}
 		
-		public function removeEntity(entity:Entity):void
+		public function removeEntity(entity:EntityS):void
 		{
 			// use this b/c container.contains(child) returns true even when child isnt in container
 			var child:DisplayObject = entity.viewS.displayObject;
