@@ -85,9 +85,14 @@
 		
 		public static function getDistance(Obj1:Object, Obj2:Object):Number
 		{
-			var dx:int = Obj1.x - Obj2.x;
-			var dy:int = Obj1.y - Obj2.y;
-			return Math.abs(Math.sqrt(dx * dx + dy * dy));
+			return getDist(Obj1.x, Obj1.y, Obj2.x, Obj2.y);
+		}
+		
+		public static function getDist(x1:Number, y1:Number, x2:Number, y2:Number):Number 
+		{
+			var dx:int = x1 - x2;
+			var dy:int = y1 - y2;
+			return Math.abs(Math.sqrt(dx * dx + dy * dy)); 
 		}
 		
 		/**

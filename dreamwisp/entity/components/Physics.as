@@ -6,7 +6,7 @@ package dreamwisp.entity.components
 	
 	public class Physics
 	{
-		private static const DEFAULT_MAX_SPEED:Number = 10;
+		protected static const DEFAULT_MAX_SPEED:Number = 10;
 		
 		protected var host:Entity;
 		
