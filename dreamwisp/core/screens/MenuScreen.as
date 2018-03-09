@@ -26,6 +26,7 @@ package dreamwisp.core.screens
 		{
 			super(game);
 			this.container = container;
+			buttons = new Vector.<MenuButton>();
 			detectButtons();
 			
 			buttonPressed = new Signal(MenuButton);
@@ -60,22 +61,30 @@ package dreamwisp.core.screens
 		/**
 		 * Adds all buttons of the MenuScreen MovieClip into the buttons vector.
 		 * Override when using different button naming scheme or special behavior.
+		 * 
+		 * @param	parent Defaults to the MenuScreen container if not specified
+		 * @param	btnArray Defaults to the member variable 'buttons' if not specified
+		 * @param	startingIndex The number of the first button in the provided parent
+		 * @return
 		 */
-		protected function detectButtons():void 
+		protected function detectButtons(parent:DisplayObjectContainer = null, btnArray:Vector.<MenuButton> = null, startingIndex:uint = 1):Vector.<MenuButton> 
 		{
-			buttons = new Vector.<MenuButton>();
-			var btnNum:uint = 1;
+			if (parent == null) parent = container;
+			
+			var btnNum:uint = startingIndex;
 			var button:MenuButton;
-			while (container.getChildByName("B" + btnNum) != null)
+			while (parent.getChildByName("B" + btnNum) != null)
 			{
 				const btnCode:String = "B" + btnNum; 
-				const graphic:DisplayObject = container.getChildByName(btnCode);
+				const graphic:DisplayObject = parent.getChildByName(btnCode);
 				
 				button = makeButton(graphic, btnCode, btnNum);
-				addDetectedButton(button);
+				addDetectedButton(button, btnArray);
 				
 				btnNum++;
 			}
+			
+			return btnArray;
 		}
 		
 		protected function makeButton(graphic:DisplayObject, btnCode:String, btnNum:uint):MenuButton 
@@ -88,9 +97,10 @@ package dreamwisp.core.screens
 			return button;
 		}
 		
-		protected function addDetectedButton(button:MenuButton):void 
+		protected function addDetectedButton(button:MenuButton, btnArray:Vector.<MenuButton> = null):void 
 		{
-			buttons.push(button);
+			if (btnArray == null) btnArray = buttons;
+			btnArray.push(button);
 		}
 		
 		override public function handleInput(inputState:IInputState):void 
