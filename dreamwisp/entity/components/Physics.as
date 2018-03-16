@@ -17,8 +17,8 @@ package dreamwisp.entity.components
 		public var accelerationY:Number = 0;
 		public var externalAccelerationX:Number = 0;
 		public var externalAccelerationY:Number = 0;
-		public var maxSpeedX:Number;
-		public var maxSpeedY:Number;
+		private var _maxSpeedX:Number;
+		private var _maxSpeedY:Number;
 		
 		public function Physics(entity:Entity, maxSpeedX:Number = DEFAULT_MAX_SPEED, maxSpeedY:Number = DEFAULT_MAX_SPEED, friction:Number = 1)
 		{
@@ -168,6 +168,14 @@ package dreamwisp.entity.components
 		{
 			return friction;
 		}
+		
+		public function get maxSpeedX():Number { return _maxSpeedX; }
+		
+		public function set maxSpeedX(value:Number):void { _maxSpeedX = value; }
+		
+		public function get maxSpeedY():Number { return _maxSpeedY; }
+		
+		public function set maxSpeedY(value:Number):void { _maxSpeedY = value; }
 		
 	}
 
