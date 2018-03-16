@@ -14,6 +14,7 @@
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.ui.Keyboard;
+	import flash.utils.ByteArray;
 	import flash.utils.describeType;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
@@ -24,6 +25,13 @@
 		public final function Belt()
 		{
 		
+		}
+		
+		public static function loadJSON(Embedded:Class):Object {
+			var bytes:ByteArray = new Embedded() as ByteArray;
+			var rawString:String = bytes.readUTFBytes(bytes.length);
+			
+            return JSON.parse(rawString);
 		}
 		
 		public static function randomNumber(bound1:Number, bound2:Number):Number{
