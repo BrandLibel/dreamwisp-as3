@@ -28,10 +28,15 @@
 		 * @param	width the static project UI width
 		 * @param	height the static project UI height
 		 */
-		public function rescale(stage:Stage, width:Number, height:Number):void 
+		public function rescale(stage:Stage, width:Number, height:Number, isPortrait:Boolean = true):void 
 		{
 			var deviceWidth:Number = Math.min(stage.fullScreenWidth, stage.fullScreenHeight);
 			var deviceHeight:Number = Math.max(stage.fullScreenWidth, stage.fullScreenHeight);
+			if (!isPortrait)
+			{
+				deviceWidth = Math.max(stage.fullScreenWidth, stage.fullScreenHeight);
+				deviceHeight = Math.min(stage.fullScreenWidth, stage.fullScreenHeight);
+			}
 			var appWidth:Number = width;
 			var appHeight:Number = height;
 			var appScale:Number = 1;
