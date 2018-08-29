@@ -34,6 +34,15 @@
             return JSON.parse(rawString);
 		}
 		
+		public static function secondsToTime(seconds:uint):String
+		{
+			var min:uint = Math.floor(seconds / 60);
+			var sec:uint = seconds % 60;
+			var extraZero:String = "";
+			if (sec < 10) extraZero = "0";
+			return min + ":" + extraZero + sec;
+		}
+		
 		public static function randomNumber(bound1:Number, bound2:Number):Number{
 			var min:Number = (bound1 < bound2) ? bound1 : bound2;
 			var max:Number = (bound1 > bound2) ? bound1 : bound2;
