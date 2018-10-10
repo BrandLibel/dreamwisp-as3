@@ -43,12 +43,19 @@
 			return min + ":" + extraZero + sec;
 		}
 		
-		public static function randomNumber(bound1:Number, bound2:Number):Number{
+		/**
+		 * Either pass 2 separate params, or an array. In which case you must do:
+		 * randomNumber.apply(this, arr);
+		 */
+		public static function randomNumber(... rest):Number
+		{
+			var bound1:Number = rest[0];
+			var bound2:Number = rest[1];
 			var min:Number = (bound1 < bound2) ? bound1 : bound2;
 			var max:Number = (bound1 > bound2) ? bound1 : bound2;
-			return (Math.random() * (max - min)) + min;
+			return (Math.random() * (max - min + 1)) + min;
 		}
-		
+
 		public static function valueIsBetween(value:Number, limit1:Number, limit2:Number, inclusive:Boolean = true):Boolean
 		{
 			var min:Number;
