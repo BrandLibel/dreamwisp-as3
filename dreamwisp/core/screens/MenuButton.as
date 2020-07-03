@@ -38,15 +38,24 @@ package dreamwisp.core.screens
 		
 		public function select():void 
 		{
-			isOriginal = !isOriginal;
-			const upState:DisplayObject = button.upState;
-			button.upState = button.overState;
-			button.overState = upState;
+			if (isOriginal)
+			{
+				const upState:DisplayObject = button.upState;
+				button.upState = button.overState;
+				button.overState = upState;
+				isOriginal = false;
+			}
 		}
 		
 		public function deselect():void 
 		{
-			select();
+			if (!isOriginal)
+			{
+				const upState:DisplayObject = button.upState;
+				button.upState = button.overState;
+				button.overState = upState;
+				isOriginal = true;
+			}
 		}
 		
 		public function hitTestPoint(x:int, y:int):Boolean 
