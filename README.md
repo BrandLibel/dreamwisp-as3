@@ -6,7 +6,7 @@ An Actionscript 3 framework for developing games that I started in 2013 (when I 
 
 The `Game` class contains everything you might need to run a game: the game loop's `update()` and `render()` functions, the game save system, the user input, and the `ScreenManager`.
 
-The `ScreenManager` is where all the action happens. Create custom screens extending the `GameScreen` or `MenuScreen` classes. When you want to display or transition to a new screen, add it to a `ScreenManager` using the `pendScreen` method. `ScreenManager` will handle any screen transitions and execute the logic and rendering for its top-most active screen.
+The `ScreenManager` is where all the action happens. Create custom screens extending the `GameScreen` or `MenuScreen` classes. When you want to display or transition to a new screen, add it to a `ScreenManager` using the `pendScreen()` method. `ScreenManager` will handle any screen transitions and execute the logic and rendering for its top-most active screen.
 
 ## Entity
 
