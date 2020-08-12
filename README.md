@@ -2,6 +2,8 @@
 
 An Actionscript 3 framework for developing games that I started in 2013 (when I was 16 years old). Building this helped me learn core programming concepts and best practices.
 
+I built several projects using this framework, including [Indefinite: Interrogation Game](https://brandlibel.me/indefinite)
+
 ## The Game and ScreenManager
 
 The `Game` class contains everything you might need to run a game: the game loop's `update()` and `render()` functions, the game save system, the user input, and the `ScreenManager`.
